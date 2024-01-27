@@ -1,0 +1,174 @@
+body {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #F5F5F5;
+}
+
+.coat-of-arms-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 700px;
+    background-image: url('/background/black.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    border: 1px solid #ddd;
+    margin-bottom: 30px;
+}
+
+.coat-of-arms-elements {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: 50%;
+    position: relative;
+}
+
+.coat-of-arms-frame {
+    width: 120%;
+    z-index: 1;
+}
+
+.coat-of-arms-frame img {
+    width: 100%;
+    height: auto;
+    transform: scale(0.8);
+}
+
+.coat-of-arms-flag {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30%;
+    transform: translate(-50%, -50%);
+}
+
+.coat-of-arms-flag img {
+    width: 100%;
+    height: auto;
+}
+
+.coat-of-arms-animal {
+    width: 75%;
+    position: absolute;
+    bottom: 10%;  /* Adjusted position */
+    z-index: 2;
+    transform: scale(0.7);
+}
+
+.coat-of-arms-crown {
+    position: absolute;
+    top: -7%;
+    left: 59.7%;
+    transform: translateX(-50%);
+}
+
+
+.animal-thumbnail, .frame-thumbnail, .flag-thumbnail, .crown-thumbnail {
+    width: 50px;
+    height: 50px;
+    margin: 10px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.card-body {
+    padding: 15px;
+    background: #ffffff;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.card {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.card:last-child {
+    border-bottom: none;
+}
+
+.btn {
+    background-color: #007BFF;
+    color: #FFFFFF;
+    border: none;
+}
+
+
+
+.coat-of-arms-banner-container {
+    position: absolute;  /* Absolute positioning based on the main container */
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 5; /* Just to ensure it stays on top of other elements */
+}
+
+.coat-of-arms-banner {
+    display: inline-block;
+    width: 100%;
+}
+
+
+
+
+
+.banner-text-container {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+}
+
+
+
+.banner-thumbnail {
+    width: 140px;
+    height: 50px;
+    margin: 10px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    object-fit: cover;
+}
+
+
+#selected-crown {
+    width: 50%;
+}
+
+#selected-animal-left {
+    transform: scaleX(-1) translateX(-70%);
+    left: 0;
+}
+
+#selected-animal-right {
+    transform: scaleX(-1) translateX(10%);
+    right: 0;
+}
+
+
+
+#selected-banner {
+    width: 100%;
+    transform: scaleY(1.5);
+}
+
+#banner-text {
+    font-family: 'Cinzel', sans-serif;
+    font-size: 2em;
+    color: #D2B48C;
+    text-align: center;
+}

@@ -1,0 +1,195 @@
+<head>
+  <title>dynasty</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
+</head>
+
+<body>
+
+
+  {{> responsiveInterface}}
+
+
+
+</body>
+
+
+<template name="responsiveInterface">
+
+  <!-- Black Navbar -->
+  <div id="navbar" class="navbar">
+    <div class="toggle-btn" id="menuToggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+
+
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <ul style="margin-top: 50px;">
+      <li id="generateImage">Generate Image</li>
+      <li id="saveProject">Save Project</li>
+      <li id="newProject">Start New Project</li>
+      <li id="showProjects">Show Projects</li>
+      <li>
+        <select id="symbolCount">
+          <option value="1">1 Symbol</option>
+          <option value="2">2 Symbols</option>
+          <option value="4">4 Symbols</option>
+        </select>
+      </li>
+    </ul>
+  </div>
+
+
+
+
+  <!-- The rest of your existing HTML here -->
+
+
+
+
+
+  <!-- New Projects Modal -->
+  <div id="projectsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="projectsModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <ul id="projectList">
+    {{#each projects}}
+      <li data-project-id="{{_id}}">
+        {{name}} - Last Modified: {{lastModified}}
+      </li>
+    {{/each}}
+  </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div id="symbolModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <img src="/symbols/symbol1.png" class="modal-symbol-preview" />
+          <img src="/symbols/symbol2.png" class="modal-symbol-preview" />
+          <img src="/symbols/symbol3.png" class="modal-symbol-preview" />
+          <img src="/symbols/symbol4.png" class="modal-symbol-preview" />
+          <!-- Add more images here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+  <div class="col-md-9 col-12 order-2 order-md-1 mx-auto">
+    <div class="coat-of-arms-container">
+
+          <img id="selected-frame" class="coat-of-arms-element" src="/background/transparent.png">
+          <img id="selected-crown" class="coat-of-arms-element" src="/background/transparent.png">
+          <img id="selected-banner" class="coat-of-arms-element" src="/background/transparent.png">
+          <img id="selected-animal-left" class="coat-of-arms-element" src="/background/transparent.png">
+          <img id="selected-animal-right" class="coat-of-arms-element" src="/background/transparent.png">
+          <img id="selected-flag" class="coat-of-arms-element" src="/background/transparent.png">
+          <div id="banner-text-content" class="coat-of-arms-element"></div>
+
+
+    <div class="symbols-container">
+      <!-- Single Symbol -->
+      <div class="symbol-section single-symbol" data-position="single">
+        <i class="fas fa-plus"></i>
+      </div>
+
+      <!-- Double Symbols -->
+      <div class="symbol-section double-symbol left" data-position="double-left">
+        <i class="fas fa-plus"></i>
+      </div>
+      <div class="symbol-section double-symbol right" data-position="double-right">
+        <i class="fas fa-plus"></i>
+      </div>
+
+      <!-- Quadrant Symbols -->
+      <div class="symbol-section quadrant-symbol top-left" data-position="top-left">
+        <i class="fas fa-plus"></i>
+      </div>
+      <div class="symbol-section quadrant-symbol top-right" data-position="top-right">
+        <i class="fas fa-plus"></i>
+      </div>
+      <div class="symbol-section quadrant-symbol bottom-left" data-position="bottom-left">
+        <i class="fas fa-plus"></i>
+      </div>
+      <div class="symbol-section quadrant-symbol bottom-right" data-position="bottom-right">
+        <i class="fas fa-plus"></i>
+      </div>
+    </div>
+
+      </div>
+  </div>
+
+
+  <!-- Modal -->
+  <div id="imageModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <img id="generatedImage" class="img-fluid" alt="Generated Image" />
+
+          <div id="threeContainer" style="width: 800px; height: 600px;"></div>
+
+
+          <button id="saveToDevice" class="btn btn-primary mt-2">Save to Device</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <div id="scroll-container" class="scroll-container"></div>
+
+  <div class="container-fluid">
+    <div class="row bottom-bar">
+      <div class="col icon-box" data-type="banner">
+        <i class="fas fa-flag"></i>
+        <div class="subtitle">Banners</div>
+      </div>
+      <div class="col icon-box" data-type="frame">
+        <i class="fas fa-border-all"></i>
+        <div class="subtitle">Frames</div>
+      </div>
+      <div class="col icon-box" data-type="animal-left">
+    <i class="fas fa-paw"></i>
+    <div class="subtitle">Animal Left</div>
+  </div>
+  <div class="col icon-box" data-type="animal-right">
+    <i class="fas fa-paw"></i>
+    <div class="subtitle">Animal Right</div>
+  </div>
+
+
+      <div class="col icon-box" data-type="crown">
+        <i class="fas fa-crown"></i>
+        <div class="subtitle">Crowns</div>
+      </div>
+      <div class="col icon-box" data-type="text">
+        <i class="fas fa-font"></i>
+        <div class="subtitle">Text</div>
+      </div>
+
+    </div>
+  </div>
+</template>
