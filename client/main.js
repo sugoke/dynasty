@@ -77,14 +77,34 @@ Template.responsiveInterface.onRendered(function () {
 });
 
 Template.responsiveInterface.onCreated(function () {
-  this['animal-left'] = ['animals/leopard.png', 'animals/lion.png', 'animals/bear.png', 'animals/dragon.png'];
+  this['animal-left'] = [
+    'animals/leopard.png',
+    'animals/lion.png',
+    'animals/bear.png',
+    'animals/dragon.png',
+    // Adding the specified .png files
+    'animals/lion4.png',
+    'animals/pegase2.png',
+    'animals/licorne.png',
+    'animals/loup.png',
+    'animals/phoenix.png',
+    'animals/cheval.png',
+    'animals/deer.png', // Assuming you meant 'deer.png' instead of 'deerpeacock.png'
+    'animals/peacock.png',
+    'animals/dolphin.png', // Fixed the spelling from 'dolphine' to 'dolphin'
+    'animals/crow.png',
+    'animals/swan.png',
+    'animals/fox.png',
+    'animals/pegasus2.png',
+    'animals/sphinx.png'
+  ];
  this['animal-right'] = this['animal-left'];  // Same animals, just mirrored
-  this.frame = ['frames/frame1.png', 'frames/frame2.png', 'frames/golden_frame01.png'];
+  this.frame = ['frames/frame1.png','frames/frame2.png','frames/frame3.png','frames/frame4.png','frames/frame5.png','frames/frame6.png','frames/frame7.png','frames/frame8.png','frames/frame9.png','frames/frame10.png',];
 
   this.symbol = ['symbols/symbol1.png', 'symbols/symbol2.png', 'symbols/symbol3.png', 'symbols/symbol4.png', 'symbols/symbol5.png'];
   this.flag = ['flags/french.png', 'flags/us.png'];
-  this.crown = ['crowns/crown.png'];
-  this.banner = ['banners/banner.png'];
+  this.crown = ['crowns/crown.png','crowns/crown2.png','crowns/crown3.png'];
+  this.banner = ['banners/banner.png','banners/banner2.png'];
 });
 
 

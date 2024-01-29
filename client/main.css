@@ -66,7 +66,7 @@ body{
 #selected-frame {
   width: 70%;  /* Occupy 50% of the container's width */
   height: auto;  /* Maintain aspect ratio */
-  z-index: 99999;
+  z-index: 1;
   top: 50%;  /* Vertical center */
   left: 15%;  /* Horizontal center considering the image takes 50% width */
   transform: translateY(-50%);  /* Adjust for exact vertical centering */
@@ -217,9 +217,9 @@ user-select: none;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 9999;
-  width: 100px;
-  height: 100px;
+  z-index: 0;
+  width: 150px;
+  height: 150px;
   background-color: white;
 }
 
