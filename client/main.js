@@ -24,6 +24,11 @@ let currentProjectId = new ReactiveVar(null);
 
 
 Template.responsiveInterface.onRendered(function () {
+  $('#modalOverlay').on('click', function() {
+    $("#slideOut").removeClass('showSlideOut');
+    $(this).fadeOut("fast"); // Hide the overlay
+  });
+
 
   // Close sidebar when clicking anywhere
     document.addEventListener('click', function(event) {
@@ -76,14 +81,14 @@ Template.responsiveInterface.onRendered(function () {
   });
 });
 
+
+
 Template.responsiveInterface.onCreated(function () {
   this['animal-left'] = [
-    'animals/leopard.png',
-    'animals/lion.png',
-    'animals/bear.png',
-    'animals/dragon.png',
+
     // Adding the specified .png files
     'animals/lion4.png',
+    'animals/bear2.png',
     'animals/pegase2.png',
     'animals/licorne.png',
     'animals/loup.png',
@@ -107,9 +112,74 @@ Template.responsiveInterface.onCreated(function () {
   this.banner = ['banners/banner.png','banners/banner2.png'];
 });
 
+const animalSymbolMeanings = {
+  'lion4.png': 'The lion, often referred to as the "king of beasts," symbolizes strength, bravery, and royalty. Historically, lions have been featured in art and mythology across various cultures, representing authority and protection. In ancient Egypt, the lioness goddess Sekhmet was worshiped as a warrior goddess and protector, embodying the fierce aspect of the solar deity.',
+  'bear2.png': 'The bear is a symbol of strength, courage, and endurance. Native American tribes revered the bear as a spiritual guide, embodying physical strength and leadership. In Norse mythology, warriors called Berserkers believed they could take on the bear’s might by wearing its skin, granting them ferocity in battle.',
+  'pegase2.png': 'Pegasus, the winged horse in Greek mythology, symbolizes freedom, inspiration, and the pursuit of knowledge. Born from the blood of Medusa, Pegasus was tamed by Bellerophon to defeat the Chimera. The image of Pegasus has been used to represent poetic inspiration and the immortality of the soul.',
+  'licorne.png': 'The unicorn, a legendary creature of purity and grace, symbolizes magic, miracles, and enchantment. Throughout history, unicorns have been depicted as gentle and shy animals, only able to be captured by a virgin. Its horn was said to have the power to neutralize poison, making it a symbol of protection and purity.',
+  'loup.png': 'The wolf symbolizes sharp intelligence, deep connections, and freedom. In Roman mythology, the she-wolf Lupa nurtured Romulus and Remus, the founders of Rome, showcasing the wolf’s role as a protector and guide. Wolves are often portrayed as loyal creatures, emphasizing the importance of family and community.',
+  'phoenix.png': 'The phoenix, a mythical bird that regenerates from its ashes, represents immortality, resurrection, and renewal. This symbol of rebirth was celebrated in ancient Egypt and later adopted by early Christians as a symbol of Christ’s resurrection, embodying the idea of eternal life.',
+  'cheval.png': 'The horse symbolizes mobility, stamina, and freedom. Throughout history, horses have played vital roles in societies, from warfare to transportation and agriculture. In many cultures, the horse is also seen as a symbol of nobility and grace, embodying the spirit of conquest and liberation.',
+  'deer.png': 'The deer, known for its gentle and serene demeanor, symbolizes sensitivity, intuition, and grace. In Celtic mythology, the deer was a messenger of the otherworld, offering guidance and protection. The stag, with its magnificent antlers, represents regeneration, as it sheds and regrows its antlers annually.',
+  'peacock.png': 'The peacock, with its brilliant plumage, symbolizes nobility, immortality, and renewal. Associated with the goddess Hera in Greek mythology, the peacock’s tail was said to possess the "eyes" of the stars. In Christianity, the peacock symbolizes the resurrection and the immortality of the soul due to the ancient belief that its flesh does not decay.',
+  'dolphin.png': 'Dolphins, regarded as friends to humans, symbolize guidance, protection, and good luck. In Greek mythology, dolphins were considered sacred to Apollo and Poseidon, often depicted as rescuers of shipwrecked sailors and guides to the Isles of the Blessed.',
+  'crow.png': 'The crow symbolizes transformation and adaptability. In many cultures, crows are seen as oracles of destiny, carrying messages from the spirit world. Their ability to eat anything and thrive anywhere embodies survival and resourcefulness.',
+  'swan.png': 'The swan symbolizes grace, beauty, and love. In Greek mythology, Zeus transformed into a swan to win Leda’s love, leading to the birth of Helen of Troy. Swans are often associated with poetic inspiration and the transition between the physical and mystical worlds.',
+  'fox.png': 'The fox, known for its cunning, symbolizes wisdom, adaptability, and cleverness. In folklore, the fox is often depicted as a trickster with the ability to outsmart others, embodying the complex balance between wisdom and mischief.',
+  'pegasus2.png': 'Similar to Pegase, Pegasus represents the same blend of freedom, inspiration, and the quest for knowledge. This mythical creature’s ability to fly symbolizes the ascension to the divine and the capacity to achieve the impossible.',
+  'sphinx.png': 'The sphinx, with its lion’s body and human head, symbolizes mystery, wisdom, and guardianship. In Egyptian mythology, the Great Sphinx is seen as a guardian of the Giza plateau, posing riddles to travelers to protect the sacred tombs. The sphinx’s enigmatic nature invites seekers to look beyond the obvious and explore deeper truths.'
+};
+
+
+
 
 
 Template.responsiveInterface.events({
+
+  'click .slideOutTab': function(event, template) {
+
+    $("#slideOut").toggleClass('showSlideOut');
+     $("#modalOverlay").fadeToggle("fast"); // Toggle the overlay visibility
+
+
+
+    // Prepare the container by clearing it first
+    const list = $("#animalMeaningsList");
+    list.empty(); // Clear any existing content
+
+    // Assuming your animalSymbolMeanings is already defined and available
+    const elements = $('.coat-of-arms-container img.coat-of-arms-element');
+
+    elements.each(function() {
+      const src = $(this).attr('src'); // Source path of the image
+      const fileName = src.split('/').pop(); // Extract the filename to match with meanings
+
+      if (animalSymbolMeanings[fileName]) {
+        // Adjust here: thumbnail above the text, and hr for a line separator
+        const listItem = $(`
+          <li style="margin-bottom: 10px;">
+            <img src="${src}" style="width: 100px; height: auto; display: block; margin: 0 auto 10px auto;">
+            <p style="text-align: center;">${animalSymbolMeanings[fileName]}</p>
+            <hr style="border-top: 1px solid #ccc;">
+          </li>
+        `);
+        list.append(listItem);
+      }
+    });
+
+    // If no relevant elements were found, append a message
+    if (list.children().length === 0) {
+      list.append('<li>No animal symbols have been added.</li>');
+    } else {
+      // Remove the last line separator from the last item for a cleaner look
+      list.children().last().find('hr').remove();
+    }
+
+    // Remove the last line separator from the last item for a cleaner look, if applicable
+if ($("#animalMeaningsList").children().length) {
+  $("#animalMeaningsList").children().last().find('hr').remove();
+}
+  },
 
   'click #sidebar ul li': function(event, templateInstance) {
   // Add a background color for the click effect

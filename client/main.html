@@ -14,7 +14,7 @@
   {{> responsiveInterface}}
 
 
-
+  <div id="modalOverlay" class="modal-overlay"></div>
 </body>
 
 
@@ -88,7 +88,6 @@
       </div>
     </div>
   </div>
-
 
 
 
@@ -192,4 +191,28 @@
 
     </div>
   </div>
+
+  <!-- // SlideOut -->
+  <div id="slideOut">
+  <!--   // Tab -->
+    <div class="slideOutTab">
+      <div>
+        <p>Analysis</p>
+      </div>
+    </div>
+    <div class="modal-content">
+      <div class="modal-header"> <button type="button" class="close" data-dismiss="modal" aria-label="Close" hidden><span aria-hidden="true">×</span></button>
+     </div>
+      <div class="modal-body">
+        <!-- Placeholder for dynamic content -->
+<ul id="animalMeaningsList" style="max-height: 100%; overflow-y: auto;"></ul>
+      </div>
+      <div class="modal-footer"> </div>
+    </div>
+  </div>
+  <!-- // Scroll content -->
+
+  <section></section>
+  <section></section>
+
 </template>
