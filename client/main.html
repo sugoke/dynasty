@@ -20,41 +20,6 @@
 
 <template name="responsiveInterface">
 
-  <!-- Black Navbar -->
-  <div id="navbar" class="navbar">
-    <div class="toggle-btn" id="menuToggle">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-  </div>
-
-
-  <!-- Sidebar -->
-  <div id="sidebar">
-    <ul style="margin-top: 50px;">
-      <li id="generateImage">Generate Image</li>
-      <li id="saveProject">Save Project</li>
-      <li id="newProject">Start New Project</li>
-      <li id="showProjects">Show Projects</li>
-      <li>
-        <select id="symbolCount">
-          <option value="1">1 Symbol</option>
-          <option value="2">2 Symbols</option>
-          <option value="4">4 Symbols</option>
-        </select>
-      </li>
-    </ul>
-  </div>
-
-
-
-
-  <!-- The rest of your existing HTML here -->
-
-
-
-
 
   <!-- New Projects Modal -->
   <div id="projectsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="projectsModalLabel">
@@ -193,9 +158,9 @@
   </div>
 
   <!-- // SlideOut -->
-  <div id="slideOut">
+  <div id="rightSlideOut">
   <!--   // Tab -->
-    <div class="slideOutTab">
+    <div class="rightSlideOutTab">
       <div>
         <p>Analysis</p>
       </div>
@@ -214,5 +179,38 @@
 
   <section></section>
   <section></section>
+
+  <!-- Left SlideOut -->
+<div id="leftSlideOut">
+  <!-- Tab -->
+  <div class="leftSlideOutTab">
+    <div>
+      <p>Menu</p>
+    </div>
+  </div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" hidden><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="modal-body">
+      <!-- Content for the left slide-out -->
+      <p>  <ul style="margin-top: 50px;">
+          <li id="generateImage">Generate Image</li>
+          <li id="saveProject">Save Project</li>
+          <li id="newProject">Start New Project</li>
+          <li id="showProjects">Show Projects</li>
+          <li>
+            <select id="symbolCount">
+              <option value="1">1 Symbol</option>
+              <option value="2">2 Symbols</option>
+              <option value="4">4 Symbols</option>
+            </select>
+          </li>
+        </ul></p>
+    </div>
+    <div class="modal-footer"></div>
+  </div>
+</div>
+
 
 </template>

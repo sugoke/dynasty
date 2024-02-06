@@ -24,22 +24,9 @@ let currentProjectId = new ReactiveVar(null);
 
 
 Template.responsiveInterface.onRendered(function () {
-  $('#modalOverlay').on('click', function() {
-    $("#slideOut").removeClass('showSlideOut');
-    $(this).fadeOut("fast"); // Hide the overlay
-  });
 
 
-  // Close sidebar when clicking anywhere
-    document.addEventListener('click', function(event) {
-      const sidebar = document.getElementById('sidebar');
-      const toggleButton = document.getElementById('menuToggle');
-      const clickedToggleButton = toggleButton.contains(event.target);
 
-      if (!clickedToggleButton) {
-        sidebar.style.width = '0';
-      }
-    });
 
   // Set default to 1 "+"
     const symbolCountElement = document.getElementById('symbolCount');
@@ -136,50 +123,35 @@ const animalSymbolMeanings = {
 
 Template.responsiveInterface.events({
 
-  'click .slideOutTab': function(event, template) {
+  'click .leftSlideOutTab': function(event, template) {
+     // Close the right slide-out if it's open
+     if ($("#rightSlideOut").hasClass('showRightSlideOut')) {
+       $("#rightSlideOut").removeClass('showRightSlideOut');
+     }
+     // Toggle the left slide-out
+     $("#leftSlideOut").toggleClass('showLeftSlideOut');
+     // Manage overlay visibility based on slide-out state
+     manageOverlayVisibility();
+   },
 
-    $("#slideOut").toggleClass('showSlideOut');
-     $("#modalOverlay").fadeToggle("fast"); // Toggle the overlay visibility
+   'click .rightSlideOutTab': function(event, template) {
+     // Close the left slide-out if it's open
+     if ($("#leftSlideOut").hasClass('showLeftSlideOut')) {
+       $("#leftSlideOut").removeClass('showLeftSlideOut');
+     }
+     // Toggle the right slide-out
+     $("#rightSlideOut").toggleClass('showRightSlideOut');
+     // Check if the right slide-out is shown, then populate it
+     if ($("#rightSlideOut").hasClass('showRightSlideOut')) {
+       populateAnimalMeanings();
+     }
+     // Manage overlay visibility
+     manageOverlayVisibility();
+   },
 
-
-
-    // Prepare the container by clearing it first
-    const list = $("#animalMeaningsList");
-    list.empty(); // Clear any existing content
-
-    // Assuming your animalSymbolMeanings is already defined and available
-    const elements = $('.coat-of-arms-container img.coat-of-arms-element');
-
-    elements.each(function() {
-      const src = $(this).attr('src'); // Source path of the image
-      const fileName = src.split('/').pop(); // Extract the filename to match with meanings
-
-      if (animalSymbolMeanings[fileName]) {
-        // Adjust here: thumbnail above the text, and hr for a line separator
-        const listItem = $(`
-          <li style="margin-bottom: 10px;">
-            <img src="${src}" style="width: 100px; height: auto; display: block; margin: 0 auto 10px auto;">
-            <p style="text-align: center;">${animalSymbolMeanings[fileName]}</p>
-            <hr style="border-top: 1px solid #ccc;">
-          </li>
-        `);
-        list.append(listItem);
-      }
-    });
-
-    // If no relevant elements were found, append a message
-    if (list.children().length === 0) {
-      list.append('<li>No animal symbols have been added.</li>');
-    } else {
-      // Remove the last line separator from the last item for a cleaner look
-      list.children().last().find('hr').remove();
-    }
-
-    // Remove the last line separator from the last item for a cleaner look, if applicable
-if ($("#animalMeaningsList").children().length) {
-  $("#animalMeaningsList").children().last().find('hr').remove();
-}
-  },
+   'click #modalOverlay': function(event, template) {
+     closeAllSlideOuts();
+   },
 
   'click #sidebar ul li': function(event, templateInstance) {
   // Add a background color for the click effect
@@ -592,3 +564,60 @@ function attachPlusSignClickEvent() {
     });
   });
 }
+
+
+// Updated populateAnimalMeanings function
+function populateAnimalMeanings() {
+  const list = $("#animalMeaningsList");
+  list.empty(); // Clear any existing content
+
+  // Get all the animal images currently used in the project
+  const currentAnimals = $('.coat-of-arms-container img.coat-of-arms-element').map(function() {
+    return $(this).attr('src').split('/').pop(); // Extracts the file name
+  }).get();
+
+  // Filter and display only the animals currently in the project
+  currentAnimals.forEach(function(fileName) {
+    // Check if there's a meaning for the current animal
+    if (animalSymbolMeanings.hasOwnProperty(fileName)) {
+      const meaning = animalSymbolMeanings[fileName];
+      const listItem = $('<li style="margin-bottom: 10px;">')
+        .append(`<img src="animals/${fileName}" style="width: 100px; height: auto; display: block; margin: 0 auto 10px auto;">`)
+        .append(`<p style="text-align: center;">${meaning}</p>`)
+        .append('<hr style="border-top: 1px solid #ccc;">');
+      list.append(listItem);
+    }
+  });
+
+  if (list.children().length === 0) {
+    list.append('<li>No animal symbols have been added to the project.</li>');
+  }
+}
+
+
+
+
+// Manage Overlay Visibility Function
+function manageOverlayVisibility() {
+  // Adjust the overlay visibility
+  if ($("#leftSlideOut").hasClass('showLeftSlideOut') || $("#rightSlideOut").hasClass('showRightSlideOut')) {
+    $("#modalOverlay").fadeIn("fast");
+  } else {
+    $("#modalOverlay").fadeOut("fast");
+  }
+}
+
+// Close All Slide-Outs Function
+function closeAllSlideOuts() {
+  // Close both the left and right slide-outs
+  $("#leftSlideOut").removeClass('showLeftSlideOut');
+  $("#rightSlideOut").removeClass('showRightSlideOut');
+  $("#modalOverlay").fadeOut("fast");
+}
+
+// Ensuring click outside slide-outs and on overlay closes them
+$(document).click(function(event) {
+  if (!$(event.target).closest('#leftSlideOut, .leftSlideOutTab, #rightSlideOut, .rightSlideOutTab').length) {
+    closeAllSlideOuts();
+  }
+});
