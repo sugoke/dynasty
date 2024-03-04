@@ -1,30 +1,7 @@
-.coat-of-arms-container {
-  margin-left: auto;
-  margin-right: auto;
-  width: 80vw;  /* 80% of the viewport width */
-  height: 80vw; /* 60% of the viewport height */
-  max-width: 100%;
+
+.parent-div {
   position: relative;
-  margin-top: 5vh; /* 5% of the viewport height */
-  background-size: cover;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 0.5vh solid gold;  /* Border thickness based on viewport height */
-  border-radius: 50%;  /* This makes it a circle */
-  box-sizing: border-box; /* Makes sure padding and border are included in the size */
-  z-index: 1;
-  background-color: white; /* Sets the background color to white */
-}
-
-
-/* Switch to landscape mode */
-@media screen and (orientation: landscape) {
-  .coat-of-arms-container {
-    width: 60vh;  /* 80% of the viewport width */
-    height: 60vh; /* 60% of the viewport height */
-  }
+  height: 100%; /* Ensure the parent div has a defined height */
 }
 
 .symbol-control {
@@ -45,17 +22,13 @@ ul {
 
 .parent-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh; /* 100% of the viewport height */
 }
 
 
-
-body{
-  background: url('/background/black.jpg')  ;
-  background-size: cover;
-}
 
 /* Controls Container */
 .controls-container {
@@ -65,18 +38,47 @@ body{
 /* Common styles for elements inside the coat of arms (like frame, crown) */
 .coat-of-arms-element {
     position: absolute;
+    width: auto;
+height: auto;
+max-width: 100%; /* Limits image width to not exceed the container */
+max-height: 100%; /* Limits image height to not exceed the container */
+/* Use position, top, left, right, bottom as needed to position */
 }
 
+body {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  min-height: 100vh; /* Full viewport height */
+  margin: 0; /* Remove default margin */
+  background: url('/background/black.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+
+
+.coat-of-arms-container {
+  width: 300px; /* Fixed width */
+  height: 300px; /* Fixed height, maintaining a 1:1 aspect ratio */
+  position: relative;
+  background-size: cover;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 5px solid gold; /* Adjusted to px for consistency */
+  border-radius: 50%;
+  box-sizing: border-box;
+  background-color: white;
+  z-index: 1;
+}
 
 #selected-frame {
-  width: 70%;  /* Occupy 50% of the container's width */
-  height: auto;  /* Maintain aspect ratio */
-  z-index: 1;
-  top: 50%;  /* Vertical center */
-  left: 15%;  /* Horizontal center considering the image takes 50% width */
-  transform: translateY(-50%);  /* Adjust for exact vertical centering */
-  pointer-events: none;
+  width: 70%; /* Relative to the container's fixed size */
+  height: auto; /* Maintains aspect ratio */
+  align-self: center; /* Center vertically in the flex container */
 }
+
+/* The rest of your CSS for coat-of-arms-element and specific elements like #selected-crown, #selected-banner, etc., remains unchanged */
 
 
 #selected-crown {
@@ -394,27 +396,7 @@ transition: background-color 0.2s ease-in-out;
 
 /* ... existing CSS ... */
 
-/* Media Query for landscape mode */
-@media screen and (orientation: landscape) {
-  #sidebar {
-    width: 250px;
-      z-index: 99999999;
-  }
-  .toggle-btn {
-    display: none;
-  }
-}
 
-/* Media Query for portrait mode */
-@media screen and (orientation: portrait) {
-  .toggle-btn {
-    display: block;
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    z-index: 2;
-  }
-}
 
 
 
@@ -434,31 +416,7 @@ transition: background-color 0.2s ease-in-out;
   background-color: white;
 }
 
-/* Navbar */
-.navbar {
-  background-color: black;
-  height: 50px;
-  position: fixed;
-  width: 100%;
-  z-index: 99999999;
-}
 
-/* Media Query for landscape mode */
-@media screen and (orientation: landscape) {
-  .navbar {
-    display: none;
-  }
-  .toggle-btn {
-    display: none;
-  }
-}
-
-/* Media Query for portrait mode */
-@media screen and (orientation: portrait) {
-  .toggle-btn {
-    display: block;
-  }
-}
 
 #rightSlideOut {
   position: fixed;
