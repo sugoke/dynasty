@@ -1,8 +1,42 @@
-
 .parent-div {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
   position: relative;
-  height: 100%; /* Ensure the parent div has a defined height */
+  width: 100%; /* Full width */
+  height: calc(100vh - 75px - 100px);
+  margin: 0; /* Ensure no margin affects the positioning */
+  padding: 0; /* Ensure no padding affects the positioning */
 }
+
+
+.coat-of-arms-container {
+  width: 60vh; /* 90% of the viewport height */
+  height: 60vh; /* 90% of the viewport height to maintain a 1:1 aspect ratio */
+  position: relative;
+  background-size: cover;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 10%;
+  box-sizing: border-box;
+  background-color: white;
+  z-index: 1;
+}
+
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: url('/background/black.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+
+
 
 .symbol-control {
   text-align: center;
@@ -20,20 +54,9 @@ ul {
   color: #333;
 }
 
-.parent-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh; /* 100% of the viewport height */
-}
 
 
 
-/* Controls Container */
-.controls-container {
-
-}
 
 /* Common styles for elements inside the coat of arms (like frame, crown) */
 .coat-of-arms-element {
@@ -45,32 +68,8 @@ max-height: 100%; /* Limits image height to not exceed the container */
 /* Use position, top, left, right, bottom as needed to position */
 }
 
-body {
-  display: flex;
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
-  min-height: 100vh; /* Full viewport height */
-  margin: 0; /* Remove default margin */
-  background: url('/background/black.jpg') no-repeat center center fixed;
-  background-size: cover;
-}
 
 
-.coat-of-arms-container {
-  width: 300px; /* Fixed width */
-  height: 300px; /* Fixed height, maintaining a 1:1 aspect ratio */
-  position: relative;
-  background-size: cover;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 5px solid gold; /* Adjusted to px for consistency */
-  border-radius: 50%;
-  box-sizing: border-box;
-  background-color: white;
-  z-index: 1;
-}
 
 #selected-frame {
   width: 70%; /* Relative to the container's fixed size */
@@ -166,11 +165,12 @@ padding-bottom: 15px; /* Add bottom padding */
   color: #fff;
   padding: 0; /* Remove padding */
   margin: 0; /* Remove margins */
+    cursor: pointer;
+
+    height: 70px;
 }
 
-.icon-box i {
-  font-size: 1.5em;
-}
+
 
 .subtitle {
 
@@ -188,11 +188,10 @@ padding-bottom: 15px; /* Add bottom padding */
 background-color: rgba(255, 255, 255, 0.1);
 padding-top: 15px;  /* Add top padding */
 padding-bottom: 15px; /* Add bottom padding */
+height: 130px;
 }
 
-.icon-box {
-  cursor: pointer;
-}
+
 
 .scrollable-image {
   height: 15vh;
@@ -224,7 +223,7 @@ user-select: none;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 0;
+  z-index: -100;
   width: 150px;
   height: 150px;
   background-color: white;
