@@ -116,21 +116,83 @@ body {
 }
 
 /* Title */
-.page-title { 
-  font-size: 2.5rem;
-  color: var(--color-parchment);
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-  font-family: 'MedievalSharp', cursive;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  background: linear-gradient(to bottom, #DEB887, #CD853F);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
-  margin: 0 0 2rem 0;
-  text-align: center;
+.page-title,
+.modal-title,
+.home-title,
+h1, h2, h3 {
+  font-family: 'MedievalSharp', cursive !important;
+  background: linear-gradient(45deg, #ffd700, #b39656) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7) !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  position: relative !important;
+  padding: 0.5rem 1rem !important;
+  margin-bottom: 1.5rem !important;
+  text-align: center !important;
+}
+
+/* Main page title */
+.page-title {
+  font-size: 2.8rem !important;
+  margin-bottom: 2rem !important;
+}
+
+/* Section titles */
+h1 {
+  font-size: 2.5rem !important;
+}
+
+h2 {
+  font-size: 2rem !important;
+}
+
+h3 {
+  font-size: 1.7rem !important;
+}
+
+/* Decorative borders for titles */
+.page-title::before,
+.page-title::after,
+h1::before,
+h1::after {
+  content: '❧' !important;
+  position: absolute !important;
+  color: #b39656 !important;
+  font-size: 1.5em !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  text-shadow: none !important;
+  -webkit-text-fill-color: #b39656 !important;
+}
+
+.page-title::before,
+h1::before {
+  left: -1rem !important;
+}
+
+.page-title::after,
+h1::after {
+  right: -1rem !important;
+}
+
+/* Modal title specific */
+.modal-title {
+  font-size: 1.8rem !important;
+  margin-bottom: 0 !important;
+}
+
+/* Subtitle style */
+.subtitle,
+h4, h5, h6 {
+  font-family: 'Cinzel', serif !important;
+  color: #d4af37 !important;
+  text-align: center !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.03em !important;
+  margin-bottom: 1.2rem !important;
 }
 
 /* Editor styles */
