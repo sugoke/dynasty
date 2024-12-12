@@ -471,55 +471,64 @@ h4, h5, h6 {
 
 /* Navbar styles */
 .navbar {
-  background: var(--color-wood-dark) !important;
-  border-bottom: 1px solid var(--color-gold-dark) !important;
-  box-shadow: var(--shadow-medieval);
+  background: #1a0c08 url('https://www.transparenttextures.com/patterns/dark-wood.png') !important;
+  border-bottom: double 3px #8B4513 !important;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(5px) !important;
 }
 
 .navbar::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: -1;
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: rgba(26, 12, 8, 0.85) !important;
+  z-index: -1 !important;
 }
 
 .navbar-brand {
-  font-family: 'MedievalSharp', cursive;
-  color: var(--color-parchment) !important;
-  font-size: 2rem;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-  padding: 0.5rem 1rem;
-  border: 2px solid transparent;
-  transition: all 0.3s ease;
-  background: var(--gradient-gold);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
-  position: relative;
-  z-index: 1;
-}
-
-.navbar-brand:hover {
-  border-color: var(--color-gold);
-  border-radius: 4px;
+  font-family: 'MedievalSharp', cursive !important;
+  font-size: 1.8rem !important;
+  background: linear-gradient(45deg, #ffd700, #b39656) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7) !important;
+  padding: 0.5rem 1rem !important;
+  position: relative !important;
 }
 
 .nav-link {
-  color: var(--color-gold-medium) !important;
-  font-family: 'Cinzel', serif;
-  text-transform: uppercase;
-  font-size: 0.9rem;
-  position: relative;
-  z-index: 1;
+  font-family: 'Cinzel', serif !important;
+  color: #d4af37 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 0.5rem 1rem !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
 }
 
 .nav-link:hover {
-  color: var(--color-parchment) !important;
+  color: #ffd700 !important;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3) !important;
+}
+
+.nav-link::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 50% !important;
+  width: 0 !important;
+  height: 2px !important;
+  background: #b39656 !important;
+  transition: all 0.3s ease !important;
+  transform: translateX(-50%) !important;
+}
+
+.nav-link:hover::after {
+  width: 80% !important;
 }
 
 .navbar-toggler {

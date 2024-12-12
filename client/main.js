@@ -50,3 +50,22 @@ Template.navbar.events({
     }
   }
 });
+
+// Add this to handle mobile menu behavior
+Template.mainLayout.onRendered(function() {
+  // Get navbar collapse element
+  const navbarCollapse = document.querySelector('.navbar-collapse');
+  
+  // Add click handlers to all nav links
+  const navLinks = document.querySelectorAll('.nav-link');
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      // Check if navbar is expanded (visible on mobile)
+      if (navbarCollapse.classList.contains('show')) {
+        // Close the navbar
+        const bsCollapse = new bootstrap.Collapse(navbarCollapse);
+        bsCollapse.hide();
+      }
+    });
+  });
+});
