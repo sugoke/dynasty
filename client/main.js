@@ -6,8 +6,10 @@ import * as bootstrap from 'bootstrap';
 window.bootstrap = bootstrap;
 
 // Import styles
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './main.css';
+import './styles/main.css';
+
+
+
 
 // Import all templates
 import './main.html';
