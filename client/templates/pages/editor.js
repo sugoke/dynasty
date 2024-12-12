@@ -3,6 +3,12 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import { Designs } from '../../../lib/collections';
 import './editor.html';
 
+// Add Stripe initialization at the top of the file
+let stripe;
+if (Meteor.settings.public?.stripe?.publicKey) {
+  stripe = window.Stripe(Meteor.settings.public.stripe.publicKey);
+}
+
 Template.editor.onCreated(function() {
   this.selectedCategory = new ReactiveVar(null);
   this.selectedElement = new ReactiveVar(null);
@@ -31,41 +37,159 @@ Template.editor.onRendered(function() {
   instance.canvas = instance.find('#coatCanvas');
   instance.ctx = instance.canvas.getContext('2d');
   
+  instance.drawElement = function(src, position = null) {
+    const canvas = this.canvas;
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    
+    img.onload = () => {
+      // Calculate dimensions based on element type
+      let width, height, x, y;
+      
+      if (src.includes('frame')) {
+        // Frame takes up most of the canvas
+        width = canvas.width * 0.8;
+        height = canvas.height * 0.8;
+        x = (canvas.width - width) / 2;
+        y = (canvas.height - height) / 2;
+      } else if (position === 'leftAnimal') {
+        // Left animal positioning
+        width = canvas.width * 0.3;
+        height = canvas.height * 0.3;
+        x = canvas.width * 0.15;
+        y = canvas.height * 0.35;
+      } else if (position === 'rightAnimal') {
+        // Right animal positioning
+        width = canvas.width * 0.3;
+        height = canvas.height * 0.3;
+        x = canvas.width * 0.55;
+        y = canvas.height * 0.35;
+      } else if (src.includes('crown')) {
+        // Crown positioning
+        width = canvas.width * 0.3;
+        height = canvas.height * 0.2;
+        x = (canvas.width - width) / 2;
+        y = canvas.height * 0.1;
+      }
+      
+      ctx.drawImage(img, x, y, width, height);
+    };
+    
+    img.src = src;
+  };
+  
   instance.redrawCanvas = () => {
-    const ctx = instance.ctx;
+    const canvas = instance.canvas;
+    const ctx = canvas.getContext('2d');
     const design = instance.design.get();
     
     // Clear canvas
-    ctx.clearRect(0, 0, instance.canvas.width, instance.canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // Draw each element
-    Object.entries(design).forEach(([type, url]) => {
-      if (url && url !== 'none') {
-        const img = new Image();
-        img.onload = () => {
-          // Position and size based on element type
-          switch(type) {
-            case 'frame':
-              ctx.drawImage(img, 0, 0, instance.canvas.width, instance.canvas.height);
-              break;
-            case 'leftAnimal':
-              ctx.save();
-              ctx.drawImage(img, 50, 200, 200, 300);
-              ctx.restore();
-              break;
-            case 'rightAnimal':
-              ctx.save();
-              ctx.translate(instance.canvas.width, 0);
-              ctx.scale(-1, 1);
-              ctx.drawImage(img, 50, 200, 200, 300);
-              ctx.restore();
-              break;
-            case 'crown':
-              ctx.drawImage(img, 200, 50, 400, 200);
-              break;
-          }
-        };
-        img.src = url;
+    // Create an array of promises for loading images
+    const loadImages = () => {
+      const images = {};
+      const promises = [];
+      
+      // Load all images first
+      if (design.frame) {
+        promises.push(new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            images.frame = img;
+            resolve();
+          };
+          img.src = design.frame;
+        }));
+      }
+      
+      if (design.leftAnimal) {
+        promises.push(new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            images.leftAnimal = img;
+            resolve();
+          };
+          img.src = design.leftAnimal;
+        }));
+      }
+      
+      if (design.rightAnimal) {
+        promises.push(new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            images.rightAnimal = img;
+            resolve();
+          };
+          img.src = design.rightAnimal;
+        }));
+      }
+      
+      if (design.crown) {
+        promises.push(new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            images.crown = img;
+            resolve();
+          };
+          img.src = design.crown;
+        }));
+      }
+      
+      return Promise.all(promises).then(() => images);
+    };
+    
+    // Draw elements in correct order after all images are loaded
+    loadImages().then((images) => {
+      // Clear canvas first
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw frame first (background)
+      if (images.frame) {
+        const width = canvas.width * 0.85;
+        const height = canvas.height * 0.85;
+        const x = (canvas.width - width) / 2;
+        const y = (canvas.height - height) / 2;
+        ctx.globalCompositeOperation = 'destination-over';
+        ctx.drawImage(images.frame, x, y, width, height);
+        ctx.globalCompositeOperation = 'source-over';
+      }
+      
+      // Draw left animal
+      if (images.leftAnimal) {
+        const width = canvas.width * 0.3;
+        const height = canvas.height * 0.3;
+        const x = canvas.width * 0.1;
+        const y = canvas.height * 0.35;
+        ctx.drawImage(images.leftAnimal, x, y, width, height);
+      }
+      
+      // Draw right animal (mirrored)
+      if (images.rightAnimal) {
+        const width = canvas.width * 0.3;
+        const height = canvas.height * 0.3;
+        const x = canvas.width * 0.6;
+        const y = canvas.height * 0.35;
+        
+        // Save context state
+        ctx.save();
+        
+        // Set up the mirror effect
+        ctx.translate(x + width, y);
+        ctx.scale(-1, 1);
+        ctx.drawImage(images.rightAnimal, 0, 0, width, height);
+        
+        // Restore context state
+        ctx.restore();
+      }
+      
+      // Draw crown last
+      if (images.crown) {
+        const width = canvas.width * 0.3;
+        const height = canvas.height * 0.2;
+        const x = (canvas.width - width) / 2;
+        const y = canvas.height * 0.1;
+        ctx.drawImage(images.crown, x, y, width, height);
       }
     });
   };
@@ -241,6 +365,33 @@ Template.editor.events({
       if (error) {
         alert('Error using credit: ' + error.reason);
       }
+    });
+  },
+  
+  'click #purchaseCredits'(event, instance) {
+    if (!stripe) {
+      alert('Stripe is not properly configured');
+      return;
+    }
+
+    // Hide the credits modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('creditsModal'));
+    modal.hide();
+    
+    // Use the same Stripe checkout as payment page
+    Meteor.call('createStripeCheckout', (error, sessionId) => {
+      if (error) {
+        alert('Error creating checkout session: ' + error.reason);
+        return;
+      }
+      
+      stripe.redirectToCheckout({
+        sessionId: sessionId
+      }).then((result) => {
+        if (result.error) {
+          alert(result.error.message);
+        }
+      });
     });
   }
 });

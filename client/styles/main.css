@@ -443,12 +443,17 @@ h4, h5, h6 {
 }
 
 .element-option-wrapper {
-  text-align: center;
-  background: var(--color-wood);
-  padding: 10px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  border: 1px solid var(--color-dark-brown);
+  text-align: center !important;
+  background: var(--color-wood) !important;
+  padding: 10px !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+  border: 1px solid var(--color-dark-brown) !important;
+  aspect-ratio: 1/1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .element-option-wrapper:hover {
@@ -458,12 +463,12 @@ h4, h5, h6 {
 }
 
 .element-option-img-container {
-  width: 100px;
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
+  width: 80% !important;
+  height: 80% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 auto !important;
 }
 
 .element-option-img-container.mirror {
@@ -479,15 +484,10 @@ h4, h5, h6 {
 }
 
 .element-option {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  cursor: pointer;
-  border: 2px solid var(--color-dark-brown);
-  padding: 5px;
-  border-radius: 4px;
-  background: var(--color-parchment);
-  transition: all 0.3s ease;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  padding: 5px !important;
 }
 
 .element-option:hover {
@@ -495,10 +495,15 @@ h4, h5, h6 {
 }
 
 .element-option-name {
-  font-family: 'MedievalSharp', cursive;
-  font-size: 0.9rem;
-  margin-top: 0.5rem;
-  color: var(--color-parchment);
+  font-family: 'MedievalSharp', cursive !important;
+  font-size: 0.9rem !important;
+  margin-top: 0.5rem !important;
+  color: var(--color-parchment) !important;
+  width: 100% !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 .action-buttons {
@@ -1566,4 +1571,14 @@ body .modal .btn-secondary:hover,
     width: 100% !important;
     text-align: center !important;
   }
+} 
+
+/* Editor CTA button spacing */
+.editor-container .cta-section {
+  margin: 2rem 0 1rem !important;
+}
+
+.editor-container .page-subtitle {
+  margin-top: 1rem !important;
+  opacity: 0.8 !important;
 } 
