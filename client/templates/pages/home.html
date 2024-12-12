@@ -1,0 +1,54 @@
+<template name="home">
+  <div class="editor-container">
+    <h1 class="page-title">Dynasty</h1>
+    <p class="page-subtitle">Craft Your Legacy in Heraldry</p>
+    
+    <div class="row features-row mb-5">
+      <div class="col-md-4">
+        <div class="card feature-card">
+          <div class="card-body text-center">
+            <i class="fas fa-crown feature-icon"></i>
+            <h3>Unique Design</h3>
+            <p>Create a distinctive coat of arms that tells your story</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card feature-card">
+          <div class="card-body text-center">
+            <i class="fas fa-shield-alt feature-icon"></i>
+            <h3>Professional Quality</h3>
+            <p>High-resolution designs perfect for display or print</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card feature-card">
+          <div class="card-body text-center">
+            <i class="fas fa-history feature-icon"></i>
+            <h3>Timeless Appeal</h3>
+            <p>Traditional heraldry meets modern design</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{#if currentUser}}
+      <div class="text-center">
+        <a href="/editor" class="btn btn-medieval-success">
+          <i class="fas fa-paint-brush"></i> Start Creating
+        </a>
+      </div>
+    {{else}}
+      <div class="text-center">
+        <p class="mb-4">Join today and begin your heraldic journey</p>
+        <a href="/login" class="btn btn-medieval me-3">
+          <i class="fas fa-user-plus"></i> Sign Up
+        </a>
+        <a href="/login" class="btn btn-medieval-secondary">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </a>
+      </div>
+    {{/if}}
+  </div>
+</template>

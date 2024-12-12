@@ -1,0 +1,70 @@
+/* Shared modal styles */
+.modal-content {
+  background: #f8f5f0;
+  border: 2px solid #8b4513;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+  background: #8b4513;
+  color: #ffffff;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  padding: 1rem 1.5rem;
+}
+
+.modal-title {
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.modal-body {
+  padding: 1.5rem;
+  font-size: 1.1rem;
+  color: #4a3828;
+}
+
+.modal-body p {
+  color: #4a3828;
+}
+
+.modal-footer {
+  border-top: 1px solid #d4c4b7;
+  padding: 1rem 1.5rem;
+}
+
+.btn-close {
+  color: #ffffff;
+  opacity: 0.8;
+  filter: brightness(0) invert(1);
+}
+
+.btn-close:hover {
+  opacity: 1;
+}
+
+.modal .btn-primary {
+  background: #8b4513;
+  border-color: #6b3410;
+  color: #ffffff;
+}
+
+.modal .btn-primary:hover {
+  background: #6b3410;
+  border-color: #4b240c;
+  color: #ffffff;
+}
+
+.modal .btn-secondary {
+  background: #a89888;
+  border-color: #8b7b6a;
+  color: #ffffff;
+}
+
+.modal .btn-secondary:hover {
+  background: #8b7b6a;
+  border-color: #6e5f4d;
+  color: #ffffff;
+} 

@@ -1,0 +1,94 @@
+<template name="editor">
+  <div class="editor-container">
+    <h1 class="page-title">Coat of Arms Creator</h1>
+    <div class="canvas-area mb-4">
+      <canvas id="coatCanvas" width="800" height="800"></canvas>
+    </div>
+    
+    <div class="controls">
+      <!-- Main element categories -->
+      <div class="element-categories mb-4">
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-medieval element-category {{#if isActiveCategory 'frame'}}active{{/if}}" data-category="frame">
+            <i class="fas fa-shield-alt"></i> Frame
+          </button>
+          <button type="button" class="btn btn-medieval element-category {{#if isActiveCategory 'animal'}}active{{/if}}" data-category="animal">
+            <i class="fas fa-dragon"></i> Animals
+          </button>
+          <button type="button" class="btn btn-medieval element-category {{#if isActiveCategory 'crown'}}active{{/if}}" data-category="crown">
+            <i class="fas fa-crown"></i> Crown
+          </button>
+        </div>
+      </div>
+      
+      <!-- Animal type selector -->
+      {{#if isAnimalCategory}}
+        <div class="animal-types mb-4">
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-medieval-secondary element-btn {{#if isActiveType 'leftAnimal'}}active{{/if}}" data-type="leftAnimal">
+              Left Animal
+            </button>
+            <button type="button" class="btn btn-medieval-secondary element-btn {{#if isActiveType 'rightAnimal'}}active{{/if}}" data-type="rightAnimal">
+              Right Animal
+            </button>
+          </div>
+        </div>
+      {{/if}}
+      
+      <!-- Element options carousel -->
+      {{#if selectedElement}}
+        <div class="element-carousel mb-4">
+          <div class="carousel-container">
+            <div class="carousel-inner">
+              {{#each elementOptions}}
+                <div class="element-option-wrapper {{#if isNoneOption this}}none-option{{/if}}">
+                  {{#if isNoneOption this}}
+                    <div class="element-option none-icon" data-url="none">
+                      <i class="fas fa-ban"></i>
+                    </div>
+                  {{else}}
+                    <div class="element-option-img-container {{#if isRightAnimal}}mirror{{/if}}">
+                      <img src="{{this}}" class="element-option" data-url="{{this}}" alt="Element option">
+                    </div>
+                  {{/if}}
+                  <div class="element-option-name">{{getElementName this}}</div>
+                </div>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+      {{/if}}
+      
+      <!-- Action buttons -->
+      <div class="action-buttons">
+        <button class="btn btn-medieval-danger" id="resetBtn">
+          <i class="fas fa-trash"></i> Reset
+        </button>
+        <button class="btn btn-medieval" id="saveBtn">
+          <i class="fas fa-save"></i> Save
+        </button>
+        <button class="btn btn-medieval-success" id="exportBtn">
+          <i class="fas fa-download"></i> Export ({{credits}} credits)
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal fade" id="creditsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Credits Required</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>You need credits to export your design. Please purchase credits to continue.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <a href="/payment" class="btn btn-primary">Purchase Credits</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</template> 
