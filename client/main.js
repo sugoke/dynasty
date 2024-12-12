@@ -8,7 +8,6 @@ window.bootstrap = bootstrap;
 // Import styles
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './main.css';
-import './styles/modals.css';
 
 // Import all templates
 import './main.html';

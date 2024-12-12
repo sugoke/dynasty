@@ -1,0 +1,94 @@
+/* Global theme styles */
+body {
+  background: #1a1410 url('/images/dark-wood.png') repeat !important;
+  color: #ffd700 !important;
+  font-family: 'Cinzel', serif;
+}
+
+.navbar {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  border-bottom: 1px solid #8b4513;
+}
+
+.navbar-brand, .nav-link {
+  color: #ffd700 !important;
+}
+
+.nav-link:hover {
+  color: #ffeb80 !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #ffd700 !important;
+  font-family: 'Cinzel', serif !important;
+}
+
+.page-title {
+  color: #ffd700 !important;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 3rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.btn-medieval {
+  background: #8b4513 !important;
+  border-color: #6b3410 !important;
+  color: #ffd700 !important;
+}
+
+.btn-medieval:hover {
+  background: #6b3410 !important;
+  border-color: #4b240c !important;
+  color: #ffe44d !important;
+}
+
+.btn-medieval-secondary {
+  background: #4a3828 !important;
+  border-color: #2a1810 !important;
+  color: #ffd700 !important;
+}
+
+.btn-medieval-secondary:hover {
+  background: #2a1810 !important;
+  border-color: #1a0c08 !important;
+  color: #ffe44d !important;
+}
+
+/* Feature cards on home page */
+.feature-card {
+  background: rgba(74, 56, 40, 0.7) !important;
+  border: 1px solid #8b4513 !important;
+  color: #ffd700 !important;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(5px);
+}
+
+.feature-card i {
+  font-size: 3rem;
+  color: #ffd700;
+  margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+  color: #ffd700 !important;
+  margin-bottom: 1rem;
+}
+
+.feature-card p {
+  color: #ffe44d !important;
+}
+
+/* Links */
+a {
+  color: #ffd700 !important;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #ffe44d !important;
+  text-decoration: underline;
+} 

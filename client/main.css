@@ -7,9 +7,6 @@
   --shadow-medieval: 0 0 20px rgba(0,0,0,0.5);
   --gradient-gold: linear-gradient(45deg, #ffd700, #b8860b);
   --bg-dark: rgba(33, 37, 41, 0.95);
-  --color-bronze: #cd9b4a;
-  --color-light-bronze: #e5c49b;
-  --color-dark-bronze: #8b6b43;
 }
 
 /* Home page styles */
@@ -128,7 +125,7 @@ body {
 /* Title */
 .page-title { 
   font-size: 2.5rem;
-  color: var(--color-bronze);
+  color: var(--color-parchment);
   text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
   font-family: 'MedievalSharp', cursive;
   font-weight: 600;
@@ -141,31 +138,6 @@ body {
   filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
   margin: 0 0 2rem 0;
   text-align: center;
-}
-
-.page-subtitle, h3, .card-title {
-  color: var(--color-light-bronze);
-  font-family: 'Cinzel', serif;
-}
-
-.card-text, p {
-  color: var(--color-light-bronze);
-}
-
-.feature-card {
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid var(--color-dark-bronze);
-}
-
-.feature-icon {
-  color: var(--color-bronze);
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-}
-
-.card {
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid var(--color-dark-bronze);
 }
 
 /* Editor styles */
