@@ -18,9 +18,18 @@ Template.login.events({
     });
   },
   
-  'click #show-register'(event, instance) {
+  'click #show-register'(event) {
     event.preventDefault();
-    document.getElementById('register-form-container').classList.remove('d-none');
+    $('#login-card').fadeOut(300, function() {
+      $('#register-card').removeClass('d-none').hide().fadeIn(300);
+    });
+  },
+  
+  'click #show-login'(event) {
+    event.preventDefault();
+    $('#register-card').fadeOut(300, function() {
+      $('#login-card').removeClass('d-none').hide().fadeIn(300);
+    });
   },
   
   'submit #register-form'(event, instance) {

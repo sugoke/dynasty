@@ -102,17 +102,58 @@
 
 /* Base styles */
 body {
-  background: var(--color-wood-dark) url('https://www.transparenttextures.com/patterns/dark-wood.png') !important;
+  background: #1a0c08 url('https://www.transparenttextures.com/patterns/wood-pattern.png') repeat fixed !important;
   color: var(--color-parchment) !important;
   min-height: 100vh !important;
-  padding-top: 60px !important;
+  padding-top: 56px !important;
+  position: relative !important;
+}
+
+body::before {
+  content: '' !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: linear-gradient(
+    rgba(26, 12, 8, 0.85),
+    rgba(26, 12, 8, 0.92)
+  ) !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+}
+
+/* Add subtle texture animation */
+@keyframes woodGrain {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 100px 100px;
+  }
+}
+
+body {
+  animation: woodGrain 120s linear infinite !important;
+}
+
+/* Adjust container for better contrast */
+.container-fluid {
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: 100vh !important;
+  position: relative !important;
+  z-index: 1 !important;
+  background: rgba(26, 12, 8, 0.4) !important;
 }
 
 .container-fluid {
-  padding: 0;
-  margin: 0;
-  min-height: 100vh;
-  background: #2C1810 url('https://www.transparenttextures.com/patterns/dark-wood.png') !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: 100vh !important;
+  position: relative !important;
+  z-index: 1 !important;
 }
 
 /* Title */
@@ -198,7 +239,7 @@ h4, h5, h6 {
 /* Editor styles */
 .editor-container {
   max-width: 1000px;
-  margin: 80px auto 0;
+  margin: 20px auto 0 !important;
   padding: 2rem;
 }
 
@@ -1124,4 +1165,405 @@ body .modal .btn-secondary:hover,
   border-color: #d4af37 !important;
   color: #ffd700 !important;
   transform: translateY(-2px) !important;
+} 
+
+/* Login page styles */
+.login-container {
+  margin-top: 80px !important;
+  margin-bottom: 2rem !important;
+}
+
+.login-card,
+.register-card {
+  background: #e8d5b5 url('https://www.transparenttextures.com/patterns/parchment.png') !important;
+  border: double 4px #8B4513 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5) !important;
+}
+
+.login-card .card-title,
+.register-card .card-title {
+  font-family: 'MedievalSharp', cursive !important;
+  font-size: 2rem !important;
+  margin-bottom: 1.5rem !important;
+  color: #2C1810 !important;
+  -webkit-text-fill-color: #2C1810 !important;
+}
+
+.login-card label,
+.register-card label {
+  font-family: 'Cinzel', serif !important;
+  color: #2C1810 !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.login-card .form-control,
+.register-card .form-control {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid #8B4513 !important;
+  color: #2C1810 !important;
+  font-family: 'Cinzel', serif !important;
+}
+
+.login-card .form-control:focus,
+.register-card .form-control:focus {
+  box-shadow: 0 0 0 0.2rem rgba(139, 69, 19, 0.25) !important;
+  border-color: #8B4513 !important;
+}
+
+.login-card hr {
+  border-color: #8B4513 !important;
+  opacity: 0.5 !important;
+}
+
+.login-card p,
+.register-card p {
+  color: #2C1810 !important;
+  font-family: 'Cinzel', serif !important;
+}
+
+.login-card a,
+.register-card a {
+  color: #8B4513 !important;
+  text-decoration: none !important;
+  transition: color 0.3s ease !important;
+}
+
+.login-card a:hover,
+.register-card a:hover {
+  color: #a0522d !important;
+  text-decoration: underline !important;
+} 
+
+/* Login card animations */
+.login-card,
+.register-card {
+  position: absolute !important;
+  width: 100% !important;
+  transition: opacity 0.3s ease !important;
+}
+
+.login-container .col-md-6 {
+  position: relative !important;
+  min-height: 400px !important;
+} 
+
+/* Hero section styles */
+.hero-section {
+  padding: 80px 0;
+  text-align: center;
+}
+
+.hero-title {
+  font-size: 3.5rem !important;
+  margin-bottom: 1rem !important;
+  text-transform: uppercase !important;
+}
+
+.hero-subtitle {
+  font-size: 1.8rem !important;
+  margin-bottom: 3rem !important;
+  color: #d4af37 !important;
+}
+
+.legacy-card {
+  background: rgba(44, 24, 16, 0.7) !important;
+  border: double 3px #8B4513 !important;
+  border-radius: 8px !important;
+  padding: 2rem !important;
+  height: 100% !important;
+  transition: transform 0.3s ease !important;
+}
+
+.legacy-card:hover {
+  transform: translateY(-5px) !important;
+}
+
+.legacy-card i {
+  font-size: 2.5rem !important;
+  color: #ffd700 !important;
+  margin-bottom: 1rem !important;
+}
+
+.legacy-card h3 {
+  font-size: 1.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.legacy-card p {
+  color: #e8d5b5 !important;
+  font-size: 1.1rem !important;
+  line-height: 1.6 !important;
+}
+
+.why-section {
+  padding: 4rem 0 !important;
+}
+
+.why-section h2 {
+  text-align: center !important;
+  margin-bottom: 3rem !important;
+}
+
+.reason-card {
+  background: rgba(44, 24, 16, 0.5) !important;
+  border: 1px solid #8B4513 !important;
+  border-radius: 8px !important;
+  padding: 2rem !important;
+  height: 100% !important;
+  margin-bottom: 2rem !important;
+}
+
+.reason-card i {
+  font-size: 2rem !important;
+  color: #d4af37 !important;
+  margin-bottom: 1rem !important;
+}
+
+.reason-card h4 {
+  color: #ffd700 !important;
+  margin-bottom: 1rem !important;
+}
+
+.reason-card p {
+  color: #e8d5b5 !important;
+  font-size: 1.1rem !important;
+  line-height: 1.6 !important;
+}
+
+.cta-section {
+  padding: 4rem 0 !important;
+  text-align: center !important;
+}
+
+.cta-text {
+  font-size: 1.3rem !important;
+  color: #d4af37 !important;
+  margin-bottom: 2rem !important;
+  max-width: 800px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.cta-subtext {
+  color: #b39656 !important;
+  font-style: italic !important;
+  margin-top: 1rem !important;
+} 
+
+/* Inspiration section styles */
+.inspiration-section {
+  margin-top: 4rem !important;
+}
+
+.inspiration-card {
+  background: rgba(44, 24, 16, 0.6) !important;
+  border: double 3px #8B4513 !important;
+  border-radius: 8px !important;
+  padding: 1.5rem !important;
+  height: 100% !important;
+  text-align: center !important;
+  transition: transform 0.3s ease !important;
+}
+
+.inspiration-card:hover {
+  transform: translateY(-5px) !important;
+}
+
+.inspiration-card i {
+  font-size: 2rem !important;
+  color: #d4af37 !important;
+  margin-bottom: 1rem !important;
+}
+
+.inspiration-card h4 {
+  font-size: 1.3rem !important;
+  color: #ffd700 !important;
+  margin-bottom: 1rem !important;
+}
+
+.inspiration-card p {
+  color: #e8d5b5 !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+} 
+
+/* Success modal specific styles */
+.modal-content.success {
+  border-color: #367c2b !important;
+}
+
+.modal-header.success {
+  background: linear-gradient(45deg, #2d5a27, #367c2b) !important;
+  border-bottom-color: #367c2b !important;
+}
+
+.modal-header.success .modal-title {
+  color: #ffd700 !important;
+  -webkit-text-fill-color: #ffd700 !important;
+}
+
+.modal-body.success {
+  background: linear-gradient(rgba(54, 124, 43, 0.1), transparent) !important;
+}
+
+.modal-footer.success {
+  background: linear-gradient(transparent, rgba(54, 124, 43, 0.1)) !important;
+  border-top-color: #367c2b !important;
+}
+
+/* Add success icon */
+.modal-body.success::before {
+  content: '✓' !important;
+  font-size: 2rem !important;
+  color: #367c2b !important;
+  display: block !important;
+  text-align: center !important;
+  margin-bottom: 1rem !important;
+} 
+
+/* Editor responsive styles */
+@media (max-width: 768px) {
+  .editor-container {
+    padding: 0 !important;
+    margin: 40px 0 0 0 !important;
+    width: 100% !important;
+  }
+
+  .canvas-area {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  #coatCanvas {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 1/1 !important;
+    max-width: 100vw !important;
+    border: none !important;
+    display: block !important;
+    margin: 0 !important;
+    background: var(--color-parchment) url('https://www.transparenttextures.com/patterns/parchment.png') !important;
+  }
+
+  /* Rest of the controls */
+  .controls {
+    padding: 1rem !important;
+    width: 100% !important;
+  }
+
+  /* Title adjustments */
+  .page-title {
+    margin: 1.5rem 0 !important;
+    padding: 0 1rem !important;
+    font-size: 2rem !important;
+    width: 100% !important;
+  }
+
+  /* Rest of your existing mobile styles... */
+} 
+
+/* Adjust carousel for mobile */
+@media (max-width: 768px) {
+  .carousel-container {
+    margin: 1rem -1rem !important;
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+
+  .carousel-inner {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)) !important;
+    gap: 1rem !important;
+    padding: 0.5rem !important;
+  }
+
+  .element-option-wrapper {
+    padding: 8px !important;
+  }
+
+  .element-option-img-container {
+    width: 80px !important;
+    height: 80px !important;
+  }
+} 
+
+/* Editor action buttons */
+.editor-actions {
+  display: flex !important;
+  gap: 1rem !important;
+  justify-content: center !important;
+  margin-top: 2rem !important;
+}
+
+.editor-actions .btn {
+  min-width: 120px !important;
+}
+
+/* Mobile styles for action buttons */
+@media (max-width: 768px) {
+  .editor-actions {
+    flex-direction: row !important;
+    padding: 0 1rem !important;
+    gap: 0.5rem !important;
+    justify-content: space-between !important;
+  }
+
+  .editor-actions .btn {
+    flex: 1 !important;
+    min-width: 0 !important;
+    padding: 0.75rem 0.5rem !important;
+    font-size: 1rem !important;
+    white-space: nowrap !important;
+  }
+
+  .editor-actions .btn i {
+    margin-right: 0.25rem !important;
+  }
+}
+
+/* For very small screens */
+@media (max-width: 360px) {
+  .editor-actions .btn {
+    padding: 0.75rem 0.25rem !important;
+    font-size: 0.9rem !important;
+  }
+} 
+
+/* Credits display */
+.credits-display {
+  text-align: center !important;
+  margin-bottom: 1rem !important;
+}
+
+.credits-count {
+  font-family: 'MedievalSharp', cursive !important;
+  color: #d4af37 !important;
+  font-size: 1.2rem !important;
+  background: rgba(44, 24, 16, 0.7) !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 4px !important;
+  border: 1px solid #8B4513 !important;
+  display: inline-block !important;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .credits-display {
+    margin: 1rem 0 !important;
+  }
+  
+  .credits-count {
+    width: 100% !important;
+    text-align: center !important;
+  }
 } 

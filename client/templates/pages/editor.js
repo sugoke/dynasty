@@ -179,6 +179,12 @@ Template.editor.events({
   },
   
   'click #resetBtn'(event, instance) {
+    // Show confirmation modal instead of resetting directly
+    const modal = new bootstrap.Modal(document.getElementById('resetModal'));
+    modal.show();
+  },
+  
+  'click #confirmReset'(event, instance) {
     const emptyDesign = {
       frame: null,
       leftAnimal: null,
@@ -187,6 +193,10 @@ Template.editor.events({
     };
     instance.design.set(emptyDesign);
     instance.redrawCanvas();
+    
+    // Hide the modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('resetModal'));
+    modal.hide();
   },
   
   'click #saveBtn'(event, instance) {
@@ -205,7 +215,9 @@ Template.editor.events({
         console.error('Save error:', error);
         alert('Error saving design: ' + error.reason);
       } else {
-        alert('Design saved successfully!');
+        // Show modal instead of alert
+        const modal = new bootstrap.Modal(document.getElementById('successModal'));
+        modal.show();
       }
     });
   },

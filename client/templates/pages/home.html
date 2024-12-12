@@ -1,54 +1,128 @@
 <template name="home">
-  <div class="editor-container">
-    <h1 class="page-title">Dynasty</h1>
-    <p class="page-subtitle">Craft Your Legacy in Heraldry</p>
-    
-    <div class="row features-row mb-5">
-      <div class="col-md-4">
-        <div class="card feature-card">
-          <div class="card-body text-center">
-            <i class="fas fa-crown feature-icon"></i>
-            <h3>Unique Design</h3>
-            <p>Create a distinctive coat of arms that tells your story</p>
+  {{#if currentUser}}
+    <div class="editor-container">
+      <h1 class="page-title">Welcome to Dynasty</h1>
+      <p class="page-subtitle">Your Legacy Awaits</p>
+      
+      <div class="row features-row mb-5">
+        <div class="col-md-4">
+          <div class="card feature-card">
+            <div class="card-body text-center">
+              <i class="fas fa-paint-brush feature-icon"></i>
+              <h3>Start Creating</h3>
+              <p>Your coat of arms is waiting to be designed. Make it unique, make it yours.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card feature-card">
+            <div class="card-body text-center">
+              <i class="fas fa-save feature-icon"></i>
+              <h3>Save & Export</h3>
+              <p>Create multiple designs, save your favorites, and export in high quality.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card feature-card">
+            <div class="card-body text-center">
+              <i class="fas fa-share-alt feature-icon"></i>
+              <h3>Share Your Legacy</h3>
+              <p>Display your coat of arms proudly and share it with your loved ones.</p>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-md-4">
-        <div class="card feature-card">
-          <div class="card-body text-center">
-            <i class="fas fa-shield-alt feature-icon"></i>
-            <h3>Professional Quality</h3>
-            <p>High-resolution designs perfect for display or print</p>
+
+      <div class="text-center cta-section">
+        <a href="/editor" class="btn btn-medieval-success btn-lg">
+          <i class="fas fa-paint-brush"></i> Open Editor
+        </a>
+      </div>
+    </div>
+  {{else}}
+    <div class="hero-section">
+      <div class="container">
+        <h1 class="hero-title">Create Your Family's Legacy</h1>
+        <p class="hero-subtitle">Because Every Family Deserves Its Place in History</p>
+        
+        <div class="row legacy-points mb-5">
+          <div class="col-md-4">
+            <div class="legacy-card">
+              <i class="fas fa-crown"></i>
+              <h3>Be the Pioneer</h3>
+              <p>Heritage isn't just inherited - it's created. Be the one who establishes your family's enduring symbol.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="legacy-card">
+              <i class="fas fa-heart"></i>
+              <h3>Unite Your Family</h3>
+              <p>Create a powerful symbol that brings your family together and strengthens bonds across generations.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="legacy-card">
+              <i class="fas fa-monument"></i>
+              <h3>Leave Your Mark</h3>
+              <p>Give your children and their children a meaningful emblem of their heritage that will stand the test of time.</p>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card feature-card">
-          <div class="card-body text-center">
-            <i class="fas fa-history feature-icon"></i>
-            <h3>Timeless Appeal</h3>
-            <p>Traditional heraldry meets modern design</p>
+
+        <div class="cta-section text-center mb-5">
+          <h2>Begin Your Family's Legacy</h2>
+          <p class="cta-text">Create a symbol that will unite your family for generations to come. Your descendants will cherish this meaningful connection to their heritage.</p>
+          <a href="/login" class="btn btn-medieval-success btn-lg me-3">
+            <i class="fas fa-feather"></i> Start Creating
+          </a>
+          <p class="mt-3 cta-subtext">Join those who dare to create lasting symbols of family pride</p>
+        </div>
+
+        <div class="why-section mb-5">
+          <h2>Why Create Your Coat of Arms?</h2>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="reason-card">
+                <i class="fas fa-history"></i>
+                <h4>Timeless Tradition</h4>
+                <p>Throughout history, coats of arms have symbolized family pride and achievement. Today, you can create this powerful symbol for your own family.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="reason-card">
+                <i class="fas fa-dna"></i>
+                <h4>Family Identity</h4>
+                <p>Create a unique visual legacy that tells your family's story and unites generations with a shared symbol of pride and belonging.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row inspiration-section mb-5">
+          <div class="col-md-4">
+            <div class="inspiration-card">
+              <i class="fas fa-tree"></i>
+              <h4>Honor Your Roots</h4>
+              <p>Celebrate your family's origins and values through meaningful symbolism.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="inspiration-card">
+              <i class="fas fa-star"></i>
+              <h4>Shape the Future</h4>
+              <p>Create a lasting symbol that will inspire future generations.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="inspiration-card">
+              <i class="fas fa-infinity"></i>
+              <h4>Timeless Connection</h4>
+              <p>Bridge past and future with a meaningful family emblem.</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
-
-    {{#if currentUser}}
-      <div class="text-center">
-        <a href="/editor" class="btn btn-medieval-success">
-          <i class="fas fa-paint-brush"></i> Start Creating
-        </a>
-      </div>
-    {{else}}
-      <div class="text-center">
-        <p class="mb-4">Join today and begin your heraldic journey</p>
-        <a href="/login" class="btn btn-medieval me-3">
-          <i class="fas fa-user-plus"></i> Sign Up
-        </a>
-        <a href="/login" class="btn btn-medieval-secondary">
-          <i class="fas fa-sign-in-alt"></i> Login
-        </a>
-      </div>
-    {{/if}}
-  </div>
+  {{/if}}
 </template>
