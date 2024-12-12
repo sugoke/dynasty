@@ -846,89 +846,73 @@ body .home-container {
 
 
 /* Shared modal styles */
+body .modal .modal-content,
 body .modal.fade .modal-content,
 body .modal.show .modal-content {
-  background: #8b4513 !important;
-  border: 2px solid #6b3410 !important;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  background: #e8d5b5 url('https://www.transparenttextures.com/patterns/parchment.png') !important;
+  border: double 4px #8B4513 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5) !important;
 }
 
+body .modal .modal-header,
 body .modal.fade .modal-header,
 body .modal.show .modal-header {
-  background: #6b3410 !important;
-  color: #ffffff !important;
-  border-bottom: none !important;
-  border-radius: 6px 6px 0 0;
-  padding: 1rem 1.5rem;
+  background: rgba(139, 69, 19, 0.1) !important;
+  border-bottom: 1px solid #8B4513 !important;
+  padding: 1.5rem !important;
 }
 
+body .modal .modal-title,
 body .modal.fade .modal-title,
 body .modal.show .modal-title {
-  font-family: 'Cinzel', serif !important;
-  font-weight: 600 !important;
-  color: #ffffff !important;
+  color: #2C1810 !important;
+  font-family: 'MedievalSharp', cursive !important;
+  text-shadow: none !important;
+  -webkit-text-fill-color: #2C1810 !important;
 }
 
+body .modal .modal-body,
 body .modal.fade .modal-body,
 body .modal.show .modal-body {
-  padding: 1.5rem;
-  font-size: 1.1rem;
-  color: #ffffff !important;
+  background: transparent !important;
+  color: #2C1810 !important;
+  padding: 2rem 1.5rem !important;
 }
 
+body .modal .modal-body p,
 body .modal.fade .modal-body p,
-body .modal.show .modal-body p,
-body .modal.fade .modal-body span,
-body .modal.show .modal-body span {
-  color: #ffffff !important;
+body .modal.show .modal-body p {
+  color: #2C1810 !important;
 }
 
+body .modal .modal-footer,
 body .modal.fade .modal-footer,
 body .modal.show .modal-footer {
-  border-top: 1px solid #6b3410 !important;
-  padding: 1rem 1.5rem;
+  background: rgba(139, 69, 19, 0.1) !important;
+  border-top: 1px solid #8B4513 !important;
+  padding: 1.5rem !important;
 }
 
+/* Modal buttons */
+body .modal .btn-close,
 body .modal.fade .btn-close,
 body .modal.show .btn-close {
-  color: #ffffff !important;
-  opacity: 0.8;
-  filter: brightness(0) invert(1);
+  color: #2C1810 !important;
+  text-shadow: none !important;
+  opacity: 0.7 !important;
 }
 
+body .modal .btn-close:hover,
 body .modal.fade .btn-close:hover,
 body .modal.show .btn-close:hover {
-  opacity: 1;
+  opacity: 1 !important;
 }
 
-body .modal.fade .btn-primary,
-body .modal.show .btn-primary {
-  background: #6b3410 !important;
-  border-color: #4b240c !important;
-  color: #ffffff !important;
+/* Modal backdrop */
+body .modal-backdrop.show {
+  opacity: 0.7 !important;
 }
-
-body .modal.fade .btn-primary:hover,
-body .modal.show .btn-primary:hover {
-  background: #4b240c !important;
-  border-color: #2b140c !important;
-  color: #ffffff !important;
-}
-
-body .modal.fade .btn-secondary,
-body .modal.show .btn-secondary {
-  background: #a89888 !important;
-  border-color: #8b7b6a !important;
-  color: #ffffff !important;
-}
-
-body .modal.fade .btn-secondary:hover,
-body .modal.show .btn-secondary:hover {
-  background: #8b7b6a !important;
-  border-color: #6e5f4d !important;
-  color: #ffffff !important;
-} 
 
 /* Global theme styles */
 body {
@@ -1078,4 +1062,57 @@ label, .form-label {
 
 .modal-body {
   color: var(--color-text-muted) !important;
+} 
+
+/* Modal buttons */
+body .modal .btn-primary,
+.modal.fade .btn-primary,
+.modal.show .btn-primary {
+  background: linear-gradient(45deg, #b39656, #d4af37) !important;
+  border: double 2px #8B4513 !important;
+  color: #2C1810 !important;
+  font-family: 'Cinzel', serif !important;
+  font-size: 1.1rem !important;
+  padding: 0.8rem 2rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  box-shadow: 
+    0 2px 10px rgba(0, 0, 0, 0.3),
+    inset 0 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+body .modal .btn-primary:hover,
+.modal.fade .btn-primary:hover,
+.modal.show .btn-primary:hover {
+  background: linear-gradient(45deg, #d4af37, #ffd700) !important;
+  border-color: #d4af37 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 
+    0 4px 15px rgba(212, 175, 55, 0.3),
+    inset 0 1px rgba(255, 255, 255, 0.3) !important;
+}
+
+body .modal .btn-secondary,
+.modal.fade .btn-secondary,
+.modal.show .btn-secondary {
+  background: linear-gradient(45deg, #2C1810, #3d2317) !important;
+  border: double 2px #b39656 !important;
+  color: #d4af37 !important;
+  font-family: 'Cinzel', serif !important;
+  font-size: 1.1rem !important;
+  padding: 0.8rem 2rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  box-shadow: 
+    0 2px 10px rgba(0, 0, 0, 0.3),
+    inset 0 1px rgba(255, 255, 255, 0.1) !important;
+}
+
+body .modal .btn-secondary:hover,
+.modal.fade .btn-secondary:hover,
+.modal.show .btn-secondary:hover {
+  background: linear-gradient(45deg, #3d2317, #4a2810) !important;
+  border-color: #d4af37 !important;
+  color: #ffd700 !important;
+  transform: translateY(-2px) !important;
 } 
