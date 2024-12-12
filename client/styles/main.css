@@ -1,13 +1,19 @@
 /* Variables */
 :root {
   --color-wood: #2C1810;
-  --color-parchment: #f4e4bc;
+  --color-parchment: #e8d5b5;
   --color-dark-brown: #8B4513;
   --color-gold: #b39656;
   --color-gold-bright: #d4af37;
   --shadow-medieval: 0 0 20px rgba(0,0,0,0.5);
   --gradient-gold: linear-gradient(45deg, #ffd700, #b8860b);
   --bg-dark: rgba(33, 37, 41, 0.95);
+  --color-gold-primary: #b39656;
+  --color-text-muted: #8b795e;
+  --color-gold-dark: #8b7355;
+  --color-gold-medium: #a18262;
+  --color-wood-dark: #2C1810;
+  --color-wood-medium: #3d2317;
 }
 
 /* Home page styles */
@@ -96,7 +102,7 @@
 
 /* Base styles */
 body {
-  background: #1a0f0f url('https://www.transparenttextures.com/patterns/dark-wood.png') !important;
+  background: var(--color-wood-dark) url('https://www.transparenttextures.com/patterns/dark-wood.png') !important;
   color: var(--color-parchment) !important;
   min-height: 100vh !important;
   padding-top: 60px !important;
@@ -155,48 +161,131 @@ body {
 }
 
 /* Button styles */
-.btn-medieval {
-  background: var(--gradient-gold);
-  color: var(--color-wood);
-  border: 2px solid var(--color-dark-brown);
-  font-family: 'Cinzel', serif;
-  font-weight: bold;
-  text-transform: uppercase;
-  padding: 10px 20px;
-  transition: all 0.3s ease;
-}
-
-.btn-medieval:hover,
-.btn-medieval.active {
-  background: var(--color-dark-brown);
-  color: var(--color-parchment);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-medieval);
-  border-color: var(--color-parchment);
-}
-
-.btn-medieval-secondary {
-  background: var(--color-parchment);
-  color: var(--color-wood);
-  border: 2px solid var(--color-dark-brown);
-}
-
-.btn-medieval-secondary:hover,
-.btn-medieval-secondary.active {
-  background: var(--color-dark-brown);
-  color: var(--color-parchment);
-}
-
-.btn-medieval-danger {
-  background: var(--color-dark-brown);
-  color: var(--color-parchment);
-  border: 2px solid var(--color-dark-brown);
-}
-
+.btn-medieval,
+.btn-medieval-secondary,
+.btn-medieval-danger,
 .btn-medieval-success {
-  background: var(--color-dark-brown);
-  color: var(--color-parchment);
-  border: 2px solid var(--color-dark-brown);
+  font-family: 'Cinzel', serif !important;
+  font-size: 1.1rem !important;
+  padding: 0.8rem 2rem !important;
+  border-width: 2px !important;
+  border-style: double !important;
+  border-radius: 4px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  position: relative !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Primary medieval button */
+.btn-medieval {
+  background: linear-gradient(45deg, #b39656, #d4af37) !important;
+  border-color: #8B4513 !important;
+  color: #2C1810 !important;
+  box-shadow: 
+    0 2px 10px rgba(0, 0, 0, 0.3),
+    inset 0 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+.btn-medieval:hover {
+  background: linear-gradient(45deg, #d4af37, #ffd700) !important;
+  border-color: #d4af37 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 
+    0 4px 15px rgba(212, 175, 55, 0.3),
+    inset 0 1px rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Secondary medieval button */
+.btn-medieval-secondary {
+  background: linear-gradient(45deg, #2C1810, #3d2317) !important;
+  border-color: #b39656 !important;
+  color: #d4af37 !important;
+  box-shadow: 
+    0 2px 10px rgba(0, 0, 0, 0.3),
+    inset 0 1px rgba(255, 255, 255, 0.1) !important;
+}
+
+.btn-medieval-secondary:hover {
+  background: linear-gradient(45deg, #3d2317, #4a2810) !important;
+  border-color: #d4af37 !important;
+  color: #ffd700 !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Success medieval button */
+.btn-medieval-success {
+  background: linear-gradient(45deg, #2d5a27, #367c2b) !important;
+  border-color: #b39656 !important;
+  color: #d4af37 !important;
+  box-shadow: 
+    0 2px 10px rgba(0, 0, 0, 0.3),
+    inset 0 1px rgba(255, 255, 255, 0.1) !important;
+}
+
+.btn-medieval-success:hover {
+  background: linear-gradient(45deg, #367c2b, #408f2f) !important;
+  border-color: #d4af37 !important;
+  color: #ffd700 !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Danger medieval button */
+.btn-medieval-danger {
+  background: linear-gradient(45deg, #8B4513, #a0522d) !important;
+  border-color: #b39656 !important;
+  color: #d4af37 !important;
+  box-shadow: 
+    0 2px 10px rgba(0, 0, 0, 0.3),
+    inset 0 1px rgba(255, 255, 255, 0.1) !important;
+}
+
+.btn-medieval-danger:hover {
+  background: linear-gradient(45deg, #a0522d, #b8860b) !important;
+  border-color: #d4af37 !important;
+  color: #ffd700 !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Active state for all buttons */
+.btn-medieval:active,
+.btn-medieval-secondary:active,
+.btn-medieval-success:active,
+.btn-medieval-danger:active {
+  transform: translateY(1px) !important;
+  box-shadow: 
+    0 1px 5px rgba(0, 0, 0, 0.2),
+    inset 0 1px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Add decorative corners to buttons */
+.btn-medieval::before,
+.btn-medieval-secondary::before,
+.btn-medieval-success::before,
+.btn-medieval-danger::before {
+  content: '' !important;
+  position: absolute !important;
+  width: 10px !important;
+  height: 10px !important;
+  border-top: 2px solid currentColor !important;
+  border-left: 2px solid currentColor !important;
+  top: 5px !important;
+  left: 5px !important;
+}
+
+.btn-medieval::after,
+.btn-medieval-secondary::after,
+.btn-medieval-success::after,
+.btn-medieval-danger::after {
+  content: '' !important;
+  position: absolute !important;
+  width: 10px !important;
+  height: 10px !important;
+  border-bottom: 2px solid currentColor !important;
+  border-right: 2px solid currentColor !important;
+  bottom: 5px !important;
+  right: 5px !important;
 }
 
 /* Element categories and types */
@@ -320,8 +409,8 @@ body {
 
 /* Navbar styles */
 .navbar {
-  background: var(--color-wood) url('https://www.transparenttextures.com/patterns/dark-wood.png') !important;
-  border-bottom: 2px solid var(--color-gold);
+  background: var(--color-wood-dark) !important;
+  border-bottom: 1px solid var(--color-gold-dark) !important;
   box-shadow: var(--shadow-medieval);
 }
 
@@ -359,7 +448,7 @@ body {
 }
 
 .nav-link {
-  color: var(--color-parchment) !important;
+  color: var(--color-gold-medium) !important;
   font-family: 'Cinzel', serif;
   text-transform: uppercase;
   font-size: 0.9rem;
@@ -368,7 +457,7 @@ body {
 }
 
 .nav-link:hover {
-  color: var(--color-gold) !important;
+  color: var(--color-parchment) !important;
 }
 
 .navbar-toggler {
@@ -383,8 +472,8 @@ body {
 
 /* Login/Register styles */
 .card {
-  background: #2C1810 url('https://www.transparenttextures.com/patterns/dark-wood.png') !important;
-  border: 2px solid var(--color-dark-brown);
+  background: var(--color-wood-medium) !important;
+  border: 1px solid var(--color-gold-dark) !important;
   box-shadow: var(--shadow-medieval);
 }
 
@@ -872,4 +961,59 @@ a {
 a:hover {
   color: #ffe44d !important;
   text-decoration: underline;
+} 
+
+/* Typography */
+h1, h2, h3, .page-title {
+  color: var(--color-parchment) !important;
+  font-family: 'MedievalSharp', cursive !important;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5) !important;
+}
+
+h4, h5, h6, .subtitle {
+  color: var(--color-gold-medium) !important;
+  font-family: 'Cinzel', serif !important;
+}
+
+p, .card-text, .text-content {
+  color: var(--color-parchment) !important;
+  font-family: 'Cinzel', serif !important;
+}
+
+/* Links */
+a {
+  color: var(--color-gold-primary) !important;
+  transition: color 0.3s ease !important;
+}
+
+a:hover {
+  color: var(--color-gold-bright) !important;
+  text-decoration: none !important;
+}
+
+/* Navigation */
+.navbar-brand {
+  color: var(--color-gold-bright) !important;
+}
+
+.nav-link {
+  color: var(--color-gold-medium) !important;
+}
+
+.nav-link:hover {
+  color: var(--color-parchment) !important;
+}
+
+/* Form labels */
+label, .form-label {
+  color: var(--color-gold-primary) !important;
+}
+
+/* Modal text */
+.modal-title {
+  color: var(--color-gold-bright) !important;
+}
+
+.modal-body {
+  color: var(--color-text-muted) !important;
 } 
