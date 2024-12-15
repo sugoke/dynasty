@@ -238,25 +238,16 @@ h4, h5, h6 {
 
 /* Editor styles */
 .editor-container {
-  max-width: 1000px;
+  max-width: 800px !important;
   margin: 20px auto 0 !important;
-  padding: 2rem;
-}
-
-.canvas-area {
-  text-align: center;
-  background: var(--color-parchment) url('https://www.transparenttextures.com/patterns/parchment.png') !important;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: var(--shadow-medieval);
-  border: 3px solid var(--color-dark-brown);
 }
 
 #coatCanvas {
-  max-width: 100%;
-  height: auto;
-  border: 2px solid var(--color-dark-brown);
+  width: 100% !important;
+  height: auto !important;
   background: var(--color-parchment) url('https://www.transparenttextures.com/patterns/parchment.png') !important;
+  border: 2px solid var(--color-dark-brown) !important;
+  margin-bottom: 1.5rem !important;
 }
 
 .controls {
@@ -1581,4 +1572,31 @@ body .modal .btn-secondary:hover,
 .editor-container .page-subtitle {
   margin-top: 1rem !important;
   opacity: 0.8 !important;
+} 
+
+/* Update editor container styles */
+.editor-container {
+  max-width: 800px !important;
+  margin: 20px auto 0 !important;
+}
+
+/* Remove canvas-area wrapper */
+#coatCanvas {
+  width: 100% !important;
+  height: auto !important;
+  background: var(--color-parchment) url('https://www.transparenttextures.com/patterns/parchment.png') !important;
+  border: 2px solid var(--color-dark-brown) !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* Update mobile styles */
+@media (max-width: 768px) {
+  .editor-container {
+    margin: 10px auto 0 !important;
+    padding: 0 10px !important;
+  }
+
+  #coatCanvas {
+    border-width: 1px !important;
+  }
 } 
