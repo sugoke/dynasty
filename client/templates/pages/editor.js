@@ -18,6 +18,14 @@ Template.editor.onCreated(function() {
     rightAnimal: null,
     crown: null
   });
+  this.selectedLayout = new ReactiveVar('1');
+  this.backgroundImages = new ReactiveVar({
+    area1: null,
+    area2: null,
+    area3: null,
+    area4: null
+  });
+  this.activeImageArea = new ReactiveVar(null);
   
   // Subscribe to user's design
   this.autorun(() => {
@@ -78,120 +86,172 @@ Template.editor.onRendered(function() {
     img.src = src;
   };
   
-  instance.redrawCanvas = () => {
-    const canvas = instance.canvas;
-    const ctx = canvas.getContext('2d');
+  instance.drawBackgroundImages = async () => {
+    const ctx = instance.canvas.getContext('2d');
+    const layout = instance.selectedLayout.get();
+    const images = instance.backgroundImages.get();
+    
+    // Direct 55% of canvas for inner area
+    const innerWidth = instance.canvas.width * 0.55;
+    const innerHeight = instance.canvas.height * 0.55;
+    const innerX = (instance.canvas.width - innerWidth) / 2;
+    const innerY = (instance.canvas.height - innerHeight) / 2;
+
+    // Calculate flag sizes based on layout
+    let flagWidth, flagHeight;
+    if (layout === '1') {
+      flagWidth = innerWidth;
+      flagHeight = innerHeight;
+    } else if (layout === '2') {
+      flagWidth = innerWidth / 2;
+      flagHeight = innerHeight;
+    } else { // layout === '4'
+      flagWidth = innerWidth / 2;
+      flagHeight = innerHeight / 2;
+    }
+
+    // Draw flags based on layout
+    if (layout === '1' && images.area1) {
+      await drawImageInArea(ctx, images.area1, 
+        innerX, 
+        innerY, 
+        flagWidth, 
+        flagHeight);
+    } 
+    else if (layout === '2') {
+      if (images.area1) {
+        await drawImageInArea(ctx, images.area1, 
+          innerX, 
+          innerY, 
+          flagWidth, 
+          flagHeight);
+      }
+      if (images.area2) {
+        await drawImageInArea(ctx, images.area2, 
+          innerX + flagWidth, 
+          innerY, 
+          flagWidth, 
+          flagHeight);
+      }
+    } 
+    else if (layout === '4') {
+      if (images.area1) {
+        await drawImageInArea(ctx, images.area1, 
+          innerX, 
+          innerY, 
+          flagWidth, 
+          flagHeight);
+      }
+      if (images.area2) {
+        await drawImageInArea(ctx, images.area2, 
+          innerX + flagWidth, 
+          innerY, 
+          flagWidth, 
+          flagHeight);
+      }
+      if (images.area3) {
+        await drawImageInArea(ctx, images.area3, 
+          innerX, 
+          innerY + flagHeight, 
+          flagWidth, 
+          flagHeight);
+      }
+      if (images.area4) {
+        await drawImageInArea(ctx, images.area4, 
+          innerX + flagWidth, 
+          innerY + flagHeight, 
+          flagWidth, 
+          flagHeight);
+      }
+    }
+  };
+
+  const drawImageInArea = (ctx, src, x, y, width, height) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        ctx.drawImage(img, x, y, width, height);
+        resolve();
+      };
+      img.src = src;
+    });
+  };
+
+  // Modify existing redrawCanvas to include background images
+  instance.redrawCanvas = async () => {
+    const ctx = instance.canvas.getContext('2d');
     const design = instance.design.get();
     
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Clear canvas first
+    ctx.clearRect(0, 0, instance.canvas.width, instance.canvas.height);
     
-    // Create an array of promises for loading images
-    const loadImages = () => {
-      const images = {};
-      const promises = [];
-      
-      // Load all images first
-      if (design.frame) {
-        promises.push(new Promise((resolve) => {
-          const img = new Image();
-          img.onload = () => {
-            images.frame = img;
-            resolve();
-          };
-          img.src = design.frame;
-        }));
-      }
-      
-      if (design.leftAnimal) {
-        promises.push(new Promise((resolve) => {
-          const img = new Image();
-          img.onload = () => {
-            images.leftAnimal = img;
-            resolve();
-          };
-          img.src = design.leftAnimal;
-        }));
-      }
-      
-      if (design.rightAnimal) {
-        promises.push(new Promise((resolve) => {
-          const img = new Image();
-          img.onload = () => {
-            images.rightAnimal = img;
-            resolve();
-          };
-          img.src = design.rightAnimal;
-        }));
-      }
-      
-      if (design.crown) {
-        promises.push(new Promise((resolve) => {
-          const img = new Image();
-          img.onload = () => {
-            images.crown = img;
-            resolve();
-          };
-          img.src = design.crown;
-        }));
-      }
-      
-      return Promise.all(promises).then(() => images);
+    // Draw background images first
+    await instance.drawBackgroundImages();
+    
+    // Load and draw frame
+    if (design.frame && design.frame !== 'none') {
+      await new Promise((resolve) => {
+        const frameImg = new Image();
+        frameImg.onload = () => {
+          const width = instance.canvas.width * 0.85;
+          const height = instance.canvas.height * 0.85;
+          const x = (instance.canvas.width - width) / 2;
+          const y = (instance.canvas.height - height) / 2;
+          ctx.drawImage(frameImg, x, y, width, height);
+          resolve();
+        };
+        frameImg.src = design.frame;
+      });
+    }
+    
+    // Draw other elements (animals, crown)
+    const loadAndDrawElement = (src, position) => {
+      return new Promise((resolve) => {
+        if (!src || src === 'none') {
+          resolve();
+          return;
+        }
+        
+        const img = new Image();
+        img.onload = () => {
+          let width, height, x, y;
+          
+          if (position === 'leftAnimal') {
+            width = instance.canvas.width * 0.3;
+            height = instance.canvas.height * 0.3;
+            x = instance.canvas.width * 0.1;
+            y = instance.canvas.height * 0.35;
+            ctx.drawImage(img, x, y, width, height);
+          } else if (position === 'rightAnimal') {
+            width = instance.canvas.width * 0.3;
+            height = instance.canvas.height * 0.3;
+            x = instance.canvas.width * 0.6;
+            y = instance.canvas.height * 0.35;
+            
+            ctx.save();
+            ctx.translate(x + width, y);
+            ctx.scale(-1, 1);
+            ctx.drawImage(img, 0, 0, width, height);
+            ctx.restore();
+          } else if (position === 'crown') {
+            width = instance.canvas.width * 0.3;
+            height = instance.canvas.height * 0.2;
+            x = (instance.canvas.width - width) / 2;
+            y = instance.canvas.height * 0.1;
+            ctx.drawImage(img, x, y, width, height);
+          }
+          resolve();
+        };
+        img.src = src;
+      });
     };
     
-    // Draw elements in correct order after all images are loaded
-    loadImages().then((images) => {
-      // Clear canvas first
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Draw frame first (background)
-      if (images.frame) {
-        const width = canvas.width * 0.85;
-        const height = canvas.height * 0.85;
-        const x = (canvas.width - width) / 2;
-        const y = (canvas.height - height) / 2;
-        ctx.globalCompositeOperation = 'destination-over';
-        ctx.drawImage(images.frame, x, y, width, height);
-        ctx.globalCompositeOperation = 'source-over';
-      }
-      
-      // Draw left animal
-      if (images.leftAnimal) {
-        const width = canvas.width * 0.3;
-        const height = canvas.height * 0.3;
-        const x = canvas.width * 0.1;
-        const y = canvas.height * 0.35;
-        ctx.drawImage(images.leftAnimal, x, y, width, height);
-      }
-      
-      // Draw right animal (mirrored)
-      if (images.rightAnimal) {
-        const width = canvas.width * 0.3;
-        const height = canvas.height * 0.3;
-        const x = canvas.width * 0.6;
-        const y = canvas.height * 0.35;
-        
-        // Save context state
-        ctx.save();
-        
-        // Set up the mirror effect
-        ctx.translate(x + width, y);
-        ctx.scale(-1, 1);
-        ctx.drawImage(images.rightAnimal, 0, 0, width, height);
-        
-        // Restore context state
-        ctx.restore();
-      }
-      
-      // Draw crown last
-      if (images.crown) {
-        const width = canvas.width * 0.3;
-        const height = canvas.height * 0.2;
-        const x = (canvas.width - width) / 2;
-        const y = canvas.height * 0.1;
-        ctx.drawImage(images.crown, x, y, width, height);
-      }
-    });
+    // Draw all elements in order
+    await Promise.all([
+      loadAndDrawElement(design.leftAnimal, 'leftAnimal'),
+      loadAndDrawElement(design.rightAnimal, 'rightAnimal'),
+      loadAndDrawElement(design.crown, 'crown')
+    ]);
   };
   
   instance.redrawCanvas();
@@ -266,6 +326,49 @@ Template.editor.helpers({
   credits() {
     const user = Meteor.user();
     return user?.profile?.credits || 0;
+  },
+  
+  isActiveLayout(layout) {
+    return Template.instance().selectedLayout.get() === layout;
+  },
+  
+  availableImages() {
+    return [
+      '/images/flags/flag1.png',
+      '/images/flags/flag2.png',
+      // Add more image options
+    ];
+  },
+  
+  selectedLayout() {
+    return Template.instance().selectedLayout.get();
+  },
+  
+  isLayout(layout) {
+    return Template.instance().selectedLayout.get() === layout;
+  },
+  
+  flagImages() {
+    return [
+      '/images/flags/france.png',
+      '/images/flags/italy.png',
+      '/images/flags/russia.png',
+      '/images/flags/sweden.png',
+      '/images/flags/belarus.png',
+      '/images/flags/monaco.png'
+    ];
+  },
+  
+  getFlagName(url) {
+    const match = url.match(/flags\/([^\/]+)\.png$/);
+    if (match) {
+      return match[1].charAt(0).toUpperCase() + match[1].slice(1);
+    }
+    return '';
+  },
+  
+  isFrameCategory() {
+    return Template.instance().selectedCategory.get() === 'frame';
   }
 });
 
@@ -393,5 +496,58 @@ Template.editor.events({
         }
       });
     });
+  },
+  
+  'click .layout-btn'(event, instance) {
+    const layout = event.currentTarget.dataset.layout;
+    instance.selectedLayout.set(layout);
+    
+    // Clear background images and has-image classes
+    instance.backgroundImages.set({
+      area1: null,
+      area2: null,
+      area3: null,
+      area4: null
+    });
+    
+    // Remove has-image class from all grid areas
+    document.querySelectorAll('.grid-area').forEach(area => {
+      area.classList.remove('has-image');
+    });
+    
+    instance.redrawCanvas();
+  },
+  
+  'click .image-area'(event, instance) {
+    const area = event.currentTarget.dataset.area;
+    instance.activeImageArea.set(area);
+    const modal = new bootstrap.Modal(document.getElementById('imagePickerModal'));
+    modal.show();
+  },
+  
+  'click .image-option'(event, instance) {
+    const url = event.currentTarget.dataset.url;
+    const area = instance.activeImageArea.get();
+    const images = instance.backgroundImages.get();
+    images[area] = url;
+    instance.backgroundImages.set(images);
+    
+    // Add has-image class to the clicked grid area
+    const gridArea = document.querySelector(`.grid-area[data-area="${area}"]`);
+    if (gridArea) {
+      gridArea.classList.add('has-image');
+    }
+    
+    instance.redrawCanvas();
+    
+    const modal = bootstrap.Modal.getInstance(document.getElementById('imagePickerModal'));
+    modal.hide();
+  },
+  
+  'click .grid-area'(event, instance) {
+    const area = event.currentTarget.dataset.area;
+    instance.activeImageArea.set(area);
+    const modal = new bootstrap.Modal(document.getElementById('imagePickerModal'));
+    modal.show();
   }
 });

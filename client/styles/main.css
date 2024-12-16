@@ -252,6 +252,7 @@ h4, h5, h6 {
 
 .controls {
   text-align: center;
+  margin-top: 2rem !important;
 }
 
 /* Button styles */
@@ -1499,6 +1500,7 @@ body .modal .btn-secondary:hover,
   gap: 1rem !important;
   justify-content: center !important;
   margin-top: 2rem !important;
+  margin-bottom: 3rem !important;
 }
 
 .editor-actions .btn {
@@ -1600,3 +1602,230 @@ body .modal .btn-secondary:hover,
     border-width: 1px !important;
   }
 } 
+
+/* Add these styles */
+.layout-selector {
+  margin: 1rem 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.layout-selector .btn-group {
+  display: inline-flex !important;
+  gap: 10px !important;
+}
+
+/* Canvas wrapper and grid overlay */
+.canvas-wrapper {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 800px !important;
+  aspect-ratio: 1/1 !important;
+  margin: 0 auto !important;
+}
+
+#coatCanvas {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: var(--color-parchment) url('https://www.transparenttextures.com/patterns/parchment.png') !important;
+  border: 2px solid var(--color-dark-brown) !important;
+}
+
+/* Grid overlay container */
+.grid-overlay {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 55% !important;
+  height: 55% !important;
+  pointer-events: all !important;
+}
+
+/* Base grid area styles */
+.grid-area {
+  position: absolute !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  border: 1px dashed rgba(179, 150, 86, 0.3) !important;
+  background-color: rgba(0, 0, 0, 0.1) !important;
+  background-size: contain !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+/* Plus icon */
+.grid-area i {
+  font-size: 2rem !important;
+  color: var(--color-gold) !important;
+  opacity: 0.5 !important;
+  transition: all 0.3s ease !important;
+}
+
+.grid-area:hover i {
+  opacity: 1 !important;
+  transform: scale(1.2) !important;
+}
+
+/* Make grid area transparent when it has an image */
+.grid-area.has-image {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+.grid-area.has-image i {
+  display: none !important;
+}
+
+/* Split layout */
+.grid-area.half {
+  position: absolute !important;
+  width: 50% !important;
+  height: 100% !important;
+}
+
+.grid-area.half:nth-child(1) {
+  left: 0 !important;
+}
+
+.grid-area.half:nth-child(2) {
+  left: 50% !important;
+}
+
+/* Quad layout */
+.grid-area.quarter {
+  position: absolute !important;
+  width: 50% !important;
+  height: 50% !important;
+}
+
+.grid-area.quarter:nth-child(1) {
+  left: 0 !important;
+  top: 0 !important;
+}
+
+.grid-area.quarter:nth-child(2) {
+  left: 50% !important;
+  top: 0 !important;
+}
+
+.grid-area.quarter:nth-child(3) {
+  left: 0 !important;
+  top: 50% !important;
+}
+
+.grid-area.quarter:nth-child(4) {
+  left: 50% !important;
+  top: 50% !important;
+}
+
+/* Layout selector styles */
+.layout-selector {
+  margin: 1rem 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.layout-selector .btn-group {
+  display: inline-flex !important;
+  gap: 10px !important;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .editor-container {
+    margin: 10px auto 0 !important;
+    padding: 0 10px !important;
+  }
+
+  .canvas-wrapper {
+    width: 100% !important;
+    max-width: 100vmin !important;
+    margin: 0 auto !important;
+  }
+
+  #coatCanvas {
+    border-width: 1px !important;
+  }
+}
+
+/* For very small screens */
+@media (max-width: 360px) {
+  .canvas-wrapper {
+    margin: 0 -10px !important;
+    width: calc(100% + 20px) !important;
+  }
+}
+
+/* Image picker modal styles */
+.image-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+  gap: 1rem !important;
+  padding: 1rem !important;
+  max-height: 60vh !important;
+  overflow-y: auto !important;
+}
+
+.image-option {
+  cursor: pointer !important;
+  border: 2px solid var(--color-dark-brown) !important;
+  border-radius: 4px !important;
+  padding: 0.5rem !important;
+  transition: all 0.3s ease !important;
+  text-align: center !important;
+}
+
+.image-option:hover {
+  border-color: var(--color-gold) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+}
+
+.image-option img {
+  width: 100% !important;
+  height: 100px !important;
+  object-fit: contain !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.image-name {
+  font-family: 'Cinzel', serif !important;
+  color: var(--color-gold) !important;
+  font-size: 0.9rem !important;
+  margin-top: 0.5rem !important;
+}
+
+/* Active state for category buttons */
+.btn-medieval.element-category.active {
+  background: linear-gradient(45deg, #2C1810, #3d2317) !important;
+  border-color: #ffd700 !important;
+  border-width: 2px !important;
+  color: #ffd700 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 
+    0 4px 15px rgba(212, 175, 55, 0.3),
+    inset 0 1px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Keep the secondary button styles as they are */
+.btn-medieval-secondary.active {
+  background: linear-gradient(45deg, #3d2317, #4a2810) !important;
+  border-color: #ffd700 !important;
+  color: #ffd700 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.4),
+    inset 0 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Hover states */
+.btn-medieval.element-category.active:hover,
+.btn-medieval-secondary.active:hover {
+  transform: translateY(-2px) !important;
+}
