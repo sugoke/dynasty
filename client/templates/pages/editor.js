@@ -16,7 +16,8 @@ Template.editor.onCreated(function() {
     frame: null,
     leftAnimal: null,
     rightAnimal: null,
-    crown: null
+    crown: null,
+    banner: null
   });
   this.selectedLayout = new ReactiveVar('1');
   this.backgroundImages = new ReactiveVar({
@@ -74,10 +75,16 @@ Template.editor.onRendered(function() {
         y = canvas.height * 0.35;
       } else if (src.includes('crown')) {
         // Crown positioning
-        width = canvas.width * 0.3;
-        height = canvas.height * 0.2;
+        width = canvas.width * 0.25;
+        height = width * 0.8;
         x = (canvas.width - width) / 2;
         y = canvas.height * 0.1;
+      } else if (src.includes('banner')) {
+        // Banner positioning
+        width = canvas.width * 0.7;
+        height = canvas.height * 0.2;
+        x = (canvas.width - width) / 2;
+        y = canvas.height * 0.65;
       }
       
       ctx.drawImage(img, x, y, width, height);
@@ -90,6 +97,7 @@ Template.editor.onRendered(function() {
     const ctx = instance.canvas.getContext('2d');
     const layout = instance.selectedLayout.get();
     const images = instance.backgroundImages.get();
+    const design = instance.design.get();
     
     // Direct 55% of canvas for inner area
     const innerWidth = instance.canvas.width * 0.55;
@@ -164,6 +172,22 @@ Template.editor.onRendered(function() {
           flagHeight);
       }
     }
+
+    // Draw crown if selected
+    if (design.crown && design.crown !== 'none') {
+      await new Promise((resolve) => {
+        const crownImg = new Image();
+        crownImg.onload = () => {
+          const crownWidth = instance.canvas.width * 0.3;
+          const crownHeight = instance.canvas.height * 0.2;
+          const crownX = (instance.canvas.width - crownWidth) / 2;
+          const crownY = instance.canvas.height * 0.1; // Position at top
+          ctx.drawImage(crownImg, crownX, crownY, crownWidth, crownHeight);
+          resolve();
+        };
+        crownImg.src = design.crown;
+      });
+    }
   };
 
   const drawImageInArea = (ctx, src, x, y, width, height) => {
@@ -204,7 +228,7 @@ Template.editor.onRendered(function() {
       });
     }
     
-    // Draw other elements (animals, crown)
+    // Draw other elements (animals, crown, banner)
     const loadAndDrawElement = (src, position) => {
       return new Promise((resolve) => {
         if (!src || src === 'none') {
@@ -234,10 +258,16 @@ Template.editor.onRendered(function() {
             ctx.drawImage(img, 0, 0, width, height);
             ctx.restore();
           } else if (position === 'crown') {
-            width = instance.canvas.width * 0.3;
-            height = instance.canvas.height * 0.2;
+            width = instance.canvas.width * 0.25;
+            height = width * 0.8;
             x = (instance.canvas.width - width) / 2;
             y = instance.canvas.height * 0.1;
+            ctx.drawImage(img, x, y, width, height);
+          } else if (position === 'banner') {
+            width = instance.canvas.width * 0.7;
+            height = instance.canvas.height * 0.2;
+            x = (instance.canvas.width - width) / 2;
+            y = instance.canvas.height * 0.65;
             ctx.drawImage(img, x, y, width, height);
           }
           resolve();
@@ -250,7 +280,8 @@ Template.editor.onRendered(function() {
     await Promise.all([
       loadAndDrawElement(design.leftAnimal, 'leftAnimal'),
       loadAndDrawElement(design.rightAnimal, 'rightAnimal'),
-      loadAndDrawElement(design.crown, 'crown')
+      loadAndDrawElement(design.crown, 'crown'),
+      loadAndDrawElement(design.banner, 'banner')
     ]);
   };
   
@@ -281,18 +312,44 @@ Template.editor.helpers({
     // Common animal options for both left and right
     const animalOptions = [
       'none',
-      '/images/lions/lion1.png',
-      '/images/dragons/dragon1.png',
-      '/images/eagles/eagle1.png',
-      '/images/unicorns/unicorn1.png',
-      '/images/wolves/wolf1.png',
-      '/images/griffins/griffin1.png',
+      // Bears
       '/images/bears/bear1.png',
+      '/images/bears/bear3.png',
+      '/images/bears/bear4.png',
+      '/images/bears/bear5.png',
+      // Boars
       '/images/boars/boar1.png',
+      // Bulls & Bison
       '/images/bulls/bull1.png',
+      '/images/bulls/bull2.png',
+      '/images/bulls/bison.png',
+      // Deers
       '/images/dears/dear1.png',
-      '/images/dolphins/dolphin1.png',
-      '/images/horses/horse1.png'
+      '/images/dears/dear2.png',
+      // Dolphins
+      '/images/dolphins/dolphin.png',
+      // Dragons
+      '/images/dragons/dragon1.png',
+      // Eagles
+      '/images/eagles/eagle1.png',
+      '/images/eagles/eagle2.png',
+      // Griffins
+      '/images/griffins/griffin1.png',
+      '/images/griffins/griffin2.png',
+      // Horses
+      '/images/horses/horse1.png',
+      '/images/horses/horse2.png',
+      // Lions
+      '/images/lions/lion1.png',
+      '/images/lions/lion2.png',
+      '/images/lions/lion3.png',
+      '/images/lions/lion4.png',
+      // Unicorns
+      '/images/unicorns/unicorn1.png',
+      '/images/unicorns/unicorn2.png',
+      // Wolves
+      '/images/wolves/wolf1.png',
+      '/images/wolves/wolf2.png'
     ];
     
     // Return array of image URLs based on type
@@ -300,7 +357,8 @@ Template.editor.helpers({
       frame: ['none', '/images/frames/frame1.png', '/images/frames/frame2.png'],
       leftAnimal: animalOptions,
       rightAnimal: animalOptions,
-      crown: ['none', '/images/crowns/crown1.png', '/images/crowns/crown2.png']
+      crown: ['none', '/images/crowns/crown1.png', '/images/crowns/crown2.png'],
+      banner: ['none', '/images/banners/redbanner.png']
     };
     
     return options[type] || [];
@@ -388,6 +446,9 @@ Template.editor.events({
       case 'crown':
         instance.selectedElement.set('crown');
         break;
+      case 'banner':
+        instance.selectedElement.set('banner');
+        break;
     }
   },
   
@@ -416,7 +477,8 @@ Template.editor.events({
       frame: null,
       leftAnimal: null,
       rightAnimal: null,
-      crown: null
+      crown: null,
+      banner: null
     };
     instance.design.set(emptyDesign);
     instance.redrawCanvas();
@@ -434,7 +496,8 @@ Template.editor.events({
       frame: design.frame || null,
       leftAnimal: design.leftAnimal || null,
       rightAnimal: design.rightAnimal || null,
-      crown: design.crown || null
+      crown: design.crown || null,
+      banner: design.banner || null
     };
     
     Meteor.call('saveDesign', cleanDesign, (error) => {

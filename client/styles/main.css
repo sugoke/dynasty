@@ -404,48 +404,52 @@ h4, h5, h6 {
 /* Carousel styles */
 .carousel-container {
   background: #2C1810 url('https://www.transparenttextures.com/patterns/dark-wood.png') !important;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: var(--shadow-medieval);
-  border: 2px solid var(--color-dark-brown);
-  margin: 1.5rem 0;
+  padding: 1.5rem !important;
+  border-radius: 8px !important;
+  box-shadow: var(--shadow-medieval) !important;
+  border: 2px solid var(--color-dark-brown) !important;
+  margin: 1.5rem 0 !important;
+  max-height: 400px !important;
+  overflow-y: auto !important;
 }
 
 .carousel-inner {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 1.5rem;
-  padding: 0.5rem;
-  max-height: 300px;
-  overflow-y: auto;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) !important;
+  gap: 1.5rem !important;
+  padding: 0.5rem !important;
 }
 
-.carousel-inner::-webkit-scrollbar {
-  width: 8px;
+.carousel-container::-webkit-scrollbar {
+  width: 8px !important;
 }
 
-.carousel-inner::-webkit-scrollbar-track {
-  background: var(--color-wood);
-  border-radius: 4px;
+.carousel-container::-webkit-scrollbar-track {
+  background: var(--color-wood) !important;
+  border-radius: 4px !important;
 }
 
-.carousel-inner::-webkit-scrollbar-thumb {
-  background: var(--color-gold);
-  border-radius: 4px;
+.carousel-container::-webkit-scrollbar-thumb {
+  background: var(--color-gold) !important;
+  border-radius: 4px !important;
+  border: 2px solid var(--color-wood) !important;
+}
+
+.carousel-container::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-bright) !important;
 }
 
 .element-option-wrapper {
-  text-align: center !important;
-  background: var(--color-wood) !important;
-  padding: 10px !important;
-  border-radius: 8px !important;
-  transition: all 0.3s ease !important;
-  border: 1px solid var(--color-dark-brown) !important;
   aspect-ratio: 1/1 !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
+  background: var(--color-wood) !important;
+  padding: 10px !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+  border: 1px solid var(--color-dark-brown) !important;
 }
 
 .element-option-wrapper:hover {
@@ -1768,8 +1772,28 @@ body .modal .btn-secondary:hover,
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
   gap: 1rem !important;
   padding: 1rem !important;
-  max-height: 60vh !important;
+  max-height: calc(2 * (150px + 2rem)) !important; /* 2 rows of images + gaps */
   overflow-y: auto !important;
+}
+
+/* Scrollbar styling for the image grid */
+.image-grid::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+.image-grid::-webkit-scrollbar-track {
+  background: var(--color-wood) !important;
+  border-radius: 4px !important;
+}
+
+.image-grid::-webkit-scrollbar-thumb {
+  background: var(--color-gold) !important;
+  border-radius: 4px !important;
+  border: 2px solid var(--color-wood) !important;
+}
+
+.image-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-bright) !important;
 }
 
 .image-option {
