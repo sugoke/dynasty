@@ -1853,3 +1853,30 @@ body .modal .btn-secondary:hover,
 .btn-medieval-secondary.active:hover {
   transform: translateY(-2px) !important;
 }
+
+/* Banner text input styles */
+.banner-text-input {
+  max-width: 400px !important;
+  margin: 0 auto !important;
+}
+
+.medieval-input {
+  background: var(--color-wood) !important;
+  border: 1px solid var(--color-gold) !important;
+  color: var(--color-parchment) !important;
+  font-family: 'MedievalSharp', cursive !important;
+  padding: 0.75rem !important;
+  font-size: 1.1rem !important;
+}
+
+.medieval-input:focus {
+  background: var(--color-wood-medium) !important;
+  border-color: var(--color-gold-bright) !important;
+  box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25) !important;
+  color: var(--color-parchment) !important;
+}
+
+.medieval-input::placeholder {
+  color: var(--color-text-muted) !important;
+  opacity: 0.7 !important;
+}

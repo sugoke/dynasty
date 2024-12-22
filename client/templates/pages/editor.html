@@ -112,6 +112,26 @@
         </div>
       {{/if}}
       
+      <!-- Add this after the element-carousel div -->
+      {{#if isBannerCategory}}
+        <div class="banner-text-input mb-4">
+          <div class="input-group">
+            <input 
+              type="text" 
+              class="form-control medieval-input" 
+              id="bannerText" 
+              placeholder="Enter your text here..." 
+              maxlength="20"
+              value="{{bannerText}}"
+            >
+            <button class="btn btn-medieval" id="updateBannerText">
+              <i class="fas fa-check"></i> Apply
+            </button>
+          </div>
+          <small class="text-muted">Maximum 20 characters</small>
+        </div>
+      {{/if}}
+      
       <!-- Credits display -->
       <div class="credits-display">
         <span class="credits-count">Available Credits: {{credits}}</span>

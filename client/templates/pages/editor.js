@@ -27,6 +27,7 @@ Template.editor.onCreated(function() {
     area4: null
   });
   this.activeImageArea = new ReactiveVar(null);
+  this.bannerText = new ReactiveVar('');
   
   // Subscribe to user's design
   this.autorun(() => {
@@ -201,6 +202,64 @@ Template.editor.onRendered(function() {
     });
   };
 
+  instance.drawBannerText = async () => {
+    const ctx = instance.canvas.getContext('2d');
+    const design = instance.design.get();
+    const text = instance.bannerText.get()?.toUpperCase();
+
+    if (design.banner && design.banner !== 'none' && text) {
+      await new Promise((resolve) => {
+        const bannerImg = new Image();
+        bannerImg.onload = () => {
+          const width = instance.canvas.width * 0.7;
+          const height = instance.canvas.height * 0.2;
+          const x = (instance.canvas.width - width) / 2;
+          const y = instance.canvas.height * 0.65;
+
+          // Draw banner first
+          ctx.drawImage(bannerImg, x, y, width, height);
+
+          // Setup text style with gold gradient
+          ctx.font = 'bold 35px MedievalSharp';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+
+          // Create gold gradient for text
+          const gradient = ctx.createLinearGradient(
+            instance.canvas.width / 2 - 100,
+            0,
+            instance.canvas.width / 2 + 100,
+            0
+          );
+          gradient.addColorStop(0, '#b8860b');    // Darker gold
+          gradient.addColorStop(0.5, '#ffd700');  // Bright gold
+          gradient.addColorStop(1, '#b8860b');    // Darker gold
+          
+          // Apply gradient fill and add text shadow
+          ctx.fillStyle = gradient;
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+          ctx.shadowBlur = 4;
+          ctx.shadowOffsetX = 2;
+          ctx.shadowOffsetY = 2;
+
+          // Draw text slightly lower in the banner
+          const textX = instance.canvas.width / 2;
+          const textY = y + (height * 0.7); // Move text down to 60% of banner height
+          ctx.fillText(text, textX, textY);
+
+          // Reset shadow
+          ctx.shadowColor = 'transparent';
+          ctx.shadowBlur = 0;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+
+          resolve();
+        };
+        bannerImg.src = design.banner;
+      });
+    }
+  };
+
   // Modify existing redrawCanvas to include background images
   instance.redrawCanvas = async () => {
     const ctx = instance.canvas.getContext('2d');
@@ -283,6 +342,9 @@ Template.editor.onRendered(function() {
       loadAndDrawElement(design.crown, 'crown'),
       loadAndDrawElement(design.banner, 'banner')
     ]);
+
+    // Draw banner with text last
+    await instance.drawBannerText();
   };
   
   instance.redrawCanvas();
@@ -427,6 +489,14 @@ Template.editor.helpers({
   
   isFrameCategory() {
     return Template.instance().selectedCategory.get() === 'frame';
+  },
+  
+  isBannerCategory() {
+    return Template.instance().selectedCategory.get() === 'banner';
+  },
+  
+  bannerText() {
+    return Template.instance().bannerText.get();
   }
 });
 
@@ -612,5 +682,19 @@ Template.editor.events({
     instance.activeImageArea.set(area);
     const modal = new bootstrap.Modal(document.getElementById('imagePickerModal'));
     modal.show();
+  },
+  
+  'click #updateBannerText'(event, instance) {
+    const text = instance.$("#bannerText").val();
+    instance.bannerText.set(text);
+    instance.redrawCanvas();
+  },
+  
+  'keypress #bannerText'(event, instance) {
+    if (event.key === 'Enter') {
+      const text = instance.$("#bannerText").val();
+      instance.bannerText.set(text);
+      instance.redrawCanvas();
+    }
   }
 });
