@@ -25,9 +25,34 @@ const SYMBOL_CATEGORIES = [
   {
     name: 'Symbols',
     images: [
-      '/images/symbols/symbols/symbol1.png',
-      '/images/symbols/symbols/symbol2.png'
-      // Add more symbols as needed
+      '/images/symbols/symbols/arrow.png',
+      '/images/symbols/symbols/boat.png',
+      '/images/symbols/symbols/book.png',
+      '/images/symbols/symbols/caduceus.png',
+      '/images/symbols/symbols/chessknight.png',
+      '/images/symbols/symbols/chevron.png',
+      '/images/symbols/symbols/cobra.png',
+      '/images/symbols/symbols/cogs.png',
+      '/images/symbols/symbols/compass.png',
+      '/images/symbols/symbols/cross.png',
+      '/images/symbols/symbols/davidstart.png',
+      '/images/symbols/symbols/dove.png',
+      '/images/symbols/symbols/gorgon.png',
+      '/images/symbols/symbols/hammer.png',
+      '/images/symbols/symbols/harp.png',
+      '/images/symbols/symbols/key.png',
+      '/images/symbols/symbols/knight3.png',
+      '/images/symbols/symbols/moon.png',
+      '/images/symbols/symbols/muslimmoon.png',
+      '/images/symbols/symbols/oaktree.png',
+      '/images/symbols/symbols/penfeather.png',
+      '/images/symbols/symbols/rooster.png',
+      '/images/symbols/symbols/rose.png',
+      '/images/symbols/symbols/skull.png',
+      '/images/symbols/symbols/sun.png',
+      '/images/symbols/symbols/sword.png',
+      '/images/symbols/symbols/trebuchet.png',
+      '/images/symbols/symbols/trefle.png'
     ]
   }
 ];
@@ -305,29 +330,42 @@ Template.editor.onRendered(function() {
         return;
       }
       
-      console.log(`Loading element: ${src} for position: ${position}`); // Debug log
+      console.log(`Loading element: ${src} for position: ${position}`);
       
       const img = new Image();
       img.onload = () => {
         let width, height, x, y;
         const ctx = instance.canvas.getContext('2d');
+        const layout = instance.selectedLayout.get(); // Get current layout
         
-        if (position === 'frame') {
+        if (position === 'symbol') {
+          // Adjust symbol size based on layout
+          const baseWidth = instance.canvas.width * 0.08;
+          width = layout === '1' ? baseWidth / 2 : baseWidth; // Half size in single mode
+          const aspectRatio = img.naturalHeight / img.naturalWidth;
+          height = width * aspectRatio;
+          x = (instance.canvas.width - width) / 2;
+          y = (instance.canvas.height - height) / 2;
+          ctx.drawImage(img, x, y, width, height);
+        } else if (position === 'frame') {
           width = instance.canvas.width * 0.85;
           height = instance.canvas.height * 0.85;
           x = (instance.canvas.width - width) / 2;
           y = (instance.canvas.height - height) / 2;
           ctx.drawImage(img, x, y, width, height);
-          console.log(`Drew frame: ${src}`); // Debug log
         } else if (position === 'leftAnimal') {
+          // Calculate height maintaining aspect ratio for people and animals
           width = instance.canvas.width * 0.3;
-          height = instance.canvas.height * 0.3;
+          const aspectRatio = img.naturalHeight / img.naturalWidth;
+          height = width * aspectRatio;
           x = instance.canvas.width * 0.1;
           y = instance.canvas.height * 0.35;
           ctx.drawImage(img, x, y, width, height);
         } else if (position === 'rightAnimal') {
+          // Calculate height maintaining aspect ratio for people and animals
           width = instance.canvas.width * 0.3;
-          height = instance.canvas.height * 0.3;
+          const aspectRatio = img.naturalHeight / img.naturalWidth;
+          height = width * aspectRatio;
           x = instance.canvas.width * 0.6;
           y = instance.canvas.height * 0.35;
           
@@ -337,12 +375,9 @@ Template.editor.onRendered(function() {
           ctx.drawImage(img, 0, 0, width, height);
           ctx.restore();
         } else if (position === 'crown') {
-          // Set width to 25% of canvas width
           width = instance.canvas.width * 0.25;
-          // Calculate height maintaining aspect ratio
           const aspectRatio = img.naturalHeight / img.naturalWidth;
           height = width * aspectRatio;
-          // Position crown
           x = (instance.canvas.width - width) / 2;
           y = instance.canvas.height * 0.1;
           ctx.drawImage(img, x, y, width, height);
@@ -358,21 +393,15 @@ Template.editor.onRendered(function() {
           x = (instance.canvas.width - width) / 2;
           y = (instance.canvas.height - height) / 2;
           
-          // Save context state
           ctx.save();
-          // Set 50% transparency
           ctx.globalAlpha = 0.5;
-          // Draw laurel
           ctx.drawImage(img, x, y, width, height);
-          // Restore context state
           ctx.restore();
-          
-          console.log(`Drew laurel: ${src}`); // Debug log
         }
         resolve();
       };
       img.onerror = () => {
-        console.error(`Failed to load image: ${src}`); // Debug log for failed loads
+        console.error(`Failed to load image: ${src}`);
         resolve();
       };
       img.src = src;
@@ -481,6 +510,14 @@ Template.editor.helpers({
       '/images/lions/lion2.png',
       '/images/lions/lion3.png',
       '/images/lions/lion4.png',
+      // People
+      
+      '/images/people/knight.png',
+      '/images/people/knight2.png',
+      '/images/people/mermaid.png',
+      '/images/people/roman.png',
+      '/images/people/viking.png',
+     
       // Unicorns
       '/images/unicorns/unicorn1.png',
       '/images/unicorns/unicorn2.png',
@@ -503,9 +540,34 @@ Template.editor.helpers({
     // Add symbols options
     const symbolOptions = [
       'none',
-      '/images/symbols/symbols/symbol1.png',
-      '/images/symbols/symbols/symbol2.png'
-      // Add more symbols as needed
+      '/images/symbols/symbols/arrow.png',
+      '/images/symbols/symbols/boat.png',
+      '/images/symbols/symbols/book.png',
+      '/images/symbols/symbols/caduceus.png',
+      '/images/symbols/symbols/chessknight.png',
+      '/images/symbols/symbols/chevron.png',
+      '/images/symbols/symbols/cobra.png',
+      '/images/symbols/symbols/cogq.png',
+      '/images/symbols/symbols/compass.png',
+      '/images/symbols/symbols/cross.png',
+      '/images/symbols/symbols/davidstart.png',
+      '/images/symbols/symbols/dove.png',
+      '/images/symbols/symbols/gorgon.png',
+      '/images/symbols/symbols/hammer.png',
+      '/images/symbols/symbols/harp.png',
+      '/images/symbols/symbols/key.png',
+      '/images/symbols/symbols/knight3.png',
+      '/images/symbols/symbols/moon.png',
+      '/images/symbols/symbols/muslimmoon.png',
+      '/images/symbols/symbols/oaktree.png',
+      '/images/symbols/symbols/penfeather.png',
+      '/images/symbols/symbols/rooster.png',
+      '/images/symbols/symbols/rose.png',
+      '/images/symbols/symbols/skull.png',
+      '/images/symbols/symbols/sun.png',
+      '/images/symbols/symbols/sword.png',
+      '/images/symbols/symbols/trebuchet.png',
+      '/images/symbols/symbols/trefle.png'
     ];
     
     // Return array of image URLs based on type
