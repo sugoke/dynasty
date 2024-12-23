@@ -1880,3 +1880,91 @@ body .modal .btn-secondary:hover,
   color: var(--color-text-muted) !important;
   opacity: 0.7 !important;
 }
+
+/* Update button group styles */
+.element-categories .btn-group {
+  display: flex !important;
+  width: 100% !important;
+  max-width: 800px !important;
+  gap: 8px !important;
+}
+
+.element-categories .btn-group .btn {
+  flex: 1 1 0 !important;  /* Make all buttons take equal space */
+  min-width: 0 !important; /* Allow buttons to shrink below content width */
+  padding: 0.75rem 0.5rem !important;
+  white-space: nowrap !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.element-categories .btn-group .btn i {
+  margin-right: 0.5rem !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .element-categories .btn-group {
+    flex-direction: column !important;
+  }
+  
+  .element-categories .btn-group .btn {
+    width: 100% !important;
+  }
+}
+
+/* Symbol category styles */
+.symbol-category {
+  margin-bottom: 2rem !important;
+}
+
+.symbol-category:last-child {
+  margin-bottom: 0 !important;
+}
+
+.category-title {
+  font-family: 'MedievalSharp', cursive !important;
+  color: var(--color-wood) !important;
+  margin-bottom: 1rem !important;
+  padding-bottom: 0.5rem !important;
+  border-bottom: 1px solid var(--color-dark-brown) !important;
+}
+
+/* Update image grid for categories */
+.symbol-category .image-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) !important;
+  gap: 1rem !important;
+  margin-bottom: 1rem !important;
+}
+
+/* Category selector styles */
+.category-selector {
+  max-width: 300px !important;
+  margin: 0 auto 2rem !important;
+}
+
+.medieval-select {
+  background: var(--color-wood) !important;
+  border: 1px solid var(--color-gold) !important;
+  color: var(--color-parchment) !important;
+  font-family: 'MedievalSharp', cursive !important;
+  padding: 0.75rem !important;
+  font-size: 1.1rem !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+}
+
+.medieval-select:focus {
+  background: var(--color-wood-medium) !important;
+  border-color: var(--color-gold-bright) !important;
+  box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25) !important;
+  color: var(--color-parchment) !important;
+}
+
+.medieval-select option {
+  background: var(--color-wood) !important;
+  color: var(--color-parchment) !important;
+  padding: 0.5rem !important;
+}

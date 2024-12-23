@@ -9,16 +9,43 @@ if (Meteor.settings.public?.stripe?.publicKey) {
   stripe = window.Stripe(Meteor.settings.public.stripe.publicKey);
 }
 
+// Add this constant at the top of the file, after the imports
+const SYMBOL_CATEGORIES = [
+  {
+    name: 'Flags',
+    images: [
+      '/images/symbols/flags/france.png',
+      '/images/symbols/flags/italy.png',
+      '/images/symbols/flags/russia.png',
+      '/images/symbols/flags/sweden.png',
+      '/images/symbols/flags/belarus.png',
+      '/images/symbols/flags/monaco.png'
+    ]
+  },
+  {
+    name: 'Symbols',
+    images: [
+      '/images/symbols/symbols/symbol1.png',
+      '/images/symbols/symbols/symbol2.png'
+      // Add more symbols as needed
+    ]
+  }
+];
+
 Template.editor.onCreated(function() {
   this.selectedCategory = new ReactiveVar(null);
   this.selectedElement = new ReactiveVar(null);
-  this.design = new ReactiveVar({
-    frame: null,
+  // Set initial design state with both frame files
+  const initialDesign = {
+    frame: '/images/frames/frame1.png',
+    frameNoBg: '/images/frames/frame1-nbg.png',
     leftAnimal: null,
     rightAnimal: null,
     crown: null,
-    banner: null
-  });
+    banner: null,
+    laurel: null
+  };
+  this.design = new ReactiveVar(initialDesign);
   this.selectedLayout = new ReactiveVar('1');
   this.backgroundImages = new ReactiveVar({
     area1: null,
@@ -28,14 +55,18 @@ Template.editor.onCreated(function() {
   });
   this.activeImageArea = new ReactiveVar(null);
   this.bannerText = new ReactiveVar('');
+  this.selectedSymbolCategory = new ReactiveVar('Flags'); // Default to Flags
   
   // Subscribe to user's design
   this.autorun(() => {
     this.subscribe('userDesign', () => {
-      // Load saved design when subscription is ready
       const savedDesign = Designs.findOne({ userId: Meteor.userId() });
       if (savedDesign?.design) {
-        this.design.set(savedDesign.design);
+        const design = savedDesign.design;
+        if (design.frame && !design.frameNoBg) {
+          design.frameNoBg = design.frame.replace('.png', '-nbg.png');
+        }
+        this.design.set(design);
         this.redrawCanvas();
       }
     });
@@ -86,6 +117,12 @@ Template.editor.onRendered(function() {
         height = canvas.height * 0.2;
         x = (canvas.width - width) / 2;
         y = canvas.height * 0.65;
+      } else if (src.includes('laurel')) {
+        // Laurel positioning - slightly smaller
+        width = canvas.width * 0.85;  // Decreased from 0.95
+        height = canvas.height * 0.85; // Decreased from 0.95
+        x = (canvas.width - width) / 2;
+        y = (canvas.height - height) / 2;
       }
       
       ctx.drawImage(img, x, y, width, height);
@@ -260,90 +297,128 @@ Template.editor.onRendered(function() {
     }
   };
 
-  // Modify existing redrawCanvas to include background images
+  // Add this function inside Template.editor.onRendered before redrawCanvas
+  const loadAndDrawElement = (src, position) => {
+    return new Promise((resolve) => {
+      if (!src || src === 'none') {
+        resolve();
+        return;
+      }
+      
+      console.log(`Loading element: ${src} for position: ${position}`); // Debug log
+      
+      const img = new Image();
+      img.onload = () => {
+        let width, height, x, y;
+        const ctx = instance.canvas.getContext('2d');
+        
+        if (position === 'frame') {
+          width = instance.canvas.width * 0.85;
+          height = instance.canvas.height * 0.85;
+          x = (instance.canvas.width - width) / 2;
+          y = (instance.canvas.height - height) / 2;
+          ctx.drawImage(img, x, y, width, height);
+          console.log(`Drew frame: ${src}`); // Debug log
+        } else if (position === 'leftAnimal') {
+          width = instance.canvas.width * 0.3;
+          height = instance.canvas.height * 0.3;
+          x = instance.canvas.width * 0.1;
+          y = instance.canvas.height * 0.35;
+          ctx.drawImage(img, x, y, width, height);
+        } else if (position === 'rightAnimal') {
+          width = instance.canvas.width * 0.3;
+          height = instance.canvas.height * 0.3;
+          x = instance.canvas.width * 0.6;
+          y = instance.canvas.height * 0.35;
+          
+          ctx.save();
+          ctx.translate(x + width, y);
+          ctx.scale(-1, 1);
+          ctx.drawImage(img, 0, 0, width, height);
+          ctx.restore();
+        } else if (position === 'crown') {
+          // Set width to 25% of canvas width
+          width = instance.canvas.width * 0.25;
+          // Calculate height maintaining aspect ratio
+          const aspectRatio = img.naturalHeight / img.naturalWidth;
+          height = width * aspectRatio;
+          // Position crown
+          x = (instance.canvas.width - width) / 2;
+          y = instance.canvas.height * 0.1;
+          ctx.drawImage(img, x, y, width, height);
+        } else if (position === 'banner') {
+          width = instance.canvas.width * 0.7;
+          height = instance.canvas.height * 0.2;
+          x = (instance.canvas.width - width) / 2;
+          y = instance.canvas.height * 0.65;
+          ctx.drawImage(img, x, y, width, height);
+        } else if (position === 'laurel') {
+          width = instance.canvas.width * 0.85;
+          height = instance.canvas.height * 0.85;
+          x = (instance.canvas.width - width) / 2;
+          y = (instance.canvas.height - height) / 2;
+          
+          // Save context state
+          ctx.save();
+          // Set 50% transparency
+          ctx.globalAlpha = 0.5;
+          // Draw laurel
+          ctx.drawImage(img, x, y, width, height);
+          // Restore context state
+          ctx.restore();
+          
+          console.log(`Drew laurel: ${src}`); // Debug log
+        }
+        resolve();
+      };
+      img.onerror = () => {
+        console.error(`Failed to load image: ${src}`); // Debug log for failed loads
+        resolve();
+      };
+      img.src = src;
+    });
+  };
+
+  // Then modify redrawCanvas to use this function
   instance.redrawCanvas = async () => {
     const ctx = instance.canvas.getContext('2d');
     const design = instance.design.get();
     
+    console.log('Current design state:', design); // Debug log
+    
     // Clear canvas first
     ctx.clearRect(0, 0, instance.canvas.width, instance.canvas.height);
     
-    // Draw background images first
+    // Draw elements sequentially to ensure correct z-index
+    // We'll avoid Promise.all to guarantee drawing order
+    
+    // 1. Background flags (bottom)
     await instance.drawBackgroundImages();
     
-    // Load and draw frame
-    if (design.frame && design.frame !== 'none') {
-      await new Promise((resolve) => {
-        const frameImg = new Image();
-        frameImg.onload = () => {
-          const width = instance.canvas.width * 0.85;
-          const height = instance.canvas.height * 0.85;
-          const x = (instance.canvas.width - width) / 2;
-          const y = (instance.canvas.height - height) / 2;
-          ctx.drawImage(frameImg, x, y, width, height);
-          resolve();
-        };
-        frameImg.src = design.frame;
-      });
+    // 2. Frame with background
+    await loadAndDrawElement(design.frame, 'frame');
+    
+    // 3. Laurels
+    await loadAndDrawElement(design.laurel, 'laurel');
+    
+    // 4. Banner
+    await loadAndDrawElement(design.banner, 'banner');
+    
+    // 5. Frame without background (-nbg version)
+    if (design.frame && !design.frameNoBg) {
+      design.frameNoBg = design.frame.replace('.png', '-nbg.png');
+      instance.design.set(design);
     }
+    await loadAndDrawElement(design.frameNoBg, 'frame');
     
-    // Draw other elements (animals, crown, banner)
-    const loadAndDrawElement = (src, position) => {
-      return new Promise((resolve) => {
-        if (!src || src === 'none') {
-          resolve();
-          return;
-        }
-        
-        const img = new Image();
-        img.onload = () => {
-          let width, height, x, y;
-          
-          if (position === 'leftAnimal') {
-            width = instance.canvas.width * 0.3;
-            height = instance.canvas.height * 0.3;
-            x = instance.canvas.width * 0.1;
-            y = instance.canvas.height * 0.35;
-            ctx.drawImage(img, x, y, width, height);
-          } else if (position === 'rightAnimal') {
-            width = instance.canvas.width * 0.3;
-            height = instance.canvas.height * 0.3;
-            x = instance.canvas.width * 0.6;
-            y = instance.canvas.height * 0.35;
-            
-            ctx.save();
-            ctx.translate(x + width, y);
-            ctx.scale(-1, 1);
-            ctx.drawImage(img, 0, 0, width, height);
-            ctx.restore();
-          } else if (position === 'crown') {
-            width = instance.canvas.width * 0.25;
-            height = width * 0.8;
-            x = (instance.canvas.width - width) / 2;
-            y = instance.canvas.height * 0.1;
-            ctx.drawImage(img, x, y, width, height);
-          } else if (position === 'banner') {
-            width = instance.canvas.width * 0.7;
-            height = instance.canvas.height * 0.2;
-            x = (instance.canvas.width - width) / 2;
-            y = instance.canvas.height * 0.65;
-            ctx.drawImage(img, x, y, width, height);
-          }
-          resolve();
-        };
-        img.src = src;
-      });
-    };
+    // 6. Crown
+    await loadAndDrawElement(design.crown, 'crown');
     
-    // Draw all elements in order
-    await Promise.all([
-      loadAndDrawElement(design.leftAnimal, 'leftAnimal'),
-      loadAndDrawElement(design.rightAnimal, 'rightAnimal'),
-      loadAndDrawElement(design.crown, 'crown'),
-      loadAndDrawElement(design.banner, 'banner')
-    ]);
+    // 7. Animals (top layer)
+    await loadAndDrawElement(design.leftAnimal, 'leftAnimal');
+    await loadAndDrawElement(design.rightAnimal, 'rightAnimal');
 
-    // Draw banner with text last
+    // Draw banner text last
     await instance.drawBannerText();
   };
   
@@ -414,13 +489,48 @@ Template.editor.helpers({
       '/images/wolves/wolf2.png'
     ];
     
+    // Update flag paths
+    const flagImages = [
+      'none',
+      '/images/symbols/flags/france.png',
+      '/images/symbols/flags/italy.png',
+      '/images/symbols/flags/russia.png',
+      '/images/symbols/flags/sweden.png',
+      '/images/symbols/flags/belarus.png',
+      '/images/symbols/flags/monaco.png'
+    ];
+
+    // Add symbols options
+    const symbolOptions = [
+      'none',
+      '/images/symbols/symbols/symbol1.png',
+      '/images/symbols/symbols/symbol2.png'
+      // Add more symbols as needed
+    ];
+    
     // Return array of image URLs based on type
     const options = {
       frame: ['none', '/images/frames/frame1.png', '/images/frames/frame2.png'],
       leftAnimal: animalOptions,
       rightAnimal: animalOptions,
-      crown: ['none', '/images/crowns/crown1.png', '/images/crowns/crown2.png'],
-      banner: ['none', '/images/banners/redbanner.png']
+      crown: [
+        'none',
+        '/images/crowns/crown1.png',
+        '/images/crowns/crown2.png',
+        '/images/crowns/crown3.png',
+        '/images/crowns/feather1.png',
+        '/images/crowns/feather2.png',
+        '/images/crowns/helmet1.png',
+        '/images/crowns/helmet2.png',
+        '/images/crowns/shield.png',
+        '/images/crowns/star1.png',
+        '/images/crowns/star2.png',
+        '/images/crowns/viking.png'
+      ],
+      banner: ['none', '/images/banners/redbanner.png'],
+      laurel: ['none', '/images/laurels/laurels.png', '/images/laurels/laurels2.png'],
+      flags: flagImages,
+      symbols: symbolOptions
     };
     
     return options[type] || [];
@@ -470,12 +580,12 @@ Template.editor.helpers({
   
   flagImages() {
     return [
-      '/images/flags/france.png',
-      '/images/flags/italy.png',
-      '/images/flags/russia.png',
-      '/images/flags/sweden.png',
-      '/images/flags/belarus.png',
-      '/images/flags/monaco.png'
+      '/images/symbols/flags/france.png',
+      '/images/symbols/flags/italy.png',
+      '/images/symbols/flags/russia.png',
+      '/images/symbols/flags/sweden.png',
+      '/images/symbols/flags/belarus.png',
+      '/images/symbols/flags/monaco.png'
     ];
   },
   
@@ -497,6 +607,36 @@ Template.editor.helpers({
   
   bannerText() {
     return Template.instance().bannerText.get();
+  },
+  
+  symbolCategories() {
+    return SYMBOL_CATEGORIES;
+  },
+  
+  symbolCategoryNames() {
+    return SYMBOL_CATEGORIES.map(cat => cat.name);
+  },
+  
+  currentCategoryImages() {
+    const currentCategory = Template.instance().selectedSymbolCategory.get();
+    const category = SYMBOL_CATEGORIES.find(cat => cat.name === currentCategory);
+    return category ? category.images : [];
+  },
+  
+  getSymbolName(url) {
+    const match = url.match(/\/([^\/]+)\/([^\/]+)\.png$/);
+    if (match) {
+      return match[2].charAt(0).toUpperCase() + match[2].slice(1);
+    }
+    return '';
+  },
+  
+  selectedSymbolCategory() {
+    return Template.instance().selectedSymbolCategory.get();
+  },
+  
+  isSelectedCategory(name) {
+    return Template.instance().selectedSymbolCategory.get() === name;
   }
 });
 
@@ -519,6 +659,9 @@ Template.editor.events({
       case 'banner':
         instance.selectedElement.set('banner');
         break;
+      case 'laurel':
+        instance.selectedElement.set('laurel');
+        break;
     }
   },
   
@@ -531,7 +674,23 @@ Template.editor.events({
     const type = instance.selectedElement.get();
     const url = event.currentTarget.dataset.url;
     const design = instance.design.get();
-    design[type] = url;
+    
+    if (type === 'frame') {
+      if (url === 'none') {
+        design.frame = null;
+        design.frameNoBg = null;
+      } else {
+        design.frame = url;
+        design.frameNoBg = url.replace('.png', '-nbg.png');
+      }
+    } else {
+      design[type] = url === 'none' ? null : url;
+    }
+    
+    if (design.frame && !design.frameNoBg) {
+      design.frameNoBg = design.frame.replace('.png', '-nbg.png');
+    }
+    
     instance.design.set(design);
     instance.redrawCanvas();
   },
@@ -544,11 +703,13 @@ Template.editor.events({
   
   'click #confirmReset'(event, instance) {
     const emptyDesign = {
-      frame: null,
+      frame: '/images/frames/frame1.png',
+      frameNoBg: '/images/frames/frame1-nbg.png',
       leftAnimal: null,
       rightAnimal: null,
       crown: null,
-      banner: null
+      banner: null,
+      laurel: null
     };
     instance.design.set(emptyDesign);
     instance.redrawCanvas();
@@ -564,10 +725,12 @@ Template.editor.events({
     // Ensure all values are either strings or null
     const cleanDesign = {
       frame: design.frame || null,
+      frameNoBg: design.frameNoBg || null,
       leftAnimal: design.leftAnimal || null,
       rightAnimal: design.rightAnimal || null,
       crown: design.crown || null,
-      banner: design.banner || null
+      banner: design.banner || null,
+      laurel: design.laurel || null
     };
     
     Meteor.call('saveDesign', cleanDesign, (error) => {
@@ -696,5 +859,13 @@ Template.editor.events({
       instance.bannerText.set(text);
       instance.redrawCanvas();
     }
+  },
+  
+  'change #symbolCategorySelect'(event, instance) {
+    instance.selectedSymbolCategory.set(event.target.value);
   }
+});
+
+Template.registerHelper('eq', function(a, b) {
+  return a === b;
 });

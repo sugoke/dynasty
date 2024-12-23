@@ -54,6 +54,9 @@
           <button type="button" class="btn btn-medieval element-category {{#if isActiveCategory 'banner'}}active{{/if}}" data-category="banner">
             <i class="fas fa-flag"></i> Banners
           </button>
+          <button type="button" class="btn btn-medieval element-category {{#if isActiveCategory 'laurel'}}active{{/if}}" data-category="laurel">
+            <i class="fas fa-leaf"></i> Laurels
+          </button>
         </div>
         
         <!-- Show layout selector only when frame category is active -->
@@ -214,17 +217,28 @@
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Choose Flag</h5>
+          <h5 class="modal-title">Choose Symbol</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div class="image-grid">
-            {{#each flagImages}}
-              <div class="image-option" data-url="{{this}}">
-                <img src="{{this}}" alt="Flag option">
-                <div class="image-name">{{getFlagName this}}</div>
-              </div>
-            {{/each}}
+          <div class="category-selector mb-4">
+            <select id="symbolCategorySelect" class="form-select medieval-select">
+              {{#each name in symbolCategoryNames}}
+                <option value="{{name}}" selected={{isSelectedCategory name}}>
+                  {{name}}
+                </option>
+              {{/each}}
+            </select>
+          </div>
+          <div class="symbol-category">
+            <div class="image-grid">
+              {{#each image in currentCategoryImages}}
+                <div class="image-option" data-url="{{image}}">
+                  <img src="{{image}}" alt="Symbol option">
+                  <div class="image-name">{{getSymbolName image}}</div>
+                </div>
+              {{/each}}
+            </div>
           </div>
         </div>
         <div class="modal-footer">
