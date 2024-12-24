@@ -157,99 +157,163 @@ Template.editor.onRendered(function() {
   };
   
   instance.drawBackgroundImages = async () => {
-    const ctx = instance.canvas.getContext('2d');
+    const ctx = instance.ctx;
     const layout = instance.selectedLayout.get();
     const images = instance.backgroundImages.get();
-    const design = instance.design.get();
     
-    // Direct 55% of canvas for inner area
+    // The "inner area" is the 55% zone in the middle where flags/symbols go
     const innerWidth = instance.canvas.width * 0.55;
     const innerHeight = instance.canvas.height * 0.55;
     const innerX = (instance.canvas.width - innerWidth) / 2;
     const innerY = (instance.canvas.height - innerHeight) / 2;
 
-    // Calculate flag sizes based on layout
-    let flagWidth, flagHeight;
+    // For each area, compute x,y,w,h depending on layout
+    let areaCoordinates = [];
+
     if (layout === '1') {
-      flagWidth = innerWidth;
-      flagHeight = innerHeight;
+      areaCoordinates = [
+        { area: 'area1', x: innerX, y: innerY, w: innerWidth, h: innerHeight }
+      ];
     } else if (layout === '2') {
-      flagWidth = innerWidth / 2;
-      flagHeight = innerHeight;
-    } else { // layout === '4'
-      flagWidth = innerWidth / 2;
-      flagHeight = innerHeight / 2;
+      const halfW = innerWidth / 2;
+      areaCoordinates = [
+        { area: 'area1', x: innerX, y: innerY, w: halfW, h: innerHeight },
+        { area: 'area2', x: innerX + halfW, y: innerY, w: halfW, h: innerHeight }
+      ];
+    } else if (layout === '4') {
+      const halfW = innerWidth / 2;
+      const halfH = innerHeight / 2;
+      areaCoordinates = [
+        { area: 'area1', x: innerX, y: innerY, w: halfW, h: halfH },
+        { area: 'area2', x: innerX + halfW, y: innerY, w: halfW, h: halfH },
+        { area: 'area3', x: innerX, y: innerY + halfH, w: halfW, h: halfH },
+        { area: 'area4', x: innerX + halfW, y: innerY + halfH, w: halfW, h: halfH }
+      ];
     }
 
-    // Draw flags based on layout
-    if (layout === '1' && images.area1) {
-      await drawImageInArea(ctx, images.area1, 
-        innerX, 
-        innerY, 
-        flagWidth, 
-        flagHeight);
-    } 
-    else if (layout === '2') {
-      if (images.area1) {
-        await drawImageInArea(ctx, images.area1, 
-          innerX, 
-          innerY, 
-          flagWidth, 
-          flagHeight);
-      }
-      if (images.area2) {
-        await drawImageInArea(ctx, images.area2, 
-          innerX + flagWidth, 
-          innerY, 
-          flagWidth, 
-          flagHeight);
-      }
-    } 
-    else if (layout === '4') {
-      if (images.area1) {
-        await drawImageInArea(ctx, images.area1, 
-          innerX, 
-          innerY, 
-          flagWidth, 
-          flagHeight);
-      }
-      if (images.area2) {
-        await drawImageInArea(ctx, images.area2, 
-          innerX + flagWidth, 
-          innerY, 
-          flagWidth, 
-          flagHeight);
-      }
-      if (images.area3) {
-        await drawImageInArea(ctx, images.area3, 
-          innerX, 
-          innerY + flagHeight, 
-          flagWidth, 
-          flagHeight);
-      }
-      if (images.area4) {
-        await drawImageInArea(ctx, images.area4, 
-          innerX + flagWidth, 
-          innerY + flagHeight, 
-          flagWidth, 
-          flagHeight);
-      }
-    }
+    // For each area, draw the image if it exists
+    for (const areaInfo of areaCoordinates) {
+      const src = images[areaInfo.area];
+      if (!src || src === 'none') continue;
 
-    // Draw crown if selected
-    if (design.crown && design.crown !== 'none') {
-      await new Promise((resolve) => {
-        const crownImg = new Image();
-        crownImg.onload = () => {
-          const crownWidth = instance.canvas.width * 0.3;
-          const crownHeight = instance.canvas.height * 0.2;
-          const crownX = (instance.canvas.width - crownWidth) / 2;
-          const crownY = instance.canvas.height * 0.1; // Position at top
-          ctx.drawImage(crownImg, crownX, crownY, crownWidth, crownHeight);
+      // If it's a symbol (in /symbols/symbols/) and not a flag, do half-size & corner anchoring
+      const isSymbol = src.includes('/symbols/symbols/');
+      
+      if (isSymbol) {
+        // Symbol logic
+        const img = new Image();
+        await new Promise((resolve) => {
+          img.onload = () => { resolve(); };
+          img.onerror = () => { resolve(); };
+          img.src = src;
+        });
+
+        if (img.naturalWidth && img.naturalHeight) {
+          let targetW = areaInfo.w * 0.5;
+          const aspectRatio = img.naturalHeight / img.naturalWidth;
+          let targetH = targetW * aspectRatio;
+          let cornerX = 0;
+          let cornerY = 0;
+          
+          if (layout === '1') {
+            // Single mode: 50% size and centered
+            targetW = areaInfo.w * 0.5;
+            targetH = targetW * aspectRatio;
+            cornerX = areaInfo.x + (areaInfo.w - targetW) / 2;
+            cornerY = areaInfo.y + (areaInfo.h - targetH) / 2;
+          } else if (layout === '2') {
+            // Split mode: maintain aspect ratio and align to middle divider
+            targetW = areaInfo.w * 0.5;  // Base width at 50%
+            targetH = targetW * aspectRatio; // Keep aspect ratio
+            cornerY = areaInfo.y + (areaInfo.h - targetH) / 2; // Center vertically
+            
+            if (areaInfo.area === 'area1') {
+              cornerX = areaInfo.x + areaInfo.w - targetW; // Right align for left area
+            } else {
+              cornerX = areaInfo.x; // Left align for right area
+            }
+          } else if (layout === '4') {
+            // Quad mode remains unchanged
+            switch (areaInfo.area) {
+              case 'area1':
+                cornerX = areaInfo.x + areaInfo.w - targetW;
+                cornerY = areaInfo.y + areaInfo.h - targetH;
+                break;
+              case 'area2':
+                cornerX = areaInfo.x;
+                cornerY = areaInfo.y + areaInfo.h - targetH;
+                break;
+              case 'area3':
+                cornerX = areaInfo.x + areaInfo.w - targetW;
+                cornerY = areaInfo.y;
+                break;
+              case 'area4':
+                cornerX = areaInfo.x;
+                cornerY = areaInfo.y;
+                break;
+            }
+          }
+
+          ctx.drawImage(img, cornerX, cornerY, targetW, targetH);
+        }
+      } else {
+        // Flag logic
+        const img = new Image();
+        await new Promise((resolve) => {
+          img.onload = () => {
+            let flagWidth = areaInfo.w;
+            let flagHeight = areaInfo.h;
+            let flagX = areaInfo.x;
+            let flagY = areaInfo.y;
+            
+            if (layout === '1') {
+              // Single mode: 50% base size + 50% for flags only
+              flagWidth *= 0.5 * 1.5;  // 50% width + 50%
+              flagHeight *= 0.5 * 1.5; // 50% height + 50%
+              flagX = areaInfo.x + (areaInfo.w - flagWidth) / 2;
+              flagY = areaInfo.y + (areaInfo.h - flagHeight) / 2;
+            } else if (layout === '2') {
+              // Split mode: 50% base size + 30% width and 50% height
+              flagWidth *= 0.5 * 1.3;  // 50% width + 20% + 10% = 50% * 1.3
+              flagHeight *= 0.5 * 1.5; // Height stays the same
+              flagY = areaInfo.y + (areaInfo.h - flagHeight) / 2; // Recenter vertically
+              
+              if (areaInfo.area === 'area1') {
+                flagX = areaInfo.x + areaInfo.w - flagWidth; // Right side
+              } else {
+                flagX = areaInfo.x; // Left side
+              }
+            } else if (layout === '4') {
+              // Quad mode remains unchanged
+              flagWidth *= 0.75;
+              flagHeight *= 0.75;
+              switch (areaInfo.area) {
+                case 'area1':
+                  flagX = areaInfo.x + areaInfo.w - flagWidth;
+                  flagY = areaInfo.y + areaInfo.h - flagHeight;
+                  break;
+                case 'area2':
+                  flagX = areaInfo.x;
+                  flagY = areaInfo.y + areaInfo.h - flagHeight;
+                  break;
+                case 'area3':
+                  flagX = areaInfo.x + areaInfo.w - flagWidth;
+                  flagY = areaInfo.y;
+                  break;
+                case 'area4':
+                  flagX = areaInfo.x;
+                  flagY = areaInfo.y;
+                  break;
+              }
+            }
+            
+            ctx.drawImage(img, flagX, flagY, flagWidth, flagHeight);
           resolve();
         };
-        crownImg.src = design.crown;
+          img.onerror = () => { resolve(); };
+          img.src = src;
       });
+      }
     }
   };
 
@@ -323,29 +387,44 @@ Template.editor.onRendered(function() {
   };
 
   // Add this function inside Template.editor.onRendered before redrawCanvas
-  const loadAndDrawElement = (src, position) => {
-    return new Promise((resolve) => {
-      if (!src || src === 'none') {
-        resolve();
-        return;
-      }
+    const loadAndDrawElement = (src, position) => {
+      return new Promise((resolve) => {
+        if (!src || src === 'none') {
+          resolve();
+          return;
+        }
       
       console.log(`Loading element: ${src} for position: ${position}`);
-      
-      const img = new Image();
-      img.onload = () => {
-        let width, height, x, y;
+        
+        const img = new Image();
+        img.onload = () => {
+          let width, height, x, y;
         const ctx = instance.canvas.getContext('2d');
         const layout = instance.selectedLayout.get(); // Get current layout
         
         if (position === 'symbol') {
-          // Adjust symbol size based on layout
+          // Adjust symbol size based on layout and category
           const baseWidth = instance.canvas.width * 0.08;
-          width = layout === '1' ? baseWidth / 2 : baseWidth; // Half size in single mode
+          const isSymbolCategory = src.includes('/symbols/symbols/'); // Check if it's from symbols category
+          const scaleFactor = isSymbolCategory ? 0.1 : 1; // 10% size for symbols, full size for flags
+          
+          width = layout === '1' ? 
+            (baseWidth / 2) * scaleFactor : // Single mode
+            baseWidth * scaleFactor;        // Split/Quad mode
+            
           const aspectRatio = img.naturalHeight / img.naturalWidth;
           height = width * aspectRatio;
-          x = (instance.canvas.width - width) / 2;
-          y = (instance.canvas.height - height) / 2;
+          
+          // Calculate center of the active grid area (55% of canvas is the inner area)
+          const innerWidth = instance.canvas.width * 0.55;
+          const innerHeight = instance.canvas.height * 0.55;
+          const innerX = (instance.canvas.width - innerWidth) / 2;
+          const innerY = (instance.canvas.height - innerHeight) / 2;
+          
+          // Center in the active grid area
+          x = innerX + (innerWidth - width) / 2;
+          y = innerY + (innerHeight - height) / 2;
+          
           ctx.drawImage(img, x, y, width, height);
         } else if (position === 'frame') {
           width = instance.canvas.width * 0.85;
@@ -355,38 +434,38 @@ Template.editor.onRendered(function() {
           ctx.drawImage(img, x, y, width, height);
         } else if (position === 'leftAnimal') {
           // Calculate height maintaining aspect ratio for people and animals
-          width = instance.canvas.width * 0.3;
+            width = instance.canvas.width * 0.3;
           const aspectRatio = img.naturalHeight / img.naturalWidth;
           height = width * aspectRatio;
-          x = instance.canvas.width * 0.1;
-          y = instance.canvas.height * 0.35;
-          ctx.drawImage(img, x, y, width, height);
-        } else if (position === 'rightAnimal') {
+            x = instance.canvas.width * 0.1;
+            y = instance.canvas.height * 0.35;
+            ctx.drawImage(img, x, y, width, height);
+          } else if (position === 'rightAnimal') {
           // Calculate height maintaining aspect ratio for people and animals
-          width = instance.canvas.width * 0.3;
+            width = instance.canvas.width * 0.3;
           const aspectRatio = img.naturalHeight / img.naturalWidth;
           height = width * aspectRatio;
-          x = instance.canvas.width * 0.6;
-          y = instance.canvas.height * 0.35;
-          
-          ctx.save();
-          ctx.translate(x + width, y);
-          ctx.scale(-1, 1);
-          ctx.drawImage(img, 0, 0, width, height);
-          ctx.restore();
-        } else if (position === 'crown') {
-          width = instance.canvas.width * 0.25;
+            x = instance.canvas.width * 0.6;
+            y = instance.canvas.height * 0.35;
+            
+            ctx.save();
+            ctx.translate(x + width, y);
+            ctx.scale(-1, 1);
+            ctx.drawImage(img, 0, 0, width, height);
+            ctx.restore();
+          } else if (position === 'crown') {
+            width = instance.canvas.width * 0.25;
           const aspectRatio = img.naturalHeight / img.naturalWidth;
           height = width * aspectRatio;
-          x = (instance.canvas.width - width) / 2;
-          y = instance.canvas.height * 0.1;
-          ctx.drawImage(img, x, y, width, height);
-        } else if (position === 'banner') {
-          width = instance.canvas.width * 0.7;
-          height = instance.canvas.height * 0.2;
-          x = (instance.canvas.width - width) / 2;
-          y = instance.canvas.height * 0.65;
-          ctx.drawImage(img, x, y, width, height);
+            x = (instance.canvas.width - width) / 2;
+            y = instance.canvas.height * 0.1;
+            ctx.drawImage(img, x, y, width, height);
+          } else if (position === 'banner') {
+            width = instance.canvas.width * 0.7;
+            height = instance.canvas.height * 0.2;
+            x = (instance.canvas.width - width) / 2;
+            y = instance.canvas.height * 0.65;
+            ctx.drawImage(img, x, y, width, height);
         } else if (position === 'laurel') {
           width = instance.canvas.width * 0.85;
           height = instance.canvas.height * 0.85;
@@ -397,30 +476,69 @@ Template.editor.onRendered(function() {
           ctx.globalAlpha = 0.5;
           ctx.drawImage(img, x, y, width, height);
           ctx.restore();
-        }
-        resolve();
-      };
+          }
+          resolve();
+        };
       img.onerror = () => {
         console.error(`Failed to load image: ${src}`);
         resolve();
       };
-      img.src = src;
-    });
-  };
-
+        img.src = src;
+      });
+    };
+    
   // Then modify redrawCanvas to use this function
   instance.redrawCanvas = async () => {
     const ctx = instance.canvas.getContext('2d');
     const design = instance.design.get();
+    const layout = instance.selectedLayout.get();
     
     console.log('Current design state:', design); // Debug log
     
     // Clear canvas first
     ctx.clearRect(0, 0, instance.canvas.width, instance.canvas.height);
     
-    // Draw elements sequentially to ensure correct z-index
-    // We'll avoid Promise.all to guarantee drawing order
+    // Draw background flags/symbols
+    await instance.drawBackgroundImages();
     
+    // Draw golden divider lines for split and quad modes
+    if (layout !== '1') {
+      const innerWidth = instance.canvas.width * 0.55;
+      const innerHeight = instance.canvas.height * 0.55;
+      const innerX = (instance.canvas.width - innerWidth) / 2;
+      const innerY = (instance.canvas.height - innerHeight) / 2;
+      
+      ctx.save();
+      ctx.strokeStyle = '#D4AF37'; // Golden color
+      ctx.lineWidth = 2;
+      
+      // Vertical line for split mode
+      if (layout === '2') {
+        ctx.beginPath();
+        ctx.moveTo(innerX + innerWidth/2, innerY);
+        ctx.lineTo(innerX + innerWidth/2, innerY + innerHeight);
+        ctx.stroke();
+      }
+      
+      // Both lines for quad mode
+      if (layout === '4') {
+        // Vertical line
+        ctx.beginPath();
+        ctx.moveTo(innerX + innerWidth/2, innerY);
+        ctx.lineTo(innerX + innerWidth/2, innerY + innerHeight);
+        ctx.stroke();
+        
+        // Horizontal line
+        ctx.beginPath();
+        ctx.moveTo(innerX, innerY + innerHeight/2);
+        ctx.lineTo(innerX + innerWidth, innerY + innerHeight/2);
+        ctx.stroke();
+      }
+      
+      ctx.restore();
+    }
+    
+    // Draw elements sequentially to ensure correct z-index
     // 1. Background flags (bottom)
     await instance.drawBackgroundImages();
     
@@ -430,24 +548,22 @@ Template.editor.onRendered(function() {
     // 3. Laurels
     await loadAndDrawElement(design.laurel, 'laurel');
     
-    // 4. Banner
-    await loadAndDrawElement(design.banner, 'banner');
-    
-    // 5. Frame without background (-nbg version)
+    // 4. Frame without background (-nbg version)
     if (design.frame && !design.frameNoBg) {
       design.frameNoBg = design.frame.replace('.png', '-nbg.png');
       instance.design.set(design);
     }
     await loadAndDrawElement(design.frameNoBg, 'frame');
     
-    // 6. Crown
+    // 5. Crown
     await loadAndDrawElement(design.crown, 'crown');
     
-    // 7. Animals (top layer)
+    // 6. Animals
     await loadAndDrawElement(design.leftAnimal, 'leftAnimal');
     await loadAndDrawElement(design.rightAnimal, 'rightAnimal');
-
-    // Draw banner text last
+    
+    // 7. Banner and text (top layer)
+    await loadAndDrawElement(design.banner, 'banner');
     await instance.drawBannerText();
   };
   
@@ -572,7 +688,11 @@ Template.editor.helpers({
     
     // Return array of image URLs based on type
     const options = {
-      frame: ['none', '/images/frames/frame1.png', '/images/frames/frame2.png'],
+      frame: [
+        'none', 
+        '/images/frames/frame1.png',
+        '/images/frames/square.png'
+      ],
       leftAnimal: animalOptions,
       rightAnimal: animalOptions,
       crown: [
@@ -773,7 +893,25 @@ Template.editor.events({
       banner: null,
       laurel: null
     };
+    
+    // Reset design
     instance.design.set(emptyDesign);
+    
+    // Reset background images
+    instance.backgroundImages.set({
+      area1: null,
+      area2: null,
+      area3: null,
+      area4: null
+    });
+    
+    // Reset layout to single
+    instance.selectedLayout.set('1');
+    
+    // Reset banner text
+    instance.bannerText.set('');
+    
+    // Redraw canvas
     instance.redrawCanvas();
     
     // Hide the modal
