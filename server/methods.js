@@ -35,9 +35,12 @@ Meteor.methods({
       
       check(design, {
         frame: StringOrNull,
+        frameNoBg: StringOrNull,
         leftAnimal: StringOrNull,
         rightAnimal: StringOrNull,
-        crown: StringOrNull
+        crown: StringOrNull,
+        banner: StringOrNull,
+        laurel: StringOrNull
       });
       
       const selector = { userId: this.userId };

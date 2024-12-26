@@ -14,12 +14,61 @@ const SYMBOL_CATEGORIES = [
   {
     name: 'Flags',
     images: [
+      '/images/symbols/flags/algeria.png',
+      '/images/symbols/flags/argentina.png',
+      '/images/symbols/flags/australia.png',
+      '/images/symbols/flags/austria.png',
+      '/images/symbols/flags/bangladesh.png',
+      '/images/symbols/flags/belgium.png',
+      '/images/symbols/flags/brazil.png',
+      '/images/symbols/flags/canada.png',
+      '/images/symbols/flags/chile.png',
+      '/images/symbols/flags/china.png',
+      '/images/symbols/flags/colombia.png',
+      '/images/symbols/flags/czechrepublic.png',
+      '/images/symbols/flags/denmark.png',
+      '/images/symbols/flags/egypt.png',
+      '/images/symbols/flags/finland.png',
       '/images/symbols/flags/france.png',
+      '/images/symbols/flags/gb-eng.png',
+      '/images/symbols/flags/gb-nir.png',
+      '/images/symbols/flags/gb-sct.png',
+      '/images/symbols/flags/gb-wls.png',
+      '/images/symbols/flags/germany.png',
+      '/images/symbols/flags/greece.png',
+      '/images/symbols/flags/hungary.png',
+      '/images/symbols/flags/india.png',
+      '/images/symbols/flags/indonesia.png',
+      '/images/symbols/flags/ireland.png',
+      '/images/symbols/flags/israel.png',
       '/images/symbols/flags/italy.png',
+      '/images/symbols/flags/japan.png',
+      '/images/symbols/flags/malaysia.png',
+      '/images/symbols/flags/mexico.png',
+      '/images/symbols/flags/morocco.png',
+      '/images/symbols/flags/netherlands.png',
+      '/images/symbols/flags/newzealand.png',
+      '/images/symbols/flags/norway.png',
+      '/images/symbols/flags/pakistan.png',
+      '/images/symbols/flags/philippines.png',
+      '/images/symbols/flags/poland.png',
+      '/images/symbols/flags/portugal.png',
+      '/images/symbols/flags/romania.png',
       '/images/symbols/flags/russia.png',
+      '/images/symbols/flags/saudiarabia.png',
+      '/images/symbols/flags/slovakia.png',
+      '/images/symbols/flags/south_africa.png',
+      '/images/symbols/flags/southafrica.png',
+      '/images/symbols/flags/southkorea.png',
+      '/images/symbols/flags/spain.png',
       '/images/symbols/flags/sweden.png',
-      '/images/symbols/flags/belarus.png',
-      '/images/symbols/flags/monaco.png'
+      '/images/symbols/flags/switzerland.png',
+      '/images/symbols/flags/thailand.png',
+      '/images/symbols/flags/turkey.png',
+      '/images/symbols/flags/unitedarabemirates.png',
+      '/images/symbols/flags/unitedkingdom.png',
+      '/images/symbols/flags/unitedstates.png',
+      '/images/symbols/flags/vietnam.png'
     ]
   },
   {
@@ -56,6 +105,87 @@ const SYMBOL_CATEGORIES = [
     ]
   }
 ];
+
+// Add this helper function after the imports
+const addGlossEffect = (ctx, x, y, width, height) => {
+  ctx.save();
+  
+  // Add highlight at the top
+  const highlightGradient = ctx.createLinearGradient(
+    x, y, x, y + height * 0.6
+  );
+  highlightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.5)');
+  highlightGradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.1)');
+  highlightGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+  
+  ctx.globalCompositeOperation = 'overlay';
+  ctx.fillStyle = highlightGradient;
+  ctx.fillRect(x, y, width, height * 0.6);
+  
+  // Add bottom shadow
+  const shadowGradient = ctx.createLinearGradient(
+    x, y + height * 0.6, x, y + height
+  );
+  shadowGradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+  shadowGradient.addColorStop(0.5, 'rgba(0, 0, 0, 0.2)');
+  shadowGradient.addColorStop(1, 'rgba(0, 0, 0, 0.4)');
+  
+  ctx.globalCompositeOperation = 'multiply';
+  ctx.fillStyle = shadowGradient;
+  ctx.fillRect(x, y + height * 0.6, width, height * 0.4);
+  
+  // Add border
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(x, y, width, height);
+  
+  // Add inner glow
+  ctx.globalCompositeOperation = 'overlay';
+  const glowGradient = ctx.createRadialGradient(
+    x + width/2, y + height/2, 0,
+    x + width/2, y + height/2, width/2
+  );
+  glowGradient.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
+  glowGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+  ctx.fillStyle = glowGradient;
+  ctx.fillRect(x, y, width, height);
+  
+  ctx.restore();
+};
+
+// Add this function after the imports
+const addWatermark = (ctx, width, height) => {
+  const user = Meteor.user();
+  if (!user?.profile?.credits) {
+    ctx.save();
+    
+    // Set watermark style with higher opacity
+    ctx.globalAlpha = 0.3;  // Increased from 0.15
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';  // Dark color for better visibility
+    ctx.font = 'bold 24px Arial';  // Made text bold and slightly larger
+    
+    // Create diagonal repeating pattern
+    const text = 'Buy credits to remove watermark';
+    const metrics = ctx.measureText(text);
+    const textWidth = metrics.width;
+    const gap = 150;  // Increased gap between watermarks
+    
+    // Rotate canvas for diagonal text
+    ctx.translate(width/2, height/2);
+    ctx.rotate(-Math.PI / 4);
+    ctx.translate(-width/2, -height/2);
+    
+    // Draw multiple lines of watermark
+    for (let y = -height; y < height*2; y += gap) {
+      for (let x = -width; x < width*2; x += textWidth + gap) {
+        ctx.fillText(text, x, y);
+      }
+    }
+    
+    ctx.restore();
+  }
+};
 
 Template.editor.onCreated(function() {
   this.selectedCategory = new ReactiveVar(null);
@@ -261,32 +391,30 @@ Template.editor.onRendered(function() {
         const img = new Image();
         await new Promise((resolve) => {
           img.onload = () => {
-            let flagWidth = areaInfo.w;
-            let flagHeight = areaInfo.h;
-            let flagX = areaInfo.x;
-            let flagY = areaInfo.y;
+            let flagWidth, flagHeight, flagX, flagY;
             
             if (layout === '1') {
-              // Single mode: 50% base size + 50% for flags only
-              flagWidth *= 0.5 * 1.5;  // 50% width + 50%
-              flagHeight *= 0.5 * 1.5; // 50% height + 50%
+              // Single mode: Fixed height, width adjusts to maintain aspect ratio
+              flagHeight = areaInfo.h * 0.75;
+              const aspectRatio = img.naturalWidth / img.naturalHeight;
+              flagWidth = flagHeight * aspectRatio;
               flagX = areaInfo.x + (areaInfo.w - flagWidth) / 2;
               flagY = areaInfo.y + (areaInfo.h - flagHeight) / 2;
             } else if (layout === '2') {
-              // Split mode: 50% base size + 30% width and 50% height
-              flagWidth *= 0.5 * 1.3;  // 50% width + 20% + 10% = 50% * 1.3
-              flagHeight *= 0.5 * 1.5; // Height stays the same
-              flagY = areaInfo.y + (areaInfo.h - flagHeight) / 2; // Recenter vertically
+              // Split mode logic remains unchanged
+              flagWidth = areaInfo.w * 0.5 * 1.3;
+              flagHeight = areaInfo.h * 0.5 * 1.5;
+              flagY = areaInfo.y + (areaInfo.h - flagHeight) / 2;
               
               if (areaInfo.area === 'area1') {
-                flagX = areaInfo.x + areaInfo.w - flagWidth; // Right side
+                flagX = areaInfo.x + areaInfo.w - flagWidth;
               } else {
-                flagX = areaInfo.x; // Left side
+                flagX = areaInfo.x;
               }
             } else if (layout === '4') {
               // Quad mode remains unchanged
-              flagWidth *= 0.75;
-              flagHeight *= 0.75;
+              flagWidth = areaInfo.w * 0.75;
+              flagHeight = areaInfo.h * 0.75;
               switch (areaInfo.area) {
                 case 'area1':
                   flagX = areaInfo.x + areaInfo.w - flagWidth;
@@ -307,12 +435,70 @@ Template.editor.onRendered(function() {
               }
             }
             
-            ctx.drawImage(img, flagX, flagY, flagWidth, flagHeight);
-          resolve();
-        };
+            if (!src.includes('/symbols/symbols/')) {  // Only for flags, not symbols
+              // Draw the base flag
+              ctx.drawImage(img, flagX, flagY, flagWidth, flagHeight);
+              
+              // Add glossy effect
+              ctx.save();
+              
+              // Add stronger white highlight at the top
+              const highlightGradient = ctx.createLinearGradient(
+                flagX,
+                flagY,
+                flagX,
+                flagY + flagHeight * 0.6  // Extended highlight area
+              );
+              highlightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.5)');  // Increased opacity
+              highlightGradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.1)');  // Added middle stop
+              highlightGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+              
+              ctx.globalCompositeOperation = 'overlay';
+              ctx.fillStyle = highlightGradient;
+              ctx.fillRect(flagX, flagY, flagWidth, flagHeight * 0.6);
+              
+              // Add stronger bottom shadow
+              const shadowGradient = ctx.createLinearGradient(
+                flagX,
+                flagY + flagHeight * 0.6,
+                flagX,
+                flagY + flagHeight
+              );
+              shadowGradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+              shadowGradient.addColorStop(0.5, 'rgba(0, 0, 0, 0.2)');  // Added middle stop
+              shadowGradient.addColorStop(1, 'rgba(0, 0, 0, 0.4)');    // Increased opacity
+              
+              ctx.globalCompositeOperation = 'multiply';
+              ctx.fillStyle = shadowGradient;
+              ctx.fillRect(flagX, flagY + flagHeight * 0.6, flagWidth, flagHeight * 0.4);
+              
+              // Add stronger border and inner shadow
+              ctx.globalCompositeOperation = 'source-over';
+              ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';  // Darker border
+              ctx.lineWidth = 1.5;  // Slightly thicker
+              ctx.strokeRect(flagX, flagY, flagWidth, flagHeight);
+              
+              // Add subtle inner glow
+              ctx.globalCompositeOperation = 'overlay';
+              const glowGradient = ctx.createRadialGradient(
+                flagX + flagWidth/2, flagY + flagHeight/2, 0,
+                flagX + flagWidth/2, flagY + flagHeight/2, flagWidth/2
+              );
+              glowGradient.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
+              glowGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+              ctx.fillStyle = glowGradient;
+              ctx.fillRect(flagX, flagY, flagWidth, flagHeight);
+              
+              ctx.restore();
+            } else {
+              // Original symbol drawing logic
+              ctx.drawImage(img, flagX, flagY, flagWidth, flagHeight);
+            }
+            resolve();
+          };
           img.onerror = () => { resolve(); };
           img.src = src;
-      });
+        });
       }
     }
   };
@@ -433,39 +619,39 @@ Template.editor.onRendered(function() {
           y = (instance.canvas.height - height) / 2;
           ctx.drawImage(img, x, y, width, height);
         } else if (position === 'leftAnimal') {
-          // Calculate height maintaining aspect ratio for people and animals
-            width = instance.canvas.width * 0.3;
+          // Left animal positioning - 20% bigger
+          width = instance.canvas.width * 0.36;  // Changed from 0.3 to 0.36
           const aspectRatio = img.naturalHeight / img.naturalWidth;
           height = width * aspectRatio;
-            x = instance.canvas.width * 0.1;
-            y = instance.canvas.height * 0.35;
-            ctx.drawImage(img, x, y, width, height);
-          } else if (position === 'rightAnimal') {
-          // Calculate height maintaining aspect ratio for people and animals
-            width = instance.canvas.width * 0.3;
+          x = instance.canvas.width * 0.1;
+          y = instance.canvas.height * 0.35;
+          ctx.drawImage(img, x, y, width, height);
+        } else if (position === 'rightAnimal') {
+          // Right animal positioning - 20% bigger
+          width = instance.canvas.width * 0.36;  // Changed from 0.3 to 0.36
           const aspectRatio = img.naturalHeight / img.naturalWidth;
           height = width * aspectRatio;
-            x = instance.canvas.width * 0.6;
-            y = instance.canvas.height * 0.35;
-            
-            ctx.save();
-            ctx.translate(x + width, y);
-            ctx.scale(-1, 1);
-            ctx.drawImage(img, 0, 0, width, height);
-            ctx.restore();
-          } else if (position === 'crown') {
-            width = instance.canvas.width * 0.25;
+          x = instance.canvas.width * 0.6;
+          y = instance.canvas.height * 0.35;
+          
+          ctx.save();
+          ctx.translate(x + width, y);
+          ctx.scale(-1, 1);
+          ctx.drawImage(img, 0, 0, width, height);
+          ctx.restore();
+        } else if (position === 'crown') {
+          width = instance.canvas.width * 0.25;
           const aspectRatio = img.naturalHeight / img.naturalWidth;
           height = width * aspectRatio;
-            x = (instance.canvas.width - width) / 2;
-            y = instance.canvas.height * 0.1;
-            ctx.drawImage(img, x, y, width, height);
-          } else if (position === 'banner') {
-            width = instance.canvas.width * 0.7;
-            height = instance.canvas.height * 0.2;
-            x = (instance.canvas.width - width) / 2;
-            y = instance.canvas.height * 0.65;
-            ctx.drawImage(img, x, y, width, height);
+          x = (instance.canvas.width - width) / 2;
+          y = instance.canvas.height * 0.1;
+          ctx.drawImage(img, x, y, width, height);
+        } else if (position === 'banner') {
+          width = instance.canvas.width * 0.7;
+          height = instance.canvas.height * 0.2;
+          x = (instance.canvas.width - width) / 2;
+          y = instance.canvas.height * 0.65;
+          ctx.drawImage(img, x, y, width, height);
         } else if (position === 'laurel') {
           width = instance.canvas.width * 0.85;
           height = instance.canvas.height * 0.85;
@@ -476,7 +662,7 @@ Template.editor.onRendered(function() {
           ctx.globalAlpha = 0.5;
           ctx.drawImage(img, x, y, width, height);
           ctx.restore();
-          }
+        }
           resolve();
         };
       img.onerror = () => {
@@ -488,7 +674,7 @@ Template.editor.onRendered(function() {
     };
     
   // Then modify redrawCanvas to use this function
-  instance.redrawCanvas = async () => {
+  instance.redrawCanvas = async (skipWatermark = false) => {
     const ctx = instance.canvas.getContext('2d');
     const design = instance.design.get();
     const layout = instance.selectedLayout.get();
@@ -497,6 +683,56 @@ Template.editor.onRendered(function() {
     
     // Clear canvas first
     ctx.clearRect(0, 0, instance.canvas.width, instance.canvas.height);
+    
+    // Draw beige background for the inner area where symbols go
+    const innerWidth = instance.canvas.width * 0.55;
+    const innerHeight = instance.canvas.height * 0.55;
+    const innerX = (instance.canvas.width - innerWidth) / 2;
+    const innerY = (instance.canvas.height - innerHeight) / 2;
+    
+    ctx.save();
+    
+    // Base beige color
+    ctx.fillStyle = '#e8d5b5';
+    ctx.fillRect(innerX, innerY, innerWidth, innerHeight);
+    
+    // Add glossy highlight at the top
+    const highlightGradient = ctx.createLinearGradient(
+      innerX,
+      innerY,
+      innerX,
+      innerY + innerHeight * 0.6
+    );
+    highlightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
+    highlightGradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.1)');
+    highlightGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    
+    ctx.globalCompositeOperation = 'overlay';
+    ctx.fillStyle = highlightGradient;
+    ctx.fillRect(innerX, innerY, innerWidth, innerHeight * 0.6);
+    
+    // Add shadow at the bottom
+    const shadowGradient = ctx.createLinearGradient(
+      innerX,
+      innerY + innerHeight * 0.6,
+      innerX,
+      innerY + innerHeight
+    );
+    shadowGradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+    shadowGradient.addColorStop(0.5, 'rgba(0, 0, 0, 0.1)');
+    shadowGradient.addColorStop(1, 'rgba(0, 0, 0, 0.2)');
+    
+    ctx.globalCompositeOperation = 'multiply';
+    ctx.fillStyle = shadowGradient;
+    ctx.fillRect(innerX, innerY + innerHeight * 0.6, innerWidth, innerHeight * 0.4);
+    
+    // Add subtle border
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(innerX, innerY, innerWidth, innerHeight);
+    
+    ctx.restore();
     
     // Draw background flags/symbols
     await instance.drawBackgroundImages();
@@ -538,33 +774,51 @@ Template.editor.onRendered(function() {
       ctx.restore();
     }
     
-    // Draw elements sequentially to ensure correct z-index
-    // 1. Background flags (bottom)
+    // Draw elements sequentially
     await instance.drawBackgroundImages();
-    
-    // 2. Frame with background
     await loadAndDrawElement(design.frame, 'frame');
-    
-    // 3. Laurels
     await loadAndDrawElement(design.laurel, 'laurel');
     
-    // 4. Frame without background (-nbg version)
     if (design.frame && !design.frameNoBg) {
       design.frameNoBg = design.frame.replace('.png', '-nbg.png');
       instance.design.set(design);
     }
     await loadAndDrawElement(design.frameNoBg, 'frame');
-    
-    // 5. Crown
     await loadAndDrawElement(design.crown, 'crown');
-    
-    // 6. Animals
     await loadAndDrawElement(design.leftAnimal, 'leftAnimal');
     await loadAndDrawElement(design.rightAnimal, 'rightAnimal');
-    
-    // 7. Banner and text (top layer)
     await loadAndDrawElement(design.banner, 'banner');
     await instance.drawBannerText();
+    
+    // Only draw watermark if not skipping
+    if (!skipWatermark) {
+      // Draw watermark last, with proper settings
+      ctx.save();
+      ctx.resetTransform();
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalAlpha = 1.0;
+      
+      const watermarkCtx = ctx;
+      watermarkCtx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      watermarkCtx.font = 'bold 28px Arial';
+      
+      const text = 'Watermark will be removed on export';
+      const metrics = watermarkCtx.measureText(text);
+      const textWidth = metrics.width;
+      const gap = 120;
+      
+      watermarkCtx.translate(instance.canvas.width/2, instance.canvas.height/2);
+      watermarkCtx.rotate(-Math.PI / 4);
+      watermarkCtx.translate(-instance.canvas.width/2, -instance.canvas.height/2);
+      
+      for (let y = -instance.canvas.height; y < instance.canvas.height*2; y += gap) {
+        for (let x = -instance.canvas.width; x < instance.canvas.width*2; x += textWidth + gap) {
+          watermarkCtx.fillText(text, x, y);
+        }
+      }
+      
+      ctx.restore();
+    }
   };
   
   instance.redrawCanvas();
@@ -575,8 +829,8 @@ Template.editor.helpers({
     return Template.instance().selectedCategory.get() === category;
   },
   
-  isAnimalCategory() {
-    return Template.instance().selectedCategory.get() === 'animal';
+  isCharCategory() {
+    return Template.instance().selectedCategory.get() === 'char';
   },
   
   isActiveType(type) {
@@ -592,7 +846,7 @@ Template.editor.helpers({
     if (!type) return [];
     
     // Common animal options for both left and right
-    const animalOptions = [
+    const charOptions = [
       'none',
       // Bears
       '/images/bears/bear1.png',
@@ -628,8 +882,10 @@ Template.editor.helpers({
       '/images/lions/lion4.png',
       // People
       
-      '/images/people/knight.png',
+      '/images/people/knight1.png',
       '/images/people/knight2.png',
+      '/images/people/knight3.png',
+      '/images/people/knight4.png',
       '/images/people/mermaid.png',
       '/images/people/roman.png',
       '/images/people/viking.png',
@@ -645,12 +901,61 @@ Template.editor.helpers({
     // Update flag paths
     const flagImages = [
       'none',
+      '/images/symbols/flags/algeria.png',
+      '/images/symbols/flags/argentina.png',
+      '/images/symbols/flags/australia.png',
+      '/images/symbols/flags/austria.png',
+      '/images/symbols/flags/bangladesh.png',
+      '/images/symbols/flags/belgium.png',
+      '/images/symbols/flags/brazil.png',
+      '/images/symbols/flags/canada.png',
+      '/images/symbols/flags/chile.png',
+      '/images/symbols/flags/china.png',
+      '/images/symbols/flags/colombia.png',
+      '/images/symbols/flags/czechrepublic.png',
+      '/images/symbols/flags/denmark.png',
+      '/images/symbols/flags/egypt.png',
+      '/images/symbols/flags/finland.png',
       '/images/symbols/flags/france.png',
+      '/images/symbols/flags/gb-eng.png',
+      '/images/symbols/flags/gb-nir.png',
+      '/images/symbols/flags/gb-sct.png',
+      '/images/symbols/flags/gb-wls.png',
+      '/images/symbols/flags/germany.png',
+      '/images/symbols/flags/greece.png',
+      '/images/symbols/flags/hungary.png',
+      '/images/symbols/flags/india.png',
+      '/images/symbols/flags/indonesia.png',
+      '/images/symbols/flags/ireland.png',
+      '/images/symbols/flags/israel.png',
       '/images/symbols/flags/italy.png',
+      '/images/symbols/flags/japan.png',
+      '/images/symbols/flags/malaysia.png',
+      '/images/symbols/flags/mexico.png',
+      '/images/symbols/flags/morocco.png',
+      '/images/symbols/flags/netherlands.png',
+      '/images/symbols/flags/newzealand.png',
+      '/images/symbols/flags/norway.png',
+      '/images/symbols/flags/pakistan.png',
+      '/images/symbols/flags/philippines.png',
+      '/images/symbols/flags/poland.png',
+      '/images/symbols/flags/portugal.png',
+      '/images/symbols/flags/romania.png',
       '/images/symbols/flags/russia.png',
+      '/images/symbols/flags/saudiarabia.png',
+      '/images/symbols/flags/slovakia.png',
+      '/images/symbols/flags/south_africa.png',
+      '/images/symbols/flags/southafrica.png',
+      '/images/symbols/flags/southkorea.png',
+      '/images/symbols/flags/spain.png',
       '/images/symbols/flags/sweden.png',
-      '/images/symbols/flags/belarus.png',
-      '/images/symbols/flags/monaco.png'
+      '/images/symbols/flags/switzerland.png',
+      '/images/symbols/flags/thailand.png',
+      '/images/symbols/flags/turkey.png',
+      '/images/symbols/flags/unitedarabemirates.png',
+      '/images/symbols/flags/unitedkingdom.png',
+      '/images/symbols/flags/unitedstates.png',
+      '/images/symbols/flags/vietnam.png'
     ];
 
     // Add symbols options
@@ -691,10 +996,12 @@ Template.editor.helpers({
       frame: [
         'none', 
         '/images/frames/frame1.png',
-        '/images/frames/square.png'
+        '/images/frames/frame2.png',
+        '/images/frames/frame3.png'
+      
       ],
-      leftAnimal: animalOptions,
-      rightAnimal: animalOptions,
+      leftAnimal: charOptions,
+      rightAnimal: charOptions,
       crown: [
         'none',
         '/images/crowns/crown1.png',
@@ -709,8 +1016,22 @@ Template.editor.helpers({
         '/images/crowns/star2.png',
         '/images/crowns/viking.png'
       ],
-      banner: ['none', '/images/banners/redbanner.png'],
-      laurel: ['none', '/images/laurels/laurels.png', '/images/laurels/laurels2.png'],
+      banner: [
+        'none', 
+        '/images/banners/redbanner.png',
+        '/images/banners/blackbanner.png',
+        '/images/banners/bluebanner.png',
+        '/images/banners/brownbanner.png',
+        '/images/banners/greenbanner.png'
+      ],
+      laurel: [
+        'none', 
+        '/images/laurels/laurels.png', 
+        '/images/laurels/laurels2.png',
+        '/images/laurels/goldlaurels.png',
+        '/images/laurels/reallaurels.png',
+        '/images/laurels/silverlaurels.png'
+      ],
       flags: flagImages,
       symbols: symbolOptions
     };
@@ -720,9 +1041,30 @@ Template.editor.helpers({
   
   getElementName(url) {
     if (url === 'none') return 'None';
-    const match = url.match(/\/([^\/]+)\/[^\/]+\.png$/);
+    const match = url.match(/\/([^\/]+)\/([^\/]+)\.png$/);
     if (match) {
-      return match[1].charAt(0).toUpperCase() + match[1].slice(1, -1);
+      const folder = match[1];
+      const filename = match[2];
+      
+      // Special handling for crowns
+      if (folder === 'crowns') {
+        switch (filename) {
+          case 'crown1': return 'Crown 1';
+          case 'crown2': return 'Crown 2';
+          case 'crown3': return 'Crown 3';
+          case 'feather1': return 'Feather 1';
+          case 'feather2': return 'Feather 2';
+          case 'helmet1': return 'Helmet 1';
+          case 'helmet2': return 'Helmet 2';
+          case 'shield': return 'Shield';
+          case 'star1': return 'Star 1';
+          case 'star2': return 'Star 2';
+          case 'viking': return 'Viking';
+        }
+      }
+      
+      // Default behavior for other elements
+      return filename.charAt(0).toUpperCase() + filename.slice(1);
     }
     return '';
   },
@@ -762,12 +1104,61 @@ Template.editor.helpers({
   
   flagImages() {
     return [
+      '/images/symbols/flags/algeria.png',
+      '/images/symbols/flags/argentina.png',
+      '/images/symbols/flags/australia.png',
+      '/images/symbols/flags/austria.png',
+      '/images/symbols/flags/bangladesh.png',
+      '/images/symbols/flags/belgium.png',
+      '/images/symbols/flags/brazil.png',
+      '/images/symbols/flags/canada.png',
+      '/images/symbols/flags/chile.png',
+      '/images/symbols/flags/china.png',
+      '/images/symbols/flags/colombia.png',
+      '/images/symbols/flags/czechrepublic.png',
+      '/images/symbols/flags/denmark.png',
+      '/images/symbols/flags/egypt.png',
+      '/images/symbols/flags/finland.png',
       '/images/symbols/flags/france.png',
+      '/images/symbols/flags/gb-eng.png',
+      '/images/symbols/flags/gb-nir.png',
+      '/images/symbols/flags/gb-sct.png',
+      '/images/symbols/flags/gb-wls.png',
+      '/images/symbols/flags/germany.png',
+      '/images/symbols/flags/greece.png',
+      '/images/symbols/flags/hungary.png',
+      '/images/symbols/flags/india.png',
+      '/images/symbols/flags/indonesia.png',
+      '/images/symbols/flags/ireland.png',
+      '/images/symbols/flags/israel.png',
       '/images/symbols/flags/italy.png',
+      '/images/symbols/flags/japan.png',
+      '/images/symbols/flags/malaysia.png',
+      '/images/symbols/flags/mexico.png',
+      '/images/symbols/flags/morocco.png',
+      '/images/symbols/flags/netherlands.png',
+      '/images/symbols/flags/newzealand.png',
+      '/images/symbols/flags/norway.png',
+      '/images/symbols/flags/pakistan.png',
+      '/images/symbols/flags/philippines.png',
+      '/images/symbols/flags/poland.png',
+      '/images/symbols/flags/portugal.png',
+      '/images/symbols/flags/romania.png',
       '/images/symbols/flags/russia.png',
+      '/images/symbols/flags/saudiarabia.png',
+      '/images/symbols/flags/slovakia.png',
+      '/images/symbols/flags/south_africa.png',
+      '/images/symbols/flags/southafrica.png',
+      '/images/symbols/flags/southkorea.png',
+      '/images/symbols/flags/spain.png',
       '/images/symbols/flags/sweden.png',
-      '/images/symbols/flags/belarus.png',
-      '/images/symbols/flags/monaco.png'
+      '/images/symbols/flags/switzerland.png',
+      '/images/symbols/flags/thailand.png',
+      '/images/symbols/flags/turkey.png',
+      '/images/symbols/flags/unitedarabemirates.png',
+      '/images/symbols/flags/unitedkingdom.png',
+      '/images/symbols/flags/unitedstates.png',
+      '/images/symbols/flags/vietnam.png'
     ];
   },
   
@@ -948,23 +1339,43 @@ Template.editor.events({
   'click #exportBtn'(event, instance) {
     const user = Meteor.user();
     if (!user?.profile?.credits) {
-      // Show modal instead of alert
       const modal = new bootstrap.Modal(document.getElementById('creditsModal'));
       modal.show();
       return;
     }
     
-    const dataUrl = instance.canvas.toDataURL('image/png');
-    const link = document.createElement('a');
-    link.download = 'coat-of-arms.png';
-    link.href = dataUrl;
-    link.click();
+    // Store current canvas
+    const tempCanvas = instance.canvas.cloneNode();
+    tempCanvas.getContext('2d').drawImage(instance.canvas, 0, 0);
     
-    Meteor.call('useCredit', (error) => {
-      if (error) {
-        alert('Error using credit: ' + error.reason);
-      }
-    });
+    // Create clean export
+    (async () => {
+      // Clear canvas
+      const ctx = instance.canvas.getContext('2d');
+      ctx.clearRect(0, 0, instance.canvas.width, instance.canvas.height);
+      
+      // Wait for redraw without watermark
+      await instance.redrawCanvas(true);
+      
+      // Get clean image data
+      const dataUrl = instance.canvas.toDataURL('image/png');
+      
+      // Restore original canvas with watermark
+      ctx.clearRect(0, 0, instance.canvas.width, instance.canvas.height);
+      ctx.drawImage(tempCanvas, 0, 0);
+      
+      // Create download link
+      const link = document.createElement('a');
+      link.download = 'coat-of-arms.png';
+      link.href = dataUrl;
+      link.click();
+      
+      Meteor.call('useCredit', (error) => {
+        if (error) {
+          alert('Error using credit: ' + error.reason);
+        }
+      });
+    })();
   },
   
   'click #purchaseCredits'(event, instance) {
@@ -1048,16 +1459,27 @@ Template.editor.events({
   },
   
   'click #updateBannerText'(event, instance) {
-    const text = instance.$("#bannerText").val();
+    const text = instance.$("#bannerText").val().slice(0, 20).toUpperCase(); // Limit to 20 chars
+    instance.$("#bannerText").val(text); // Update input value to show truncated text
     instance.bannerText.set(text);
     instance.redrawCanvas();
   },
   
   'keypress #bannerText'(event, instance) {
     if (event.key === 'Enter') {
-      const text = instance.$("#bannerText").val();
+      const text = instance.$("#bannerText").val().slice(0, 20).toUpperCase(); // Limit to 20 chars
+      instance.$("#bannerText").val(text); // Update input value to show truncated text
       instance.bannerText.set(text);
       instance.redrawCanvas();
+    }
+  },
+  
+  'input #bannerText'(event, instance) {
+    const input = event.target;
+    if (input.value.length > 20) {  // Changed to 20 chars
+      input.value = input.value.slice(0, 20).toUpperCase();
+    } else {
+      input.value = input.value.toUpperCase();
     }
   },
   
