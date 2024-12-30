@@ -1,1 +1,14 @@
+# Meteor
+.meteor/local
+.meteor/meteorite
+
+# Settings with real keys
+settings.json
+settings-prod.json
+
+# Dependencies
 node_modules/
+
+# OS Files
+.DS_Store
+*.log
