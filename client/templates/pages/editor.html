@@ -42,55 +42,69 @@
     <div class="controls">
       <!-- Main element categories -->
       <div class="element-categories mb-4">
-        <div class="btn-group" role="group">
-          <button type="button" class="btn btn-medieval element-category {{#if isActiveCategory 'frame'}}active{{/if}}" data-category="frame">
-            <i class="fas fa-shield-alt"></i> Frame
-          </button>
-          <button type="button" class="btn btn-medieval element-category {{#if isActiveCategory 'char'}}active{{/if}}" data-category="char">
-            <i class="fas fa-dragon"></i> Char.
-          </button>
-          <button type="button" class="btn btn-medieval element-category {{#if isActiveCategory 'crown'}}active{{/if}}" data-category="crown">
-            <i class="fas fa-crown"></i> Crown
-          </button>
-          <button type="button" class="btn btn-medieval element-category {{#if isActiveCategory 'banner'}}active{{/if}}" data-category="banner">
-            <i class="fas fa-flag"></i> Banner
-          </button>
-          <button type="button" class="btn btn-medieval element-category {{#if isActiveCategory 'laurel'}}active{{/if}}" data-category="laurel">
-            <i class="fas fa-leaf"></i> Laurels
-          </button>
-        </div>
+        <!-- Main buttons -->
+        <button type="button" class="btn btn-medieval element-category w-100 mb-2 {{#if isActiveCategory 'frame'}}active{{/if}}" data-category="frame">
+          <i class="fas fa-shield-alt"></i> FRAME
+        </button>
         
-        <!-- Show layout selector only when frame category is active -->
-        {{#if isFrameCategory}}
-          <div class="layout-selector mt-3">
-            <div class="btn-group" role="group">
-              <button type="button" class="btn btn-medieval-secondary layout-btn {{#if isActiveLayout '1'}}active{{/if}}" data-layout="1">
-                <i class="fas fa-square"></i> Single
+        {{#if isActiveCategory 'frame'}}
+          <div class="sub-buttons mb-2">
+            <div class="btn-group-horizontal w-100" role="group">
+              <button type="button" class="btn btn-outline-medieval layout-btn {{#if isActiveLayout '1'}}active{{/if}}" data-layout="1">
+                <i class="fas fa-square me-1"></i>1
               </button>
-              <button type="button" class="btn btn-medieval-secondary layout-btn {{#if isActiveLayout '2'}}active{{/if}}" data-layout="2">
-                <i class="fas fa-columns"></i> Split
+              <button type="button" class="btn btn-outline-medieval layout-btn {{#if isActiveLayout '2'}}active{{/if}}" data-layout="2">
+                <i class="fas fa-columns me-1"></i>2
               </button>
-              <button type="button" class="btn btn-medieval-secondary layout-btn {{#if isActiveLayout '4'}}active{{/if}}" data-layout="4">
-                <i class="fas fa-th-large"></i> Quad
+              <button type="button" class="btn btn-outline-medieval layout-btn {{#if isActiveLayout '4'}}active{{/if}}" data-layout="4">
+                <i class="fas fa-th-large me-1"></i>4
               </button>
             </div>
           </div>
         {{/if}}
-      </div>
-      
-      <!-- Animal type selector -->
-      {{#if isActiveCategory 'char'}}
-        <div class="animal-types mb-4">
-          <div class="btn-group" role="group">
-            <button type="button" class="btn btn-medieval-secondary element-btn {{#if isActiveType 'leftAnimal'}}active{{/if}}" data-type="leftAnimal">
-              Left Character
-            </button>
-            <button type="button" class="btn btn-medieval-secondary element-btn {{#if isActiveType 'rightAnimal'}}active{{/if}}" data-type="rightAnimal">
-              Right Character
-            </button>
+        
+        <button type="button" class="btn btn-medieval element-category w-100 mb-2 {{#if isActiveCategory 'char'}}active{{/if}}" data-category="char">
+          <i class="fas fa-dragon"></i> CHAR.
+        </button>
+        
+        {{#if isActiveCategory 'char'}}
+          <div class="sub-buttons mb-2">
+            <div class="btn-group-horizontal w-100" role="group">
+              <button type="button" class="btn btn-outline-medieval element-btn {{#if isActiveType 'leftAnimal'}}active{{/if}}" data-type="leftAnimal">
+                <i class="fas fa-chevron-left me-1"></i>Left
+              </button>
+              <button type="button" class="btn btn-outline-medieval element-btn {{#if isActiveType 'rightAnimal'}}active{{/if}}" data-type="rightAnimal">
+                <i class="fas fa-chevron-right me-1"></i>Right
+              </button>
+            </div>
           </div>
-        </div>
-      {{/if}}
+        {{/if}}
+        
+        <button type="button" class="btn btn-medieval element-category w-100 mb-2 {{#if isActiveCategory 'crown'}}active{{/if}}" data-category="crown">
+          <i class="fas fa-crown"></i> CROWN
+        </button>
+        
+        <button type="button" class="btn btn-medieval element-category w-100 mb-2 {{#if isActiveCategory 'banner'}}active{{/if}}" data-category="banner">
+          <i class="fas fa-flag"></i> BANNER
+        </button>
+        
+        {{#if isActiveCategory 'banner'}}
+          <div class="sub-buttons mb-2">
+            <input 
+              type="text" 
+              class="form-control medieval-input" 
+              id="bannerText" 
+              placeholder="Type banner text..." 
+              maxlength="12"
+              value="{{bannerText}}"
+            >
+          </div>
+        {{/if}}
+        
+        <button type="button" class="btn btn-medieval element-category w-100 mb-2 {{#if isActiveCategory 'laurel'}}active{{/if}}" data-category="laurel">
+          <i class="fas fa-leaf"></i> LAURELS
+        </button>
+      </div>
       
       <!-- Element options carousel -->
       {{#if selectedElement}}

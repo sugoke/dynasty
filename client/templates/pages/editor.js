@@ -395,16 +395,16 @@ Template.editor.onRendered(function() {
             
             if (layout === '1') {
               // Single mode: Fixed height, width adjusts to maintain aspect ratio
-              flagHeight = areaInfo.h * 0.75;
+              flagHeight = areaInfo.h * 0.9;  // Increased from 0.75
               const aspectRatio = img.naturalWidth / img.naturalHeight;
               flagWidth = flagHeight * aspectRatio;
               flagX = areaInfo.x + (areaInfo.w - flagWidth) / 2;
               flagY = areaInfo.y + (areaInfo.h - flagHeight) / 2;
             } else if (layout === '2') {
               // Split mode: Show cropped middle section of flag
-              flagHeight = areaInfo.h * 0.8; // Keep 80% height
-              flagWidth = areaInfo.w; // Use full width of area
-              flagY = areaInfo.y + (areaInfo.h - flagHeight) / 2; // Center vertically
+              flagHeight = areaInfo.h * 0.95;  // Increased from 0.8
+              flagWidth = areaInfo.w;
+              flagY = areaInfo.y + (areaInfo.h - flagHeight) / 2;
               
               // Position exactly at the center line with no gap
               if (areaInfo.area === 'area1') {
@@ -439,9 +439,9 @@ Template.editor.onRendered(function() {
                 return;
               }
             } else if (layout === '4') {
-              // Quad mode remains unchanged
-              flagWidth = areaInfo.w * 0.75;
-              flagHeight = areaInfo.h * 0.75;
+              // Quad mode
+              flagWidth = areaInfo.w * 0.95;  // Increased from 0.75
+              flagHeight = areaInfo.h * 0.95;  // Increased from 0.75
               switch (areaInfo.area) {
                 case 'area1':
                   flagX = areaInfo.x + areaInfo.w - flagWidth;
@@ -1489,29 +1489,15 @@ Template.editor.events({
     modal.show();
   },
   
-  'click #updateBannerText'(event, instance) {
-    const text = instance.$("#bannerText").val().slice(0, 20).toUpperCase(); // Limit to 20 chars
-    instance.$("#bannerText").val(text); // Update input value to show truncated text
-    instance.bannerText.set(text);
-    instance.redrawCanvas();
-  },
-  
-  'keypress #bannerText'(event, instance) {
-    if (event.key === 'Enter') {
-      const text = instance.$("#bannerText").val().slice(0, 20).toUpperCase(); // Limit to 20 chars
-      instance.$("#bannerText").val(text); // Update input value to show truncated text
-      instance.bannerText.set(text);
-      instance.redrawCanvas();
-    }
-  },
-  
   'input #bannerText'(event, instance) {
     const input = event.target;
-    if (input.value.length > 20) {  // Changed to 20 chars
-      input.value = input.value.slice(0, 20).toUpperCase();
+    if (input.value.length > 12) {
+      input.value = input.value.slice(0, 12).toUpperCase();
     } else {
       input.value = input.value.toUpperCase();
     }
+    instance.bannerText.set(input.value);
+    instance.redrawCanvas();
   },
   
   'click .category-selector button'(event, instance) {

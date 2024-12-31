@@ -177,8 +177,8 @@ h1, h2, h3 {
 
 /* Main page title */
 .page-title {
-  font-size: 2.8rem !important;
-  margin-bottom: 2rem !important;
+  font-size: 2rem !important;
+  margin-bottom: 1rem !important;
 }
 
 /* Section titles */
@@ -238,8 +238,9 @@ h4, h5, h6 {
 
 /* Editor styles */
 .editor-container {
-  max-width: 800px !important;
-  margin: 20px auto 0 !important;
+  max-width: 100vmin !important;
+  margin: 10px auto 0 !important;
+  padding: 0 10px !important;
 }
 
 #coatCanvas {
@@ -993,8 +994,8 @@ h1, h2, h3, h4, h5, h6 {
 .page-title {
   color: #ffd700 !important;
   text-align: center;
-  margin-bottom: 2rem;
-  font-size: 3rem;
+  margin-bottom: 1rem;
+  font-size: 2rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
@@ -1582,8 +1583,9 @@ body .modal .btn-secondary:hover,
 
 /* Update editor container styles */
 .editor-container {
-  max-width: 800px !important;
-  margin: 20px auto 0 !important;
+  max-width: 100vmin !important;
+  margin: 10px auto 0 !important;
+  padding: 0 10px !important;
 }
 
 /* Remove canvas-area wrapper */
@@ -1623,17 +1625,19 @@ body .modal .btn-secondary:hover,
 .canvas-wrapper {
   position: relative !important;
   width: 100% !important;
-  max-width: 800px !important;
+  max-width: 100vmin !important;
   aspect-ratio: 1/1 !important;
   margin: 0 auto !important;
+  padding: 3px !important;
+  background: var(--color-parchment) url('https://www.transparenttextures.com/patterns/parchment.png') !important;
+  border: 2px solid var(--color-dark-brown) !important;
 }
 
 #coatCanvas {
   display: block !important;
   width: 100% !important;
   height: 100% !important;
-  background: var(--color-parchment) url('https://www.transparenttextures.com/patterns/parchment.png') !important;
-  border: 2px solid var(--color-dark-brown) !important;
+  background: white !important;
 }
 
 /* Grid overlay container */
@@ -1642,8 +1646,8 @@ body .modal .btn-secondary:hover,
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
-  width: 55% !important;
-  height: 55% !important;
+  width: 98% !important;
+  height: 98% !important;
   pointer-events: all !important;
 }
 
@@ -1967,4 +1971,65 @@ body .modal .btn-secondary:hover,
   background: var(--color-wood) !important;
   color: var(--color-parchment) !important;
   padding: 0.5rem !important;
+}
+
+/* Sub-buttons styles */
+.sub-buttons {
+  padding: 0 1rem !important;
+}
+
+.btn-group-horizontal {
+  display: flex !important;
+  gap: 0.5rem !important;
+}
+
+.btn-group-horizontal .btn {
+  flex: 1 !important;
+  padding: 0.25rem 0.5rem !important;
+  font-size: 0.875rem !important;
+  background: rgba(255, 215, 0, 0.1) !important;  /* Golden background */
+  border: 1px solid rgba(255, 215, 0, 0.3) !important;  /* Golden border */
+  color: #FFD700 !important;  /* Golden text */
+}
+
+.btn-group-horizontal .btn:hover,
+.btn-group-horizontal .btn.active {
+  background: rgba(255, 215, 0, 0.2) !important;
+  border-color: #FFD700 !important;
+  color: #FFD700 !important;
+}
+
+/* Banner input styling to match */
+.sub-buttons .medieval-input {
+  background: rgba(255, 215, 0, 0.1) !important;
+  border: 1px solid rgba(255, 215, 0, 0.3) !important;
+  color: #FFD700 !important;
+}
+
+.sub-buttons #updateBannerText {
+  background: rgba(255, 215, 0, 0.1) !important;
+  border: 1px solid rgba(255, 215, 0, 0.3) !important;
+  color: #FFD700 !important;
+}
+
+.sub-buttons #updateBannerText:hover {
+  background: rgba(255, 215, 0, 0.2) !important;
+  border-color: #FFD700 !important;
+  color: #FFD700 !important;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .sub-buttons {
+    padding: 0 0.5rem !important;
+  }
+  
+  .btn-group-horizontal {
+    gap: 0.25rem !important;
+  }
+  
+  .btn-group-horizontal .btn {
+    font-size: 0.75rem !important;
+    padding: 0.2rem 0.4rem !important;
+  }
 }
