@@ -46,7 +46,7 @@
           <button type="button" class="btn btn-medieval element-category {{#if isActiveCategory 'frame'}}active{{/if}}" data-category="frame">
             <i class="fas fa-shield-alt"></i> Frame
           </button>
-          <button type="button" class="btn btn-medieval element-category {{#if isActiveCategory 'animal'}}active{{/if}}" data-category="animal">
+          <button type="button" class="btn btn-medieval element-category {{#if isActiveCategory 'char'}}active{{/if}}" data-category="char">
             <i class="fas fa-dragon"></i> Char.
           </button>
           <button type="button" class="btn btn-medieval element-category {{#if isActiveCategory 'crown'}}active{{/if}}" data-category="crown">
@@ -79,7 +79,7 @@
       </div>
       
       <!-- Animal type selector -->
-      {{#if isAnimalCategory}}
+      {{#if isActiveCategory 'char'}}
         <div class="animal-types mb-4">
           <div class="btn-group" role="group">
             <button type="button" class="btn btn-medieval-secondary element-btn {{#if isActiveType 'leftAnimal'}}active{{/if}}" data-type="leftAnimal">
@@ -223,13 +223,14 @@
         </div>
         <div class="modal-body">
           <div class="category-selector mb-4">
-            <select id="symbolCategorySelect" class="form-select medieval-select">
-              {{#each name in symbolCategoryNames}}
-                <option value="{{name}}" selected={{isSelectedCategory name}}>
-                  {{name}}
-                </option>
-              {{/each}}
-            </select>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-medieval-secondary {{#if isSelectedCategory 'Flags'}}active{{/if}}" data-category="Flags">
+                <i class="fas fa-flag"></i> Flags
+              </button>
+              <button type="button" class="btn btn-medieval-secondary {{#if isSelectedCategory 'Symbols'}}active{{/if}}" data-category="Symbols">
+                <i class="fas fa-chess-rook"></i> Symbols
+              </button>
+            </div>
           </div>
           <div class="symbol-category">
             <div class="image-grid">

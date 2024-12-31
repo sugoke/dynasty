@@ -401,15 +401,42 @@ Template.editor.onRendered(function() {
               flagX = areaInfo.x + (areaInfo.w - flagWidth) / 2;
               flagY = areaInfo.y + (areaInfo.h - flagHeight) / 2;
             } else if (layout === '2') {
-              // Split mode logic remains unchanged
-              flagWidth = areaInfo.w * 0.5 * 1.3;
-              flagHeight = areaInfo.h * 0.5 * 1.5;
-              flagY = areaInfo.y + (areaInfo.h - flagHeight) / 2;
+              // Split mode: Show cropped middle section of flag
+              flagHeight = areaInfo.h * 0.8; // Keep 80% height
+              flagWidth = areaInfo.w; // Use full width of area
+              flagY = areaInfo.y + (areaInfo.h - flagHeight) / 2; // Center vertically
               
+              // Position exactly at the center line with no gap
               if (areaInfo.area === 'area1') {
                 flagX = areaInfo.x + areaInfo.w - flagWidth;
               } else {
                 flagX = areaInfo.x;
+              }
+              
+              let skipRegularDraw = false;
+              if (!src.includes('/symbols/symbols/')) {  // Only for flags, not symbols
+                // Calculate source coordinates to crop middle section
+                const sourceHeight = img.naturalHeight;
+                const sourceWidth = sourceHeight * (flagWidth / flagHeight); // Keep aspect ratio
+                const sourceX = (img.naturalWidth - sourceWidth) / 2; // Center the crop
+                const sourceY = 0;
+                
+                // Draw cropped section
+                ctx.drawImage(
+                  img,
+                  sourceX, sourceY, sourceWidth, sourceHeight, // Source (crop) coordinates
+                  flagX, flagY, flagWidth, flagHeight // Destination coordinates
+                );
+                
+                // Add gloss effects
+                addGlossEffect(ctx, flagX, flagY, flagWidth, flagHeight);
+                
+                skipRegularDraw = true;
+              }
+              
+              if (skipRegularDraw) {
+                resolve();
+                return;
               }
             } else if (layout === '4') {
               // Quad mode remains unchanged
@@ -1210,6 +1237,10 @@ Template.editor.helpers({
   
   isSelectedCategory(name) {
     return Template.instance().selectedSymbolCategory.get() === name;
+  },
+  
+  isAnimalCategory() {
+    return Template.instance().selectedCategory.get() === 'char';
   }
 });
 
@@ -1223,7 +1254,7 @@ Template.editor.events({
       case 'frame':
         instance.selectedElement.set('frame');
         break;
-      case 'animal':
+      case 'char':
         instance.selectedElement.set('leftAnimal');
         break;
       case 'crown':
@@ -1483,8 +1514,9 @@ Template.editor.events({
     }
   },
   
-  'change #symbolCategorySelect'(event, instance) {
-    instance.selectedSymbolCategory.set(event.target.value);
+  'click .category-selector button'(event, instance) {
+    const category = event.currentTarget.dataset.category;
+    instance.selectedSymbolCategory.set(category);
   }
 });
 
