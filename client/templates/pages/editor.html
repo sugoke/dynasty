@@ -4,7 +4,7 @@
     
     <!-- Add canvas wrapper with relative positioning -->
     <div class="canvas-wrapper">
-      <canvas id="coatCanvas" width="800" height="800"></canvas>
+      <canvas id="coatCanvas" width="1000" height="1000"></canvas>
       
       <!-- Add grid overlay -->
       {{#if selectedLayout}}
@@ -67,13 +67,13 @@
           <i class="fas fa-dragon"></i> CHAR.
         </button>
         
-        {{#if isActiveCategory 'char'}}
+        {{#if isCharCategory}}
           <div class="sub-buttons mb-2">
             <div class="btn-group-horizontal w-100" role="group">
-              <button type="button" class="btn btn-outline-medieval element-btn {{#if isActiveType 'leftAnimal'}}active{{/if}}" data-type="leftAnimal">
+              <button type="button" class="btn btn-outline-medieval element-btn" data-type="leftAnimal">
                 <i class="fas fa-chevron-left me-1"></i>Left
               </button>
-              <button type="button" class="btn btn-outline-medieval element-btn {{#if isActiveType 'rightAnimal'}}active{{/if}}" data-type="rightAnimal">
+              <button type="button" class="btn btn-outline-medieval element-btn" data-type="rightAnimal">
                 <i class="fas fa-chevron-right me-1"></i>Right
               </button>
             </div>
@@ -227,13 +227,61 @@
     </div>
   </div>
   
-  <!-- Update the image picker modal -->
-  <div class="modal fade" id="imagePickerModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+  <!-- Update element picker modal -->
+  <div class="modal fade element-picker-modal" 
+       id="elementPickerModal" 
+       tabindex="-1" 
+       role="dialog"
+       aria-labelledby="elementPickerTitle">
+    <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Choose Symbol</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h5 class="modal-title" id="elementPickerTitle">{{elementPickerTitle}}</h5>
+        </div>
+        <div class="modal-body">
+          {{#if showAnimalCategories}}
+            <div class="category-tabs" role="tablist">
+              {{#each animalCategory in animalCategories}}
+                <button class="category-tab {{isActiveAnimalTab animalCategory}}" 
+                        role="tab"
+                        data-category="{{animalCategory}}"
+                        aria-selected="{{#if isActiveAnimalTab animalCategory}}true{{else}}false{{/if}}"
+                        aria-controls="{{animalCategory}}Panel">
+                  {{formatAnimalCategory animalCategory}}
+                </button>
+              {{/each}}
+            </div>
+          {{/if}}
+          
+          <div class="image-grid" role="grid">
+            <div class="image-option none-option" data-url="none">
+              <div class="none-icon">
+                <i class="fas fa-ban"></i>
+              </div>
+              <div class="image-name">None</div>
+            </div>
+            {{#each elementOptions}}
+              <div class="image-option {{#if isRightAnimalType}}mirror{{/if}}" data-url="{{this}}">
+                <img src="{{this}}" alt="Element option">
+                <div class="image-name">{{getElementName this}}</div>
+              </div>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Update image picker modal -->
+  <div class="modal fade" 
+       id="imagePickerModal" 
+       tabindex="-1" 
+       role="dialog"
+       aria-labelledby="imagePickerTitle">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="imagePickerTitle">Choose Symbol</h5>
         </div>
         <div class="modal-body">
           <div class="category-selector mb-4">
@@ -256,9 +304,6 @@
               {{/each}}
             </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-medieval" data-bs-dismiss="modal">Cancel</button>
         </div>
       </div>
     </div>

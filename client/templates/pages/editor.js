@@ -160,16 +160,16 @@ const addWatermark = (ctx, width, height) => {
   if (!user?.profile?.credits) {
     ctx.save();
     
-    // Set watermark style with higher opacity
-    ctx.globalAlpha = 0.3;  // Increased from 0.15
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';  // Dark color for better visibility
-    ctx.font = 'bold 24px Arial';  // Made text bold and slightly larger
+    // Set watermark style with more transparency
+    ctx.globalAlpha = 0.15;  /* Reduced from 0.3 */
+    ctx.fillStyle = 'rgba(44, 24, 16, 0.5)';  /* Using wood color with transparency */
+    ctx.font = 'bold 24px Arial';
     
     // Create diagonal repeating pattern
     const text = 'Buy credits to remove watermark';
     const metrics = ctx.measureText(text);
     const textWidth = metrics.width;
-    const gap = 150;  // Increased gap between watermarks
+    const gap = 150;
     
     // Rotate canvas for diagonal text
     ctx.translate(width/2, height/2);
@@ -185,6 +185,46 @@ const addWatermark = (ctx, width, height) => {
     
     ctx.restore();
   }
+};
+
+// Add this constant at the top of the file
+const CHAR_OPTIONS = {
+  bears: [
+    '/images/bears/bear1.png',
+    '/images/bears/bear2.png',
+    '/images/bears/bear3.png',
+    '/images/bears/bear4.png'
+  ],
+  boars: [
+    '/images/boars/boar1.png',
+    '/images/boars/boar2.png',
+    '/images/boars/boar3.png'
+  ],
+  bulls: [
+    '/images/bulls/bull1.png',
+    '/images/bulls/bull2.png',
+    '/images/bulls/bull3.png'
+  ],
+  dragons: [
+    '/images/dragons/dragon1.png',
+    '/images/dragons/dragon2.png',
+    '/images/dragons/dragon3.png'
+  ],
+  eagles: [
+    '/images/eagles/eagle1.png',
+    '/images/eagles/eagle2.png',
+    '/images/eagles/eagle3.png'
+  ],
+  lions: [
+    '/images/lions/lion1.png',
+    '/images/lions/lion2.png',
+    '/images/lions/lion3.png'
+  ],
+  wolves: [
+    '/images/wolves/wolf1.png',
+    '/images/wolves/wolf2.png',
+    '/images/wolves/wolf3.png'
+  ]
 };
 
 Template.editor.onCreated(function() {
@@ -211,6 +251,8 @@ Template.editor.onCreated(function() {
   this.activeImageArea = new ReactiveVar(null);
   this.bannerText = new ReactiveVar('');
   this.selectedSymbolCategory = new ReactiveVar('Flags'); // Default to Flags
+  this.currentElementType = new ReactiveVar(null);
+  this.currentAnimalCategory = new ReactiveVar('bears');
   
   // Subscribe to user's design
   this.autorun(() => {
@@ -232,59 +274,6 @@ Template.editor.onRendered(function() {
   const instance = this;
   instance.canvas = instance.find('#coatCanvas');
   instance.ctx = instance.canvas.getContext('2d');
-  
-  instance.drawElement = function(src, position = null) {
-    const canvas = this.canvas;
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
-    
-    img.onload = () => {
-      // Calculate dimensions based on element type
-      let width, height, x, y;
-      
-      if (src.includes('frame')) {
-        // Frame takes up most of the canvas
-        width = canvas.width * 0.8;
-        height = canvas.height * 0.8;
-        x = (canvas.width - width) / 2;
-        y = (canvas.height - height) / 2;
-      } else if (position === 'leftAnimal') {
-        // Left animal positioning
-        width = canvas.width * 0.3;
-        height = canvas.height * 0.3;
-        x = canvas.width * 0.15;
-        y = canvas.height * 0.35;
-      } else if (position === 'rightAnimal') {
-        // Right animal positioning
-        width = canvas.width * 0.3;
-        height = canvas.height * 0.3;
-        x = canvas.width * 0.55;
-        y = canvas.height * 0.35;
-      } else if (src.includes('crown')) {
-        // Crown positioning
-        width = canvas.width * 0.25;
-        height = width * 0.8;
-        x = (canvas.width - width) / 2;
-        y = canvas.height * 0.1;
-      } else if (src.includes('banner')) {
-        // Banner positioning
-        width = canvas.width * 0.7;
-        height = canvas.height * 0.2;
-        x = (canvas.width - width) / 2;
-        y = canvas.height * 0.65;
-      } else if (src.includes('laurel')) {
-        // Laurel positioning - slightly smaller
-        width = canvas.width * 0.85;  // Decreased from 0.95
-        height = canvas.height * 0.85; // Decreased from 0.95
-        x = (canvas.width - width) / 2;
-        y = (canvas.height - height) / 2;
-      }
-      
-      ctx.drawImage(img, x, y, width, height);
-    };
-    
-    img.src = src;
-  };
   
   instance.drawBackgroundImages = async () => {
     const ctx = instance.ctx;
@@ -599,107 +588,77 @@ Template.editor.onRendered(function() {
     }
   };
 
-  // Add this function inside Template.editor.onRendered before redrawCanvas
-    const loadAndDrawElement = (src, position) => {
-      return new Promise((resolve) => {
-        if (!src || src === 'none') {
-          resolve();
-          return;
-        }
+  // Update loadAndDrawElement to be the only drawing function
+  const loadAndDrawElement = (src, position) => {
+    return new Promise((resolve) => {
+      if (!src) {
+        resolve();
+        return;
+      }
       
-      console.log(`Loading element: ${src} for position: ${position}`);
-        
-        const img = new Image();
-        img.onload = () => {
-          let width, height, x, y;
+      console.log('Loading element:', src, 'for position:', position);
+      const img = new Image();
+      img.src = src;
+      
+      img.onload = () => {
         const ctx = instance.canvas.getContext('2d');
-        const layout = instance.selectedLayout.get(); // Get current layout
+        let width, height, x, y;
         
-        if (position === 'symbol') {
-          // Adjust symbol size based on layout and category
-          const baseWidth = instance.canvas.width * 0.08;
-          const isSymbolCategory = src.includes('/symbols/symbols/'); // Check if it's from symbols category
-          const scaleFactor = isSymbolCategory ? 0.1 : 1; // 10% size for symbols, full size for flags
-          
-          width = layout === '1' ? 
-            (baseWidth / 2) * scaleFactor : // Single mode
-            baseWidth * scaleFactor;        // Split/Quad mode
-            
-          const aspectRatio = img.naturalHeight / img.naturalWidth;
-          height = width * aspectRatio;
-          
-          // Calculate center of the active grid area (55% of canvas is the inner area)
-          const innerWidth = instance.canvas.width * 0.55;
-          const innerHeight = instance.canvas.height * 0.55;
-          const innerX = (instance.canvas.width - innerWidth) / 2;
-          const innerY = (instance.canvas.height - innerHeight) / 2;
-          
-          // Center in the active grid area
-          x = innerX + (innerWidth - width) / 2;
-          y = innerY + (innerHeight - height) / 2;
-          
-          ctx.drawImage(img, x, y, width, height);
-        } else if (position === 'frame') {
-          width = instance.canvas.width * 0.85;
-          height = instance.canvas.height * 0.85;
-          x = (instance.canvas.width - width) / 2;
-          y = (instance.canvas.height - height) / 2;
+        if (position === 'frame') {
+          width = instance.canvas.width;
+          height = instance.canvas.height;
+          x = 0;
+          y = 0;
           ctx.drawImage(img, x, y, width, height);
         } else if (position === 'leftAnimal') {
-          // Left animal positioning - 20% bigger
-          width = instance.canvas.width * 0.36;  // Changed from 0.3 to 0.36
-          const aspectRatio = img.naturalHeight / img.naturalWidth;
-          height = width * aspectRatio;
-          x = instance.canvas.width * 0.1;
-          y = instance.canvas.height * 0.35;
+          width = instance.canvas.width * 0.42;
+          height = instance.canvas.height * 0.42;
+          x = instance.canvas.width * 0.00;
+          y = instance.canvas.height * 0.3;
           ctx.drawImage(img, x, y, width, height);
         } else if (position === 'rightAnimal') {
-          // Right animal positioning - 20% bigger
-          width = instance.canvas.width * 0.36;  // Changed from 0.3 to 0.36
-          const aspectRatio = img.naturalHeight / img.naturalWidth;
-          height = width * aspectRatio;
-          x = instance.canvas.width * 0.6;
-          y = instance.canvas.height * 0.35;
+          width = instance.canvas.width * 0.42;
+          height = instance.canvas.height * 0.42;
+          x = instance.canvas.width * 0.58;
+          y = instance.canvas.height * 0.3;
           
+          // Save context state
           ctx.save();
+          
+          // Set up the transform for flipping
           ctx.translate(x + width, y);
           ctx.scale(-1, 1);
+          
+          // Draw the image at 0,0 since we've translated the context
           ctx.drawImage(img, 0, 0, width, height);
+          
+          // Restore context state
           ctx.restore();
         } else if (position === 'crown') {
-          width = instance.canvas.width * 0.25;
-          const aspectRatio = img.naturalHeight / img.naturalWidth;
-          height = width * aspectRatio;
+          width = instance.canvas.width * 0.35;
+          height = width * 0.8;
           x = (instance.canvas.width - width) / 2;
-          y = instance.canvas.height * 0.1;
+          y = instance.canvas.height * 0.05;
           ctx.drawImage(img, x, y, width, height);
         } else if (position === 'banner') {
-          width = instance.canvas.width * 0.7;
-          height = instance.canvas.height * 0.2;
+          width = instance.canvas.width * 0.8;
+          height = instance.canvas.height * 0.25;
           x = (instance.canvas.width - width) / 2;
-          y = instance.canvas.height * 0.65;
+          y = instance.canvas.height * 0.7;
           ctx.drawImage(img, x, y, width, height);
         } else if (position === 'laurel') {
-          width = instance.canvas.width * 0.85;
-          height = instance.canvas.height * 0.85;
-          x = (instance.canvas.width - width) / 2;
-          y = (instance.canvas.height - height) / 2;
-          
-          ctx.save();
-          ctx.globalAlpha = 0.5;
+          width = instance.canvas.width;
+          height = instance.canvas.height;
+          x = 0;
+          y = 0;
           ctx.drawImage(img, x, y, width, height);
-          ctx.restore();
         }
-          resolve();
-        };
-      img.onerror = () => {
-        console.error(`Failed to load image: ${src}`);
+        
         resolve();
       };
-        img.src = src;
-      });
-    };
-    
+    });
+  };
+  
   // Then modify redrawCanvas to use this function
   instance.redrawCanvas = async (skipWatermark = false) => {
     const ctx = instance.canvas.getContext('2d');
@@ -869,168 +828,24 @@ Template.editor.helpers({
   },
   
   elementOptions() {
-    const type = Template.instance().selectedElement.get();
+    const type = Template.instance().currentElementType.get();
+    const animalCategory = Template.instance().currentAnimalCategory.get();
+    
     if (!type) return [];
-    
-    // Common animal options for both left and right
-    const charOptions = [
-      'none',
-      // Bears
-      '/images/bears/bear1.png',
-      '/images/bears/bear3.png',
-      '/images/bears/bear4.png',
-      '/images/bears/bear5.png',
-      // Boars
-      '/images/boars/boar1.png',
-      // Bulls & Bison
-      '/images/bulls/bull1.png',
-      '/images/bulls/bull2.png',
-      '/images/bulls/bison.png',
-      // Deers
-      '/images/dears/dear1.png',
-      '/images/dears/dear2.png',
-      // Dolphins
-      '/images/dolphins/dolphin.png',
-      // Dragons
-      '/images/dragons/dragon1.png',
-      // Eagles
-      '/images/eagles/eagle1.png',
-      '/images/eagles/eagle2.png',
-      // Griffins
-      '/images/griffins/griffin1.png',
-      '/images/griffins/griffin2.png',
-      // Horses
-      '/images/horses/horse1.png',
-      '/images/horses/horse2.png',
-      // Lions
-      '/images/lions/lion1.png',
-      '/images/lions/lion2.png',
-      '/images/lions/lion3.png',
-      '/images/lions/lion4.png',
-      // People
-      
-      '/images/people/knight1.png',
-      '/images/people/knight2.png',
-      '/images/people/knight3.png',
-      '/images/people/knight4.png',
-      '/images/people/mermaid.png',
-      '/images/people/roman.png',
-      '/images/people/viking.png',
-     
-      // Unicorns
-      '/images/unicorns/unicorn1.png',
-      '/images/unicorns/unicorn2.png',
-      // Wolves
-      '/images/wolves/wolf1.png',
-      '/images/wolves/wolf2.png'
-    ];
-    
-    // Update flag paths
-    const flagImages = [
-      'none',
-      '/images/symbols/flags/algeria.png',
-      '/images/symbols/flags/argentina.png',
-      '/images/symbols/flags/australia.png',
-      '/images/symbols/flags/austria.png',
-      '/images/symbols/flags/bangladesh.png',
-      '/images/symbols/flags/belgium.png',
-      '/images/symbols/flags/brazil.png',
-      '/images/symbols/flags/canada.png',
-      '/images/symbols/flags/chile.png',
-      '/images/symbols/flags/china.png',
-      '/images/symbols/flags/colombia.png',
-      '/images/symbols/flags/czechrepublic.png',
-      '/images/symbols/flags/denmark.png',
-      '/images/symbols/flags/egypt.png',
-      '/images/symbols/flags/finland.png',
-      '/images/symbols/flags/france.png',
-      '/images/symbols/flags/gb-eng.png',
-      '/images/symbols/flags/gb-nir.png',
-      '/images/symbols/flags/gb-sct.png',
-      '/images/symbols/flags/gb-wls.png',
-      '/images/symbols/flags/germany.png',
-      '/images/symbols/flags/greece.png',
-      '/images/symbols/flags/hungary.png',
-      '/images/symbols/flags/india.png',
-      '/images/symbols/flags/indonesia.png',
-      '/images/symbols/flags/ireland.png',
-      '/images/symbols/flags/israel.png',
-      '/images/symbols/flags/italy.png',
-      '/images/symbols/flags/japan.png',
-      '/images/symbols/flags/malaysia.png',
-      '/images/symbols/flags/mexico.png',
-      '/images/symbols/flags/morocco.png',
-      '/images/symbols/flags/netherlands.png',
-      '/images/symbols/flags/newzealand.png',
-      '/images/symbols/flags/norway.png',
-      '/images/symbols/flags/pakistan.png',
-      '/images/symbols/flags/philippines.png',
-      '/images/symbols/flags/poland.png',
-      '/images/symbols/flags/portugal.png',
-      '/images/symbols/flags/romania.png',
-      '/images/symbols/flags/russia.png',
-      '/images/symbols/flags/saudiarabia.png',
-      '/images/symbols/flags/slovakia.png',
-      '/images/symbols/flags/south_africa.png',
-      '/images/symbols/flags/southafrica.png',
-      '/images/symbols/flags/southkorea.png',
-      '/images/symbols/flags/spain.png',
-      '/images/symbols/flags/sweden.png',
-      '/images/symbols/flags/switzerland.png',
-      '/images/symbols/flags/thailand.png',
-      '/images/symbols/flags/turkey.png',
-      '/images/symbols/flags/unitedarabemirates.png',
-      '/images/symbols/flags/unitedkingdom.png',
-      '/images/symbols/flags/unitedstates.png',
-      '/images/symbols/flags/vietnam.png'
-    ];
 
-    // Add symbols options
-    const symbolOptions = [
-      'none',
-      '/images/symbols/symbols/arrow.png',
-      '/images/symbols/symbols/boat.png',
-      '/images/symbols/symbols/book.png',
-      '/images/symbols/symbols/caduceus.png',
-      '/images/symbols/symbols/chessknight.png',
-      '/images/symbols/symbols/chevron.png',
-      '/images/symbols/symbols/cobra.png',
-      '/images/symbols/symbols/cogq.png',
-      '/images/symbols/symbols/compass.png',
-      '/images/symbols/symbols/cross.png',
-      '/images/symbols/symbols/davidstart.png',
-      '/images/symbols/symbols/dove.png',
-      '/images/symbols/symbols/gorgon.png',
-      '/images/symbols/symbols/hammer.png',
-      '/images/symbols/symbols/harp.png',
-      '/images/symbols/symbols/key.png',
-      '/images/symbols/symbols/knight3.png',
-      '/images/symbols/symbols/moon.png',
-      '/images/symbols/symbols/muslimmoon.png',
-      '/images/symbols/symbols/oaktree.png',
-      '/images/symbols/symbols/penfeather.png',
-      '/images/symbols/symbols/rooster.png',
-      '/images/symbols/symbols/rose.png',
-      '/images/symbols/symbols/skull.png',
-      '/images/symbols/symbols/sun.png',
-      '/images/symbols/symbols/sword.png',
-      '/images/symbols/symbols/trebuchet.png',
-      '/images/symbols/symbols/trefle.png'
-    ];
-    
-    // Return array of image URLs based on type
-    const options = {
+    // Filter animals by category if it's an animal type
+    if ((type === 'leftAnimal' || type === 'rightAnimal') && animalCategory) {
+      return CHAR_OPTIONS[animalCategory] || [];
+    }
+
+    // Return regular options for other types
+    return {
       frame: [
-        'none', 
         '/images/frames/frame1.png',
         '/images/frames/frame2.png',
         '/images/frames/frame3.png'
-      
       ],
-      leftAnimal: charOptions,
-      rightAnimal: charOptions,
       crown: [
-        'none',
         '/images/crowns/crown1.png',
         '/images/crowns/crown2.png',
         '/images/crowns/crown3.png',
@@ -1044,7 +859,6 @@ Template.editor.helpers({
         '/images/crowns/viking.png'
       ],
       banner: [
-        'none', 
         '/images/banners/redbanner.png',
         '/images/banners/blackbanner.png',
         '/images/banners/bluebanner.png',
@@ -1052,18 +866,13 @@ Template.editor.helpers({
         '/images/banners/greenbanner.png'
       ],
       laurel: [
-        'none', 
         '/images/laurels/laurels.png', 
         '/images/laurels/laurels2.png',
         '/images/laurels/goldlaurels.png',
         '/images/laurels/reallaurels.png',
         '/images/laurels/silverlaurels.png'
-      ],
-      flags: flagImages,
-      symbols: symbolOptions
-    };
-    
-    return options[type] || [];
+      ]
+    }[type] || [];
   },
   
   getElementName(url) {
@@ -1241,6 +1050,48 @@ Template.editor.helpers({
   
   isAnimalCategory() {
     return Template.instance().selectedCategory.get() === 'char';
+  },
+  
+  elementPickerTitle() {
+    const type = Template.instance().currentElementType.get();
+    switch(type) {
+      case 'frame': return 'Choose Frame';
+      case 'leftAnimal': return 'Choose Left Character';
+      case 'rightAnimal': return 'Choose Right Character';
+      case 'crown': return 'Choose Crown';
+      case 'banner': return 'Choose Banner';
+      case 'laurel': return 'Choose Laurel';
+      default: return 'Choose Element';
+    }
+  },
+
+  showAnimalCategories() {
+    const type = Template.instance().currentElementType.get();
+    return type === 'leftAnimal' || type === 'rightAnimal';
+  },
+
+  isActiveAnimalTab(category) {
+    return Template.instance().currentAnimalCategory.get() === category ? 'active' : '';
+  },
+
+  animalCategories() {
+    return [
+      'bears',
+      'boars',
+      'bulls',
+      'dragons',
+      'eagles',
+      'lions',
+      'wolves'
+    ];
+  },
+
+  formatAnimalCategory(category) {
+    return category.charAt(0).toUpperCase() + category.slice(1);
+  },
+
+  isRightAnimalType() {
+    return Template.instance().currentElementType.get() === 'rightAnimal';
   }
 });
 
@@ -1249,34 +1100,25 @@ Template.editor.events({
     const category = event.currentTarget.dataset.category;
     instance.selectedCategory.set(category);
     
-    // Set default element type based on category
-    switch(category) {
-      case 'frame':
-        instance.selectedElement.set('frame');
-        break;
-      case 'char':
-        instance.selectedElement.set('leftAnimal');
-        break;
-      case 'crown':
-        instance.selectedElement.set('crown');
-        break;
-      case 'banner':
-        instance.selectedElement.set('banner');
-        break;
-      case 'laurel':
-        instance.selectedElement.set('laurel');
-        break;
+    // Only show modal for non-char categories
+    if (category !== 'char') {
+      let elementType = category;
+      instance.currentElementType.set(elementType);
+      const modal = new bootstrap.Modal(document.getElementById('elementPickerModal'));
+      modal.show();
     }
   },
   
   'click .element-btn'(event, instance) {
     const type = event.currentTarget.dataset.type;
-    instance.selectedElement.set(type);
+    instance.currentElementType.set(type);
+    const modal = new bootstrap.Modal(document.getElementById('elementPickerModal'));
+    modal.show();
   },
   
-  'click .element-option, click .none-icon'(event, instance) {
-    const type = instance.selectedElement.get();
+  'click .element-picker-modal .image-option'(event, instance) {
     const url = event.currentTarget.dataset.url;
+    const type = instance.currentElementType.get();
     const design = instance.design.get();
     
     if (type === 'frame') {
@@ -1291,12 +1133,37 @@ Template.editor.events({
       design[type] = url === 'none' ? null : url;
     }
     
-    if (design.frame && !design.frameNoBg) {
-      design.frameNoBg = design.frame.replace('.png', '-nbg.png');
-    }
-    
     instance.design.set(design);
     instance.redrawCanvas();
+    
+    // Return focus to the triggering button before closing modal
+    const triggerButton = document.querySelector('.category-tab.active, .image-option.active');
+    if (triggerButton) {
+      triggerButton.focus();
+    }
+    
+    // Close modal
+    $('.element-picker-modal').modal('hide');
+  },
+  
+  'click #imagePickerModal .image-option'(event, instance) {
+    const url = event.currentTarget.dataset.url;
+    const area = instance.activeImageArea.get();
+    const images = instance.backgroundImages.get();
+    images[area] = url;
+    instance.backgroundImages.set(images);
+    
+    // Add has-image class to the clicked grid area
+    const gridArea = document.querySelector(`.grid-area[data-area="${area}"]`);
+    if (gridArea) {
+      gridArea.classList.add('has-image');
+      gridArea.focus();
+    }
+    
+    instance.redrawCanvas();
+    
+    // Close modal
+    $('#imagePickerModal').modal('hide');
   },
   
   'click #resetBtn'(event, instance) {
@@ -1463,25 +1330,6 @@ Template.editor.events({
     modal.show();
   },
   
-  'click .image-option'(event, instance) {
-    const url = event.currentTarget.dataset.url;
-    const area = instance.activeImageArea.get();
-    const images = instance.backgroundImages.get();
-    images[area] = url;
-    instance.backgroundImages.set(images);
-    
-    // Add has-image class to the clicked grid area
-    const gridArea = document.querySelector(`.grid-area[data-area="${area}"]`);
-    if (gridArea) {
-      gridArea.classList.add('has-image');
-    }
-    
-    instance.redrawCanvas();
-    
-    const modal = bootstrap.Modal.getInstance(document.getElementById('imagePickerModal'));
-    modal.hide();
-  },
-  
   'click .grid-area'(event, instance) {
     const area = event.currentTarget.dataset.area;
     instance.activeImageArea.set(area);
@@ -1503,6 +1351,27 @@ Template.editor.events({
   'click .category-selector button'(event, instance) {
     const category = event.currentTarget.dataset.category;
     instance.selectedSymbolCategory.set(category);
+  },
+  
+  'click .category-tab'(event, instance) {
+    const category = event.currentTarget.dataset.category;
+    instance.currentAnimalCategory.set(category);
+  },
+  
+  // Add modal show handlers to manage focus
+  'show.bs.modal #elementPickerModal'(event, instance) {
+    // Set initial focus to first interactive element
+    setTimeout(() => {
+      const firstButton = event.target.querySelector('.category-tab, .image-option');
+      if (firstButton) firstButton.focus();
+    }, 150);
+  },
+  
+  'show.bs.modal #imagePickerModal'(event, instance) {
+    setTimeout(() => {
+      const firstButton = event.target.querySelector('.btn-medieval-secondary');
+      if (firstButton) firstButton.focus();
+    }, 150);
   }
 });
 

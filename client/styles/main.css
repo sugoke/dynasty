@@ -238,17 +238,18 @@ h4, h5, h6 {
 
 /* Editor styles */
 .editor-container {
-  max-width: 100vmin !important;
-  margin: 10px auto 0 !important;
-  padding: 0 10px !important;
+  max-width: 1400px !important;  /* Increased from 1200px */
+  margin: 20px auto 0 !important;
+  padding: 0 20px !important;
 }
 
 #coatCanvas {
   width: 100% !important;
-  height: auto !important;
-  background: var(--color-parchment) url('https://www.transparenttextures.com/patterns/parchment.png') !important;
-  border: 2px solid var(--color-dark-brown) !important;
-  margin-bottom: 1.5rem !important;
+  height: 100% !important;
+  background: white !important;
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 .controls {
@@ -1583,29 +1584,32 @@ body .modal .btn-secondary:hover,
 
 /* Update editor container styles */
 .editor-container {
-  max-width: 100vmin !important;
-  margin: 10px auto 0 !important;
-  padding: 0 10px !important;
+  max-width: 1400px !important;  /* Increased from 1200px */
+  margin: 20px auto 0 !important;
+  padding: 0 20px !important;
 }
 
 /* Remove canvas-area wrapper */
 #coatCanvas {
   width: 100% !important;
-  height: auto !important;
-  background: var(--color-parchment) url('https://www.transparenttextures.com/patterns/parchment.png') !important;
-  border: 2px solid var(--color-dark-brown) !important;
-  margin-bottom: 1.5rem !important;
+  height: 100% !important;
+  background: white !important;
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 /* Update mobile styles */
 @media (max-width: 768px) {
   .editor-container {
     margin: 10px auto 0 !important;
-    padding: 0 10px !important;
+    padding: 0 !important;
   }
 
-  #coatCanvas {
-    border-width: 1px !important;
+  .canvas-wrapper {
+    width: 100vw !important;
+    max-width: none !important;
+    margin: 0 -10px !important;
   }
 } 
 
@@ -1625,29 +1629,31 @@ body .modal .btn-secondary:hover,
 .canvas-wrapper {
   position: relative !important;
   width: 100% !important;
-  max-width: 100vmin !important;
+  max-width: 1200px !important;  /* Even larger */
   aspect-ratio: 1/1 !important;
   margin: 0 auto !important;
-  padding: 3px !important;
+  padding: 0 !important;
   background: var(--color-parchment) url('https://www.transparenttextures.com/patterns/parchment.png') !important;
-  border: 2px solid var(--color-dark-brown) !important;
+  border: none !important;
 }
 
 #coatCanvas {
-  display: block !important;
   width: 100% !important;
   height: 100% !important;
   background: white !important;
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 /* Grid overlay container */
 .grid-overlay {
   position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  width: 98% !important;
-  height: 98% !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  transform: none !important;
   pointer-events: all !important;
 }
 
@@ -1670,7 +1676,7 @@ body .modal .btn-secondary:hover,
 /* Plus icon */
 .grid-area i {
   font-size: 2rem !important;
-  color: var(--color-gold) !important;
+  color: var(--color-dark-brown) !important;  /* Changed from gold to dark brown */
   opacity: 0.5 !important;
   transition: all 0.3s ease !important;
 }
@@ -1678,6 +1684,7 @@ body .modal .btn-secondary:hover,
 .grid-area:hover i {
   opacity: 1 !important;
   transform: scale(1.2) !important;
+  color: var(--color-wood) !important;  /* Darker on hover */
 }
 
 /* Make grid area transparent when it has an image */
@@ -1690,46 +1697,79 @@ body .modal .btn-secondary:hover,
   display: none !important;
 }
 
-/* Split layout */
+/* Update split layout styles */
 .grid-area.half {
   position: absolute !important;
   width: 50% !important;
   height: 100% !important;
+  display: flex !important;
 }
 
+/* Left area - align plus to right */
 .grid-area.half:nth-child(1) {
   left: 0 !important;
+  justify-content: flex-end !important;  /* Align to right */
+  padding-right: 20px !important;  /* Add some spacing from middle */
 }
 
+/* Right area - align plus to left */
 .grid-area.half:nth-child(2) {
   left: 50% !important;
+  justify-content: flex-start !important;  /* Align to left */
+  padding-left: 20px !important;  /* Add some spacing from middle */
 }
 
-/* Quad layout */
+/* Keep vertical centering */
+.grid-area.half i {
+  align-self: center !important;
+}
+
+/* Update quad layout positioning */
 .grid-area.quarter {
   position: absolute !important;
   width: 50% !important;
   height: 50% !important;
+  display: flex !important;
 }
 
+/* Top left - align bottom right */
 .grid-area.quarter:nth-child(1) {
   left: 0 !important;
   top: 0 !important;
+  justify-content: flex-end !important;
+  align-items: flex-end !important;
+  padding-right: 20px !important;
+  padding-bottom: 20px !important;
 }
 
+/* Top right - align bottom left */
 .grid-area.quarter:nth-child(2) {
   left: 50% !important;
   top: 0 !important;
+  justify-content: flex-start !important;
+  align-items: flex-end !important;
+  padding-left: 20px !important;
+  padding-bottom: 20px !important;
 }
 
+/* Bottom left - align top right */
 .grid-area.quarter:nth-child(3) {
   left: 0 !important;
   top: 50% !important;
+  justify-content: flex-end !important;
+  align-items: flex-start !important;
+  padding-right: 20px !important;
+  padding-top: 20px !important;
 }
 
+/* Bottom right - align top left */
 .grid-area.quarter:nth-child(4) {
   left: 50% !important;
   top: 50% !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+  padding-left: 20px !important;
+  padding-top: 20px !important;
 }
 
 /* Layout selector styles */
@@ -1748,25 +1788,26 @@ body .modal .btn-secondary:hover,
 @media (max-width: 768px) {
   .editor-container {
     margin: 10px auto 0 !important;
-    padding: 0 10px !important;
+    padding: 0 !important;
   }
 
   .canvas-wrapper {
-    width: 100% !important;
-    max-width: 100vmin !important;
-    margin: 0 auto !important;
+    width: 100vw !important;
+    max-width: none !important;
+    margin: 0 -10px !important;
   }
 
-  #coatCanvas {
-    border-width: 1px !important;
+  /* Ensure editor container doesn't clip the expanded wrapper */
+  .editor-container {
+    overflow-x: hidden !important;
+    padding: 0 !important;
   }
 }
 
 /* For very small screens */
 @media (max-width: 360px) {
   .canvas-wrapper {
-    margin: 0 -10px !important;
-    width: calc(100% + 20px) !important;
+    margin: 0 -15px !important;
   }
 }
 
@@ -1776,7 +1817,7 @@ body .modal .btn-secondary:hover,
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
   gap: 1rem !important;
   padding: 1rem !important;
-  max-height: calc(2 * (150px + 2rem)) !important; /* 2 rows of images + gaps */
+  max-height: calc(2 * (150px + 2rem)) !important;
   overflow-y: auto !important;
 }
 
@@ -1894,8 +1935,8 @@ body .modal .btn-secondary:hover,
 }
 
 .element-categories .btn-group .btn {
-  flex: 1 1 0 !important;  /* Make all buttons take equal space */
-  min-width: 0 !important; /* Allow buttons to shrink below content width */
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
   padding: 0.75rem 0.5rem !important;
   white-space: nowrap !important;
   display: flex !important;
@@ -1987,9 +2028,9 @@ body .modal .btn-secondary:hover,
   flex: 1 !important;
   padding: 0.25rem 0.5rem !important;
   font-size: 0.875rem !important;
-  background: rgba(255, 215, 0, 0.1) !important;  /* Golden background */
-  border: 1px solid rgba(255, 215, 0, 0.3) !important;  /* Golden border */
-  color: #FFD700 !important;  /* Golden text */
+  background: rgba(255, 215, 0, 0.1) !important;
+  border: 1px solid rgba(255, 215, 0, 0.3) !important;
+  color: #FFD700 !important;
 }
 
 .btn-group-horizontal .btn:hover,
@@ -2032,4 +2073,122 @@ body .modal .btn-secondary:hover,
     font-size: 0.75rem !important;
     padding: 0.2rem 0.4rem !important;
   }
+}
+
+/* Remove the element carousel styles since we'll use modal instead */
+.element-carousel,
+.carousel-container,
+.carousel-inner,
+.element-option-wrapper {
+  display: none !important;
+}
+
+/* Update modal styles for element picker */
+.element-picker-modal .modal-dialog {
+  max-width: 800px !important;
+}
+
+.element-picker-modal .image-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) !important;
+  gap: 1rem !important;
+  padding: 1rem !important;
+  max-height: 70vh !important;
+  overflow-y: auto !important;
+}
+
+.element-picker-modal .image-option {
+  cursor: pointer !important;
+  border: 2px solid var(--color-dark-brown) !important;
+  border-radius: 4px !important;
+  padding: 0.5rem !important;
+  transition: all 0.3s ease !important;
+  text-align: center !important;
+  background: var(--color-parchment) !important;
+}
+
+.element-picker-modal .image-option:hover {
+  border-color: var(--color-gold) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+}
+
+.element-picker-modal .image-option img {
+  width: 100% !important;
+  height: 100px !important;
+  object-fit: contain !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.element-picker-modal .image-option.none-option {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 100% !important;
+}
+
+.element-picker-modal .none-icon {
+  font-size: 2rem !important;
+  color: var(--color-gold) !important;
+  opacity: 0.5 !important;
+  transition: all 0.3s ease !important;
+}
+
+.element-picker-modal .none-option:hover .none-icon {
+  opacity: 1 !important;
+  transform: scale(1.2) !important;
+}
+
+.element-picker-modal .image-name {
+  font-family: 'Cinzel', serif !important;
+  color: var(--color-gold) !important;
+  font-size: 0.9rem !important;
+  margin-top: 0.5rem !important;
+}
+
+/* Add category tabs for the modal */
+.element-picker-modal .category-tabs {
+  display: flex !important;
+  gap: 0.5rem !important;
+  padding: 1rem 1rem 0 !important;
+  border-bottom: 1px solid var(--color-dark-brown) !important;
+}
+
+.element-picker-modal .category-tab {
+  padding: 0.5rem 1rem !important;
+  border: 1px solid var(--color-dark-brown) !important;
+  border-bottom: none !important;
+  border-radius: 4px 4px 0 0 !important;
+  cursor: pointer !important;
+  background: var(--color-wood) !important;
+  color: var(--color-gold) !important;
+  transition: all 0.3s ease !important;
+}
+
+.element-picker-modal .category-tab.active {
+  background: var(--color-gold) !important;
+  color: var(--color-wood) !important;
+  border-color: var(--color-gold) !important;
+}
+
+/* Mirror effect for right-side characters */
+.element-picker-modal .image-option.mirror img {
+  transform: scaleX(-1) !important;
+}
+
+/* Update modal styles */
+.element-picker-modal .modal-dialog,
+#imagePickerModal .modal-dialog {
+  max-width: 800px !important;
+}
+
+.element-picker-modal .modal-body,
+#imagePickerModal .modal-body {
+  padding-bottom: 2rem !important;  /* Add more padding at bottom since no footer */
+}
+
+.element-picker-modal .image-grid,
+#imagePickerModal .image-grid {
+  max-height: 75vh !important;  /* Increase max height since no footer */
 }
