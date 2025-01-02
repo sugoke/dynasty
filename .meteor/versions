@@ -61,6 +61,8 @@ mongo-id@1.0.9
 npm-mongo@4.17.4
 observe-sequence@2.0.0
 ordered-dict@1.2.0
+ostrio:cookies@2.8.1
+ostrio:files@3.0.0-beta.6
 ostrio:flow-router-extra@2.11.0
 promise@1.0.0
 pwix:blaze-layout@2.3.3

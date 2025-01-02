@@ -1,15 +1,21 @@
 <template name="payment">
-  <div class="editor-container">
-    <h1 class="page-title">Purchase Export Credits</h1>
+  <div class="container mt-5 pt-4">
+    <div class="text-center mb-4">
+      <h1>Purchase Export Credits</h1>
+    </div>
     
-    <div class="card mb-4">
-      <div class="card-body">
-        <h3 class="card-title">Export Credits Package</h3>
-        <p class="card-text">Get 5 export credits for $20.00</p>
-        <p class="card-text">Current credits: {{credits}}</p>
-        <button class="btn btn-medieval-success" id="purchaseBtn">
-          <i class="fas fa-shopping-cart"></i> Purchase Credits
-        </button>
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body text-center">
+            <h3 class="card-title">Export Credits Package</h3>
+            <p class="card-text">Get 5 export credits for $20.00</p>
+            <p class="card-text">Current credits: {{credits}}</p>
+            <button class="btn btn-medieval-success btn-lg" id="purchaseBtn">
+              <i class="fas fa-shopping-cart"></i> Purchase Credits
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

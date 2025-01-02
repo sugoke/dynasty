@@ -2,6 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 import Stripe from 'stripe';
 import { Designs } from '../lib/collections';
+import fs from 'fs';
+import path from 'path';
 
 console.log('Meteor settings:', Meteor.settings);
 console.log('Stripe key:', Meteor.settings?.private?.stripe?.secretKey);
@@ -105,8 +107,13 @@ Meteor.methods({
       throw new Meteor.Error('stripe-not-configured', 'Stripe is not configured');
     }
     
+    // Get user's email
+    const user = await Meteor.users.findOneAsync(this.userId);
+    const email = user.emails?.[0]?.address;
+    
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
+      customer_email: email,
       line_items: [{
         price_data: {
           currency: 'usd',
@@ -120,8 +127,52 @@ Meteor.methods({
       mode: 'payment',
       success_url: Meteor.absoluteUrl('payment/success'),
       cancel_url: Meteor.absoluteUrl('payment/cancel'),
+      appearance: {
+        theme: 'night',
+        variables: {
+          fontFamily: '"MedievalSharp", cursive',
+          fontWeightNormal: '400',
+          borderRadius: '4px',
+          colorBackground: '#2C1810',
+          colorPrimary: '#b39656',
+          colorText: '#e8d5b5',
+        },
+      },
     });
     
     return session.id;
+  },
+  
+  async saveExportedImage(dataUrl) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    try {
+      // Remove the data URL prefix to get just the base64 data
+      const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
+      
+      // Get the project root directory by removing .meteor/local/build/programs/server
+      const projectRoot = process.cwd().split('.meteor')[0];
+      console.log('Project root:', projectRoot); // Debug log
+      
+      // Create savedCompositions directory in private folder
+      const dir = path.join(projectRoot, 'private', 'savedCompositions');
+      console.log('Saving to directory:', dir); // Debug log
+      
+      if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      
+      // Save the file
+      const filePath = path.join(dir, `${this.userId}.png`);
+      fs.writeFileSync(filePath, base64Data, 'base64');
+      
+      console.log(`Saved composition for user ${this.userId} at ${filePath}`);
+      return true;
+    } catch (error) {
+      console.error('Error saving exported image:', error);
+      throw new Meteor.Error('save-failed', 'Failed to save exported image');
+    }
   }
 }); 

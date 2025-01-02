@@ -2,43 +2,45 @@
   <div class="editor-container">
     <h1 class="page-title">Coat of Arms Creator</h1>
     
-    <!-- Add canvas wrapper with relative positioning -->
-    <div class="canvas-wrapper">
-      <canvas id="coatCanvas" width="1000" height="1000"></canvas>
-      
-      <!-- Add grid overlay -->
-      {{#if selectedLayout}}
-        <div class="grid-overlay">
-          {{#if isLayout "1"}}
-            <div class="grid-area" data-area="area1">
-              <i class="fas fa-plus"></i>
-            </div>
-          {{else if isLayout "2"}}
-            <div class="grid-area half" data-area="area1">
-              <i class="fas fa-plus"></i>
-            </div>
-            <div class="grid-area half" data-area="area2">
-              <i class="fas fa-plus"></i>
-            </div>
-          {{else if isLayout "4"}}
-            <div class="grid-area quarter" data-area="area1">
-              <i class="fas fa-plus"></i>
-            </div>
-            <div class="grid-area quarter" data-area="area2">
-              <i class="fas fa-plus"></i>
-            </div>
-            <div class="grid-area quarter" data-area="area3">
-              <i class="fas fa-plus"></i>
-            </div>
-            <div class="grid-area quarter" data-area="area4">
-              <i class="fas fa-plus"></i>
-            </div>
-          {{/if}}
-        </div>
-      {{/if}}
+    <!-- Canvas section -->
+    <div class="canvas-section">
+      <div class="canvas-wrapper">
+        <canvas id="coatCanvas" width="1000" height="1000"></canvas>
+        
+        <!-- Grid overlay -->
+        {{#if selectedLayout}}
+          <div class="grid-overlay">
+            {{#if isLayout "1"}}
+              <div class="grid-area" data-area="area1">
+                <i class="fas fa-plus"></i>
+              </div>
+            {{else if isLayout "2"}}
+              <div class="grid-area half" data-area="area1">
+                <i class="fas fa-plus"></i>
+              </div>
+              <div class="grid-area half" data-area="area2">
+                <i class="fas fa-plus"></i>
+              </div>
+            {{else if isLayout "4"}}
+              <div class="grid-area quarter" data-area="area1">
+                <i class="fas fa-plus"></i>
+              </div>
+              <div class="grid-area quarter" data-area="area2">
+                <i class="fas fa-plus"></i>
+              </div>
+              <div class="grid-area quarter" data-area="area3">
+                <i class="fas fa-plus"></i>
+              </div>
+              <div class="grid-area quarter" data-area="area4">
+                <i class="fas fa-plus"></i>
+              </div>
+            {{/if}}
+          </div>
+        {{/if}}
+      </div>
     </div>
     
-    
+    <!-- Controls section -->
     <div class="controls">
       <!-- Main element categories -->
       <div class="element-categories mb-4">
@@ -237,19 +239,23 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="elementPickerTitle">{{elementPickerTitle}}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           {{#if showAnimalCategories}}
-            <div class="category-tabs" role="tablist">
-              {{#each animalCategory in animalCategories}}
-                <button class="category-tab {{isActiveAnimalTab animalCategory}}" 
-                        role="tab"
-                        data-category="{{animalCategory}}"
-                        aria-selected="{{#if isActiveAnimalTab animalCategory}}true{{else}}false{{/if}}"
-                        aria-controls="{{animalCategory}}Panel">
-                  {{formatAnimalCategory animalCategory}}
-                </button>
-              {{/each}}
+            <div class="category-selector mb-3">
+              <button class="btn btn-medieval dropdown-toggle w-100 d-flex align-items-center" type="button" id="animalCategoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="/images/{{currentAnimalCategory}}/{{currentAnimalCategory}}1.png" alt="{{formatAnimalCategory currentAnimalCategory}}" class="category-thumb">
+                <span>{{formatAnimalCategory currentAnimalCategory}}</span>
+              </button>
+              <ul class="dropdown-menu w-100" aria-labelledby="animalCategoryDropdown">
+                {{#each animalCategories}}
+                  <li><a class="dropdown-item animal-option d-flex align-items-center" href="#" data-category="{{this}}">
+                    <img src="/images/{{this}}/{{this}}1.png" alt="{{formatAnimalCategory this}}" class="category-thumb">
+                    <span>{{formatAnimalCategory this}}</span>
+                  </a></li>
+                {{/each}}
+              </ul>
             </div>
           {{/if}}
           
@@ -262,7 +268,9 @@
             </div>
             {{#each elementOptions}}
               <div class="image-option {{#if isRightAnimalType}}mirror{{/if}}" data-url="{{this}}">
-                <img src="{{this}}" alt="Element option">
+                <div class="image-container">
+                  <img src="{{this}}" alt="Element option">
+                </div>
                 <div class="image-name">{{getElementName this}}</div>
               </div>
             {{/each}}

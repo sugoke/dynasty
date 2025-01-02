@@ -315,11 +315,9 @@ Template.editor.onRendered(function() {
       const src = images[areaInfo.area];
       if (!src || src === 'none') continue;
 
-      // If it's a symbol (in /symbols/symbols/) and not a flag, do half-size & corner anchoring
       const isSymbol = src.includes('/symbols/symbols/');
       
       if (isSymbol) {
-        // Symbol logic
         const img = new Image();
         await new Promise((resolve) => {
           img.onload = () => { resolve(); };
@@ -331,9 +329,8 @@ Template.editor.onRendered(function() {
           let targetW = areaInfo.w * 0.5;
           const aspectRatio = img.naturalHeight / img.naturalWidth;
           let targetH = targetW * aspectRatio;
-          let cornerX = 0;
-          let cornerY = 0;
-          
+          let cornerX, cornerY;
+
           if (layout === '1') {
             // Single mode: 50% size and centered
             targetW = areaInfo.w * 0.5;
@@ -352,7 +349,7 @@ Template.editor.onRendered(function() {
               cornerX = areaInfo.x; // Left align for right area
             }
           } else if (layout === '4') {
-            // Quad mode remains unchanged
+            // Quad mode corner positioning
             switch (areaInfo.area) {
               case 'area1':
                 cornerX = areaInfo.x + areaInfo.w - targetW;
@@ -376,139 +373,54 @@ Template.editor.onRendered(function() {
           ctx.drawImage(img, cornerX, cornerY, targetW, targetH);
         }
       } else {
-        // Flag logic
         const img = new Image();
         await new Promise((resolve) => {
           img.onload = () => {
-            let flagWidth, flagHeight, flagX, flagY;
-            
             if (layout === '1') {
               // Single mode: Fixed height, width adjusts to maintain aspect ratio
-              flagHeight = areaInfo.h * 0.9;  // Increased from 0.75
+              const flagHeight = areaInfo.h * 0.9;
               const aspectRatio = img.naturalWidth / img.naturalHeight;
-              flagWidth = flagHeight * aspectRatio;
-              flagX = areaInfo.x + (areaInfo.w - flagWidth) / 2;
-              flagY = areaInfo.y + (areaInfo.h - flagHeight) / 2;
+              const flagWidth = flagHeight * aspectRatio;
+              const flagX = areaInfo.x + (areaInfo.w - flagWidth) / 2;
+              const flagY = areaInfo.y + (areaInfo.h - flagHeight) / 2;
+              
+              ctx.drawImage(img, flagX, flagY, flagWidth, flagHeight);
+              addGlossEffect(ctx, flagX, flagY, flagWidth, flagHeight);
             } else if (layout === '2') {
               // Split mode: Show cropped middle section of flag
-              flagHeight = areaInfo.h * 0.95;  // Increased from 0.8
-              flagWidth = areaInfo.w;
-              flagY = areaInfo.y + (areaInfo.h - flagHeight) / 2;
+              const flagHeight = areaInfo.h * 0.95;
+              const flagWidth = areaInfo.w;
+              const flagY = areaInfo.y + (areaInfo.h - flagHeight) / 2;
+              const flagX = areaInfo.area === 'area1' ? 
+                areaInfo.x + areaInfo.w - flagWidth : 
+                areaInfo.x;
+
+              // Calculate source coordinates to crop middle section
+              const sourceHeight = img.naturalHeight;
+              const sourceWidth = sourceHeight * (flagWidth / flagHeight);
+              const sourceX = (img.naturalWidth - sourceWidth) / 2;
+              const sourceY = 0;
               
-              // Position exactly at the center line with no gap
-              if (areaInfo.area === 'area1') {
-                flagX = areaInfo.x + areaInfo.w - flagWidth;
-              } else {
-                flagX = areaInfo.x;
-              }
+              ctx.drawImage(
+                img,
+                sourceX, sourceY, sourceWidth, sourceHeight,
+                flagX, flagY, flagWidth, flagHeight
+              );
               
-              let skipRegularDraw = false;
-              if (!src.includes('/symbols/symbols/')) {  // Only for flags, not symbols
-                // Calculate source coordinates to crop middle section
-                const sourceHeight = img.naturalHeight;
-                const sourceWidth = sourceHeight * (flagWidth / flagHeight); // Keep aspect ratio
-                const sourceX = (img.naturalWidth - sourceWidth) / 2; // Center the crop
-                const sourceY = 0;
-                
-                // Draw cropped section
-                ctx.drawImage(
-                  img,
-                  sourceX, sourceY, sourceWidth, sourceHeight, // Source (crop) coordinates
-                  flagX, flagY, flagWidth, flagHeight // Destination coordinates
-                );
-                
-                // Add gloss effects
-                addGlossEffect(ctx, flagX, flagY, flagWidth, flagHeight);
-                
-                skipRegularDraw = true;
-              }
-              
-              if (skipRegularDraw) {
-                resolve();
-                return;
-              }
+              addGlossEffect(ctx, flagX, flagY, flagWidth, flagHeight);
             } else if (layout === '4') {
-              // Quad mode
-              flagWidth = areaInfo.w * 0.95;  // Increased from 0.75
-              flagHeight = areaInfo.h * 0.95;  // Increased from 0.75
-              switch (areaInfo.area) {
-                case 'area1':
-                  flagX = areaInfo.x + areaInfo.w - flagWidth;
-                  flagY = areaInfo.y + areaInfo.h - flagHeight;
-                  break;
-                case 'area2':
-                  flagX = areaInfo.x;
-                  flagY = areaInfo.y + areaInfo.h - flagHeight;
-                  break;
-                case 'area3':
-                  flagX = areaInfo.x + areaInfo.w - flagWidth;
-                  flagY = areaInfo.y;
-                  break;
-                case 'area4':
-                  flagX = areaInfo.x;
-                  flagY = areaInfo.y;
-                  break;
-              }
-            }
-            
-            if (!src.includes('/symbols/symbols/')) {  // Only for flags, not symbols
-              // Draw the base flag
-              ctx.drawImage(img, flagX, flagY, flagWidth, flagHeight);
+              // Quad mode: square crop from center
+              const sourceSize = Math.min(img.naturalWidth, img.naturalHeight);
+              const sourceX = (img.naturalWidth - sourceSize) / 2;
+              const sourceY = (img.naturalHeight - sourceSize) / 2;
               
-              // Add glossy effect
-              ctx.save();
-              
-              // Add stronger white highlight at the top
-              const highlightGradient = ctx.createLinearGradient(
-                flagX,
-                flagY,
-                flagX,
-                flagY + flagHeight * 0.6  // Extended highlight area
+              ctx.drawImage(
+                img,
+                sourceX, sourceY, sourceSize, sourceSize,
+                areaInfo.x, areaInfo.y, areaInfo.w, areaInfo.h
               );
-              highlightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.5)');  // Increased opacity
-              highlightGradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.1)');  // Added middle stop
-              highlightGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
               
-              ctx.globalCompositeOperation = 'overlay';
-              ctx.fillStyle = highlightGradient;
-              ctx.fillRect(flagX, flagY, flagWidth, flagHeight * 0.6);
-              
-              // Add stronger bottom shadow
-              const shadowGradient = ctx.createLinearGradient(
-                flagX,
-                flagY + flagHeight * 0.6,
-                flagX,
-                flagY + flagHeight
-              );
-              shadowGradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
-              shadowGradient.addColorStop(0.5, 'rgba(0, 0, 0, 0.2)');  // Added middle stop
-              shadowGradient.addColorStop(1, 'rgba(0, 0, 0, 0.4)');    // Increased opacity
-              
-              ctx.globalCompositeOperation = 'multiply';
-              ctx.fillStyle = shadowGradient;
-              ctx.fillRect(flagX, flagY + flagHeight * 0.6, flagWidth, flagHeight * 0.4);
-              
-              // Add stronger border and inner shadow
-              ctx.globalCompositeOperation = 'source-over';
-              ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';  // Darker border
-              ctx.lineWidth = 1.5;  // Slightly thicker
-              ctx.strokeRect(flagX, flagY, flagWidth, flagHeight);
-              
-              // Add subtle inner glow
-              ctx.globalCompositeOperation = 'overlay';
-              const glowGradient = ctx.createRadialGradient(
-                flagX + flagWidth/2, flagY + flagHeight/2, 0,
-                flagX + flagWidth/2, flagY + flagHeight/2, flagWidth/2
-              );
-              glowGradient.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
-              glowGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-              ctx.fillStyle = glowGradient;
-              ctx.fillRect(flagX, flagY, flagWidth, flagHeight);
-              
-              ctx.restore();
-            } else {
-              // Original symbol drawing logic
-              ctx.drawImage(img, flagX, flagY, flagWidth, flagHeight);
+              addGlossEffect(ctx, areaInfo.x, areaInfo.y, areaInfo.w, areaInfo.h);
             }
             resolve();
           };
@@ -1258,15 +1170,22 @@ Template.editor.events({
       // Get clean image data
       const dataUrl = instance.canvas.toDataURL('image/png');
       
-      // Restore original canvas with watermark
-      ctx.clearRect(0, 0, instance.canvas.width, instance.canvas.height);
-      ctx.drawImage(tempCanvas, 0, 0);
+      // Save to server
+      Meteor.call('saveExportedImage', dataUrl, (error) => {
+        if (error) {
+          console.error('Error saving exported image:', error);
+        }
+      });
       
       // Create download link
       const link = document.createElement('a');
       link.download = 'coat-of-arms.png';
       link.href = dataUrl;
       link.click();
+      
+      // Restore original canvas with watermark
+      ctx.clearRect(0, 0, instance.canvas.width, instance.canvas.height);
+      ctx.drawImage(tempCanvas, 0, 0);
       
       Meteor.call('useCredit', (error) => {
         if (error) {

@@ -8,8 +8,22 @@ window.bootstrap = bootstrap;
 // Import styles
 import './styles/main.css';
 
+// Add at the start of your main.js
+const observer = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+      console.log('Style changed:', mutation.target);
+    }
+  });
+});
 
-
+Meteor.startup(() => {
+  observer.observe(document.body, {
+    attributes: true,
+    subtree: true,
+    attributeFilter: ['class', 'style']
+  });
+});
 
 // Import all templates
 import './main.html';
