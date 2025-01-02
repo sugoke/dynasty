@@ -197,33 +197,55 @@ const CHAR_OPTIONS = {
   ],
   boars: [
     '/images/boars/boar1.png',
-    '/images/boars/boar2.png',
-    '/images/boars/boar3.png'
   ],
   bulls: [
     '/images/bulls/bull1.png',
     '/images/bulls/bull2.png',
-    '/images/bulls/bull3.png'
+    '/images/bulls/bison.png'
+  ],
+  deers: [
+    '/images/deers/deer1.png',
+    '/images/deers/deer2.png'
+  ],
+  dolphins: [
+    '/images/dolphins/dolphin1.png'
   ],
   dragons: [
-    '/images/dragons/dragon1.png',
-    '/images/dragons/dragon2.png',
-    '/images/dragons/dragon3.png'
+    '/images/dragons/dragon1.png'
   ],
   eagles: [
     '/images/eagles/eagle1.png',
     '/images/eagles/eagle2.png',
-    '/images/eagles/eagle3.png'
+  ],
+  griffins: [
+    '/images/griffins/griffin1.png',
+    '/images/griffins/griffin2.png'
+  ],
+  horses: [
+    '/images/horses/horse1.png'
   ],
   lions: [
     '/images/lions/lion1.png',
     '/images/lions/lion2.png',
-    '/images/lions/lion3.png'
+    '/images/lions/lion3.png',
+    '/images/lions/lion4.png'
+  ],
+  people: [
+    '/images/people/knight1.png',
+    '/images/people/knight2.png',
+    '/images/people/knight3.png',
+    '/images/people/knight4.png',
+    '/images/people/mermaid.png',
+    '/images/people/roman.png',
+    '/images/people/viking.png'
+  ],
+  unicorns: [
+    '/images/unicorns/unicorn1.png',
+    '/images/unicorns/unicorn2.png'
   ],
   wolves: [
     '/images/wolves/wolf1.png',
-    '/images/wolves/wolf2.png',
-    '/images/wolves/wolf3.png'
+    '/images/wolves/wolf2.png'
   ]
 };
 
@@ -252,7 +274,7 @@ Template.editor.onCreated(function() {
   this.bannerText = new ReactiveVar('');
   this.selectedSymbolCategory = new ReactiveVar('Flags'); // Default to Flags
   this.currentElementType = new ReactiveVar(null);
-  this.currentAnimalCategory = new ReactiveVar('bears');
+  this.currentAnimalCategory = new ReactiveVar(null);
   
   // Subscribe to user's design
   this.autorun(() => {
@@ -547,8 +569,11 @@ Template.editor.onRendered(function() {
           // Restore context state
           ctx.restore();
         } else if (position === 'crown') {
+          const crownImg = new Image();
+          crownImg.src = img.src;
+          const aspectRatio = crownImg.naturalWidth / crownImg.naturalHeight;
           width = instance.canvas.width * 0.35;
-          height = width * 0.8;
+          height = width / aspectRatio;
           x = (instance.canvas.width - width) / 2;
           y = instance.canvas.height * 0.05;
           ctx.drawImage(img, x, y, width, height);
@@ -725,6 +750,10 @@ Template.editor.onRendered(function() {
 Template.editor.helpers({
   isActiveCategory(category) {
     return Template.instance().selectedCategory.get() === category;
+  },
+  
+  getCategoryPreviewImage(category) {
+    return CHAR_OPTIONS[category]?.[0] || '';
   },
   
   isCharCategory() {
@@ -1273,6 +1302,12 @@ Template.editor.events({
   },
   
   'click .category-tab'(event, instance) {
+    const category = event.currentTarget.dataset.category;
+    instance.currentAnimalCategory.set(category);
+  },
+  
+  'click .animal-option'(event, instance) {
+    event.preventDefault();
     const category = event.currentTarget.dataset.category;
     instance.currentAnimalCategory.set(category);
   },

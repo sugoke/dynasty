@@ -245,13 +245,18 @@
           {{#if showAnimalCategories}}
             <div class="category-selector mb-3">
               <button class="btn btn-medieval dropdown-toggle w-100 d-flex align-items-center" type="button" id="animalCategoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="/images/{{currentAnimalCategory}}/{{currentAnimalCategory}}1.png" alt="{{formatAnimalCategory currentAnimalCategory}}" class="category-thumb">
-                <span>{{formatAnimalCategory currentAnimalCategory}}</span>
+                {{#if currentAnimalCategory}}
+                  <img src="{{getCategoryPreviewImage currentAnimalCategory}}" alt="{{formatAnimalCategory currentAnimalCategory}}" class="category-thumb">
+                  <span>{{formatAnimalCategory currentAnimalCategory}}</span>
+                {{else}}
+                  <i class="fas fa-chevron-down me-2"></i>
+                  <span>Choose Category</span>
+                {{/if}}
               </button>
               <ul class="dropdown-menu w-100" aria-labelledby="animalCategoryDropdown">
                 {{#each animalCategories}}
                   <li><a class="dropdown-item animal-option d-flex align-items-center" href="#" data-category="{{this}}">
-                    <img src="/images/{{this}}/{{this}}1.png" alt="{{formatAnimalCategory this}}" class="category-thumb">
+                    <img src="{{getCategoryPreviewImage this}}" alt="{{formatAnimalCategory this}}" class="category-thumb">
                     <span>{{formatAnimalCategory this}}</span>
                   </a></li>
                 {{/each}}
