@@ -2,172 +2,174 @@
   <div class="editor-container">
     <h1 class="page-title">Coat of Arms Creator</h1>
     
-    <!-- Canvas section -->
-    <div class="canvas-section">
-      <div class="canvas-wrapper">
-        <canvas id="coatCanvas" width="1000" height="1000"></canvas>
-        
-        <!-- Grid overlay -->
-        {{#if selectedLayout}}
-          <div class="grid-overlay">
-            {{#if isLayout "1"}}
-              <div class="grid-area" data-area="area1">
-                <i class="fas fa-plus"></i>
-              </div>
-            {{else if isLayout "2"}}
-              <div class="grid-area half" data-area="area1">
-                <i class="fas fa-plus"></i>
-              </div>
-              <div class="grid-area half" data-area="area2">
-                <i class="fas fa-plus"></i>
-              </div>
-            {{else if isLayout "4"}}
-              <div class="grid-area quarter" data-area="area1">
-                <i class="fas fa-plus"></i>
-              </div>
-              <div class="grid-area quarter" data-area="area2">
-                <i class="fas fa-plus"></i>
-              </div>
-              <div class="grid-area quarter" data-area="area3">
-                <i class="fas fa-plus"></i>
-              </div>
-              <div class="grid-area quarter" data-area="area4">
-                <i class="fas fa-plus"></i>
-              </div>
-            {{/if}}
-          </div>
-        {{/if}}
-      </div>
-    </div>
-    
-    <!-- Controls section -->
-    <div class="controls">
-      <!-- Main element categories -->
-      <div class="element-categories mb-4">
-        <!-- Main buttons -->
-        <button type="button" class="btn btn-medieval element-category w-100 mb-2 {{#if isActiveCategory 'frame'}}active{{/if}}" data-category="frame">
-          <i class="fas fa-shield-alt"></i> FRAME
-        </button>
-        
-        {{#if isActiveCategory 'frame'}}
-          <div class="sub-buttons mb-2">
-            <div class="btn-group-horizontal w-100" role="group">
-              <button type="button" class="btn btn-outline-medieval layout-btn {{#if isActiveLayout '1'}}active{{/if}}" data-layout="1">
-                <i class="fas fa-square me-1"></i>1
-              </button>
-              <button type="button" class="btn btn-outline-medieval layout-btn {{#if isActiveLayout '2'}}active{{/if}}" data-layout="2">
-                <i class="fas fa-columns me-1"></i>2
-              </button>
-              <button type="button" class="btn btn-outline-medieval layout-btn {{#if isActiveLayout '4'}}active{{/if}}" data-layout="4">
-                <i class="fas fa-th-large me-1"></i>4
-              </button>
-            </div>
-          </div>
-        {{/if}}
-        
-        <button type="button" class="btn btn-medieval element-category w-100 mb-2 {{#if isActiveCategory 'char'}}active{{/if}}" data-category="char">
-          <i class="fas fa-dragon"></i> CHAR.
-        </button>
-        
-        {{#if isCharCategory}}
-          <div class="sub-buttons mb-2">
-            <div class="btn-group-horizontal w-100" role="group">
-              <button type="button" class="btn btn-outline-medieval element-btn" data-type="leftAnimal">
-                <i class="fas fa-chevron-left me-1"></i>Left
-              </button>
-              <button type="button" class="btn btn-outline-medieval element-btn" data-type="rightAnimal">
-                <i class="fas fa-chevron-right me-1"></i>Right
-              </button>
-            </div>
-          </div>
-        {{/if}}
-        
-        <button type="button" class="btn btn-medieval element-category w-100 mb-2 {{#if isActiveCategory 'crown'}}active{{/if}}" data-category="crown">
-          <i class="fas fa-crown"></i> CROWN
-        </button>
-        
-        <button type="button" class="btn btn-medieval element-category w-100 mb-2 {{#if isActiveCategory 'banner'}}active{{/if}}" data-category="banner">
-          <i class="fas fa-flag"></i> BANNER
-        </button>
-        
-        {{#if isActiveCategory 'banner'}}
-          <div class="sub-buttons mb-2">
-            <input 
-              type="text" 
-              class="form-control medieval-input" 
-              id="bannerText" 
-              placeholder="Type banner text..." 
-              maxlength="12"
-              value="{{bannerText}}"
-            >
-          </div>
-        {{/if}}
-        
-        <button type="button" class="btn btn-medieval element-category w-100 mb-2 {{#if isActiveCategory 'laurel'}}active{{/if}}" data-category="laurel">
-          <i class="fas fa-leaf"></i> LAURELS
-        </button>
-      </div>
-      
-      <!-- Element options carousel -->
-      {{#if selectedElement}}
-        <div class="element-carousel mb-4">
-          <div class="carousel-container">
-            <div class="carousel-inner">
-              {{#each elementOptions}}
-                <div class="element-option-wrapper {{#if isNoneOption this}}none-option{{/if}}">
-                  {{#if isNoneOption this}}
-                    <div class="element-option none-icon" data-url="none">
-                      <i class="fas fa-ban"></i>
-                    </div>
-                  {{else}}
-                    <div class="element-option-img-container {{#if isRightAnimal}}mirror{{/if}}">
-                      <img src="{{this}}" class="element-option" data-url="{{this}}" alt="Element option">
-                    </div>
-                  {{/if}}
-                  <div class="element-option-name">{{getElementName this}}</div>
+    <div class="editor-content">
+      <!-- Canvas section -->
+      <div class="canvas-section">
+        <div class="canvas-wrapper">
+          <canvas id="coatCanvas" width="1000" height="1000"></canvas>
+          
+          <!-- Grid overlay -->
+          {{#if selectedLayout}}
+            <div class="grid-overlay">
+              {{#if isLayout "1"}}
+                <div class="grid-area" data-area="area1">
+                  <i class="fas fa-plus"></i>
                 </div>
-              {{/each}}
+              {{else if isLayout "2"}}
+                <div class="grid-area half" data-area="area1">
+                  <i class="fas fa-plus"></i>
+                </div>
+                <div class="grid-area half" data-area="area2">
+                  <i class="fas fa-plus"></i>
+                </div>
+              {{else if isLayout "4"}}
+                <div class="grid-area quarter" data-area="area1">
+                  <i class="fas fa-plus"></i>
+                </div>
+                <div class="grid-area quarter" data-area="area2">
+                  <i class="fas fa-plus"></i>
+                </div>
+                <div class="grid-area quarter" data-area="area3">
+                  <i class="fas fa-plus"></i>
+                </div>
+                <div class="grid-area quarter" data-area="area4">
+                  <i class="fas fa-plus"></i>
+                </div>
+              {{/if}}
             </div>
-          </div>
+          {{/if}}
         </div>
-      {{/if}}
-      
-      <!-- Add this after the element-carousel div -->
-      {{#if isBannerCategory}}
-        <div class="banner-text-input mb-4">
-          <div class="input-group">
-            <input 
-              type="text" 
-              class="form-control medieval-input" 
-              id="bannerText" 
-              placeholder="Enter your text here..." 
-              maxlength="20"
-              value="{{bannerText}}"
-            >
-            <button class="btn btn-medieval" id="updateBannerText">
-              <i class="fas fa-check"></i> Apply
-            </button>
-          </div>
-          <small class="text-muted">Maximum 20 characters</small>
-        </div>
-      {{/if}}
-      
-      <!-- Credits display -->
-      <div class="credits-display">
-        <span class="credits-count">Available Credits: {{credits}}</span>
       </div>
       
-      <!-- Action buttons -->
-      <div class="editor-actions mb-5">
-        <button class="btn btn-medieval-danger px-4" id="resetBtn">
-          <i class="fas fa-trash"></i> Reset
-        </button>
-        <button class="btn btn-medieval px-4" id="saveBtn">
-          <i class="fas fa-save"></i> Save
-        </button>
-        <button class="btn btn-medieval-success px-4" id="exportBtn">
-          <i class="fas fa-download"></i> Export
-        </button>
+      <!-- Controls section -->
+      <div class="controls">
+        <!-- Main element categories -->
+        <div class="element-categories mb-4">
+          <!-- Main buttons -->
+          <button type="button" class="btn btn-medieval element-category w-100 mb-2 {{#if isActiveCategory 'frame'}}active{{/if}}" data-category="frame">
+            <i class="fas fa-shield-alt"></i> FRAME
+          </button>
+          
+          {{#if isActiveCategory 'frame'}}
+            <div class="sub-buttons mb-2">
+              <div class="btn-group-horizontal w-100" role="group">
+                <button type="button" class="btn btn-outline-medieval layout-btn {{#if isActiveLayout '1'}}active{{/if}}" data-layout="1">
+                  <i class="fas fa-square me-1"></i>1
+                </button>
+                <button type="button" class="btn btn-outline-medieval layout-btn {{#if isActiveLayout '2'}}active{{/if}}" data-layout="2">
+                  <i class="fas fa-columns me-1"></i>2
+                </button>
+                <button type="button" class="btn btn-outline-medieval layout-btn {{#if isActiveLayout '4'}}active{{/if}}" data-layout="4">
+                  <i class="fas fa-th-large me-1"></i>4
+                </button>
+              </div>
+            </div>
+          {{/if}}
+          
+          <button type="button" class="btn btn-medieval element-category w-100 mb-2 {{#if isActiveCategory 'char'}}active{{/if}}" data-category="char">
+            <i class="fas fa-dragon"></i> CHAR.
+          </button>
+          
+          {{#if isCharCategory}}
+            <div class="sub-buttons mb-2">
+              <div class="btn-group-horizontal w-100" role="group">
+                <button type="button" class="btn btn-outline-medieval element-btn" data-type="leftAnimal">
+                  <i class="fas fa-chevron-left me-1"></i>Left
+                </button>
+                <button type="button" class="btn btn-outline-medieval element-btn" data-type="rightAnimal">
+                  <i class="fas fa-chevron-right me-1"></i>Right
+                </button>
+              </div>
+            </div>
+          {{/if}}
+          
+          <button type="button" class="btn btn-medieval element-category w-100 mb-2 {{#if isActiveCategory 'crown'}}active{{/if}}" data-category="crown">
+            <i class="fas fa-crown"></i> CROWN
+          </button>
+          
+          <button type="button" class="btn btn-medieval element-category w-100 mb-2 {{#if isActiveCategory 'banner'}}active{{/if}}" data-category="banner">
+            <i class="fas fa-flag"></i> BANNER
+          </button>
+          
+          {{#if isActiveCategory 'banner'}}
+            <div class="sub-buttons mb-2">
+              <input 
+                type="text" 
+                class="form-control medieval-input" 
+                id="bannerText" 
+                placeholder="Type banner text..." 
+                maxlength="12"
+                value="{{bannerText}}"
+              >
+            </div>
+          {{/if}}
+          
+          <button type="button" class="btn btn-medieval element-category w-100 mb-2 {{#if isActiveCategory 'laurel'}}active{{/if}}" data-category="laurel">
+            <i class="fas fa-leaf"></i> LAURELS
+          </button>
+        </div>
+        
+        <!-- Element options carousel -->
+        {{#if selectedElement}}
+          <div class="element-carousel mb-4">
+            <div class="carousel-container">
+              <div class="carousel-inner">
+                {{#each elementOptions}}
+                  <div class="element-option-wrapper {{#if isNoneOption this}}none-option{{/if}}">
+                    {{#if isNoneOption this}}
+                      <div class="element-option none-icon" data-url="none">
+                        <i class="fas fa-ban"></i>
+                      </div>
+                    {{else}}
+                      <div class="element-option-img-container {{#if isRightAnimal}}mirror{{/if}}">
+                        <img src="{{this}}" class="element-option" data-url="{{this}}" alt="Element option">
+                      </div>
+                    {{/if}}
+                    <div class="element-option-name">{{getElementName this}}</div>
+                  </div>
+                {{/each}}
+              </div>
+            </div>
+          </div>
+        {{/if}}
+        
+        <!-- Add this after the element-carousel div -->
+        {{#if isBannerCategory}}
+          <div class="banner-text-input mb-4">
+            <div class="input-group">
+              <input 
+                type="text" 
+                class="form-control medieval-input" 
+                id="bannerText" 
+                placeholder="Enter your text here..." 
+                maxlength="20"
+                value="{{bannerText}}"
+              >
+              <button class="btn btn-medieval" id="updateBannerText">
+                <i class="fas fa-check"></i> Apply
+              </button>
+            </div>
+            <small class="text-muted">Maximum 20 characters</small>
+          </div>
+        {{/if}}
+        
+        <!-- Credits display -->
+        <div class="credits-display">
+          <span class="credits-count">Available Credits: {{credits}}</span>
+        </div>
+        
+        <!-- Action buttons -->
+        <div class="editor-actions mb-5">
+          <button class="btn btn-medieval-danger px-4" id="resetBtn">
+            <i class="fas fa-trash"></i> Reset
+          </button>
+          <button class="btn btn-medieval px-4" id="saveBtn">
+            <i class="fas fa-save"></i> Save
+          </button>
+          <button class="btn btn-medieval-success px-4" id="exportBtn">
+            <i class="fas fa-download"></i> Export
+          </button>
+        </div>
       </div>
     </div>
   </div>
