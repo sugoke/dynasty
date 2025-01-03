@@ -2,7 +2,7 @@
   <div class="login-container">
     <div class="row justify-content-center">
       <div class="col-md-6">
-        <div class="card login-card" id="login-card">
+        <div class="card login-card d-none" id="login-card">
           <div class="card-body">
             <h3 class="card-title text-center">Login</h3>
             <form id="login-form">
@@ -18,13 +18,16 @@
             </form>
             <hr>
             <p class="text-center">
+              <a href="#" id="show-forgot-password">Forgot Password?</a>
+            </p>
+            <p class="text-center">
               Don't have an account? 
               <a href="#" id="show-register">Register</a>
             </p>
           </div>
         </div>
         
-        <div class="card register-card d-none" id="register-card">
+        <div class="card register-card" id="register-card">
           <div class="card-body">
             <h3 class="card-title text-center">Register</h3>
             <form id="register-form">
@@ -42,6 +45,24 @@
             <p class="text-center">
               Already have an account? 
               <a href="#" id="show-login">Login</a>
+            </p>
+          </div>
+        </div>
+
+        <div class="card forgot-password-card d-none" id="forgot-password-card">
+          <div class="card-body">
+            <h3 class="card-title text-center">Reset Password</h3>
+            <form id="forgot-password-form">
+              <div class="form-group">
+                <label for="reset-email">Email</label>
+                <input type="email" class="form-control" id="reset-email" required>
+              </div>
+              <button type="submit" class="btn btn-medieval w-100 mt-4">Send Reset Link</button>
+            </form>
+            <hr>
+            <p class="text-center">
+              Remember your password? 
+              <a href="#" id="show-login-from-forgot">Login</a>
             </p>
           </div>
         </div>

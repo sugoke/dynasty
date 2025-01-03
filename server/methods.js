@@ -126,18 +126,7 @@ Meteor.methods({
       }],
       mode: 'payment',
       success_url: Meteor.absoluteUrl('payment/success'),
-      cancel_url: Meteor.absoluteUrl('payment/cancel'),
-      appearance: {
-        theme: 'night',
-        variables: {
-          fontFamily: '"MedievalSharp", cursive',
-          fontWeightNormal: '400',
-          borderRadius: '4px',
-          colorBackground: '#2C1810',
-          colorPrimary: '#b39656',
-          colorText: '#e8d5b5',
-        },
-      },
+      cancel_url: Meteor.absoluteUrl('payment/cancel')
     });
     
     return session.id;

@@ -181,7 +181,7 @@ body {
   background: #1a0c08 url('https://www.transparenttextures.com/patterns/wood-pattern.png') repeat fixed !important;
   color: var(--color-parchment) !important;
   min-height: 100vh !important;
-  padding-top: 80px !important;
+  padding-top: 64px !important;
   position: relative !important;
   margin: 0 !important;
 }
@@ -197,7 +197,7 @@ body::before {
     rgba(26, 12, 8, 0.85),
     rgba(26, 12, 8, 0.92)
   ) !important;
-  z-index: -1 !important;
+  z-index: 0 !important;
   pointer-events: none !important;
 }
 
@@ -344,12 +344,18 @@ h4, h5, h6 {
   .controls {
     width: 320px !important;
     flex: 0 0 320px !important;
-    height: calc(100vh - 110px) !important;
+    height: calc(100vh - 94px) !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
     padding-right: 10px !important;
+    padding-top: 1rem !important;  /* Add space at the top */
     position: sticky !important;
-    top: 95px !important;
+    top: 79px !important;
+  }
+
+  /* Element categories spacing */
+  .element-categories {
+    margin-top: 1rem !important;  /* Add space above first button */
   }
 }
 
@@ -381,7 +387,7 @@ h4, h5, h6 {
 .canvas-wrapper {
   position: relative !important;
   width: 100% !important;
-  max-width: min(calc(100vh - 110px), 1200px) !important;  /* Never bigger than viewport height minus navbar and padding */
+  max-width: min(calc(100vh - 94px), 1200px) !important;  /* Never bigger than viewport height minus navbar and padding */
   aspect-ratio: 1/1 !important;
   margin: 0 auto !important;
   padding: 0 !important;
@@ -656,56 +662,53 @@ h4, h5, h6 {
 
 /* Navbar styles */
 .navbar {
-  width: 100% !important;
-  max-width: 100% !important;
+  height: 64px !important;
+  min-height: 64px !important;
   background: #1a0c08 url('https://www.transparenttextures.com/patterns/dark-wood.png') !important;
   border-bottom: double 3px #8B4513 !important;
   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5) !important;
   backdrop-filter: blur(5px) !important;
-  height: 80px !important;  /* Increased from 72px to 80px */
-  min-height: 80px !important;
+  z-index: 10 !important; /* Lower z-index */
 }
 
-/* Container inside navbar */
-.navbar > .container {
-  max-width: 1200px !important;
-  margin: 0 auto !important;
-  padding-left: 15px !important;
-  padding-right: 15px !important;
-  min-height: auto !important; /* Override the min-height from .container */
-}
-
-.navbar::before {
-  content: '' !important;
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  background: rgba(26, 12, 8, 0.85) !important;
-  z-index: -1 !important;
+/* Update navbar-light to navbar-dark for proper text colors */
+.navbar.navbar-light {
+  background-color: #1a0c08 !important;
 }
 
 .navbar-brand {
   font-family: 'MedievalSharp', cursive !important;
-  font-size: 1.8rem !important;
-  background: linear-gradient(45deg, #ffd700, #b39656) !important;
-  background-clip: text !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.7) !important;
-  padding: 0.5rem 0 !important;
-  position: relative !important;
+  font-size: 1.5rem !important;
+  color: var(--color-gold) !important;
+  margin-right: 2rem !important;
+  padding: 0 !important;
 }
 
 .nav-link {
   font-family: 'Cinzel', serif !important;
-  color: #d4af37 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.05em !important;
+  color: var(--color-gold-medium) !important;
   padding: 0.5rem 1rem !important;
-  transition: all 0.3s ease !important;
+  font-size: 0.9rem !important;
+  white-space: nowrap !important;
   position: relative !important;
+  z-index: 20 !important; /* Higher than navbar */
+}
+
+.nav-link:hover {
+  color: var(--color-gold-bright) !important;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .navbar-brand {
+    font-size: 1.2rem !important;
+    margin-right: 1rem !important;
+  }
+  
+  .nav-link {
+    padding: 0.5rem 0.5rem !important;
+    font-size: 0.8rem !important;
+  }
 }
 
 .nav-link:hover {
@@ -1325,8 +1328,8 @@ body .modal .btn-secondary:hover,
 
 /* Login page styles */
 .login-container {
-  padding-top: 0 !important;
-  margin-top: 40px !important;
+  padding-top: 4rem !important;  /* Increased from 2rem to 4rem */
+  margin-top: 0 !important;
 }
 
 .login-card,
@@ -1335,6 +1338,7 @@ body .modal .btn-secondary:hover,
   border: double 4px #8B4513 !important;
   border-radius: 8px !important;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5) !important;
+  margin-top: 1rem !important;
 }
 
 .login-card .card-title,
@@ -1765,12 +1769,18 @@ body .modal .btn-secondary:hover,
   .controls {
     width: 320px !important;
     flex: 0 0 320px !important;
-    height: calc(100vh - 110px) !important;
+    height: calc(100vh - 94px) !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
     padding-right: 10px !important;
+    padding-top: 1rem !important;  /* Add space at the top */
     position: sticky !important;
-    top: 95px !important;
+    top: 79px !important;
+  }
+
+  /* Element categories spacing */
+  .element-categories {
+    margin-top: 1rem !important;  /* Add space above first button */
   }
 }
 
@@ -1814,7 +1824,7 @@ body .modal .btn-secondary:hover,
 .canvas-wrapper {
   position: relative !important;
   width: 100% !important;
-  max-width: min(calc(100vh - 110px), 1200px) !important;  /* Never bigger than viewport height minus navbar and padding */
+  max-width: min(calc(100vh - 94px), 1200px) !important;  /* Never bigger than viewport height minus navbar and padding */
   aspect-ratio: 1/1 !important;
   margin: 0 auto !important;
   padding: 0 !important;
@@ -1977,7 +1987,7 @@ body .modal .btn-secondary:hover,
   }
 
   .canvas-wrapper {
-    max-width: min(100vw, calc(100vh - 110px)) !important;
+    max-width: min(100vw, calc(100vh - 94px)) !important;
   }
 
   /* Ensure editor container doesn't clip the expanded wrapper */
@@ -2523,10 +2533,10 @@ body .modal .btn-secondary:hover,
   margin: 0 -15px !important;
   padding: 10px 15px !important;
   position: absolute !important;
-  top: 80px !important;
+  top: 64px !important;
   left: 0 !important;
   right: 0 !important;
-  z-index: 1000 !important;
+  z-index: 1029 !important; /* Just below navbar */
 }
 
 /* Ensure navbar brand doesn't get cut off */
@@ -2559,5 +2569,111 @@ body .modal .btn-secondary:hover,
   .nav-link {
     padding: 0.5rem 1rem !important;
   }
+}
+
+/* Example image styling */
+.example-frame {
+  position: relative !important;
+  max-width: 600px !important;
+  margin: 0 auto !important;
+  padding: 20px !important;
+  background: linear-gradient(45deg, #8B4513, #654321) !important;
+  border: double 6px #b39656 !important;
+  border-radius: 10px !important;
+  box-shadow: 
+    0 0 20px rgba(0,0,0,0.5),
+    inset 0 0 10px rgba(0,0,0,0.5) !important;
+}
+
+.example-frame::before,
+.example-frame::after {
+  content: '❧' !important;
+  position: absolute !important;
+  color: #b39656 !important;
+  font-size: 2em !important;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5) !important;
+}
+
+.example-frame::before {
+  top: -10px !important;
+  left: 20px !important;
+}
+
+.example-frame::after {
+  bottom: -10px !important;
+  right: 20px !important;
+  transform: rotate(180deg) !important;
+}
+
+.example-image-container {
+  position: relative !important;
+  padding-top: 100% !important; /* 1:1 Aspect Ratio */
+  overflow: hidden !important;
+  border-radius: 4px !important;
+  background: var(--color-parchment) !important;
+}
+
+.example-image {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  padding: 10px !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .example-frame {
+    max-width: 90% !important;
+    margin: 2rem auto !important;
+  }
+}
+
+/* Navbar z-index */
+.navbar {
+  z-index: 10 !important;
+}
+
+/* Make all buttons clickable */
+.btn,
+.btn-medieval,
+.btn-medieval-success,
+.btn-medieval-danger,
+.btn-medieval-secondary,
+.nav-link {
+  position: relative !important;
+  z-index: 20 !important;
+}
+
+/* Ensure containers don't block interaction */
+.container,
+.container-fluid,
+.editor-container,
+.login-container {
+  position: relative !important;
+  z-index: 15 !important;
+}
+
+/* Keep modals above everything */
+.modal {
+  z-index: 1050 !important;
+}
+
+.modal-backdrop {
+  z-index: 1040 !important;
+}
+
+/* Remove any blocking overlays */
+body::before {
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Ensure example frame doesn't block buttons */
+.example-frame {
+  position: relative !important;
+  z-index: 1 !important;
 }
 

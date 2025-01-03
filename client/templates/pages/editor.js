@@ -469,132 +469,142 @@ Template.editor.onRendered(function() {
     const design = instance.design.get();
     const text = instance.bannerText.get()?.toUpperCase();
 
-    if (design.banner && design.banner !== 'none' && text) {
-      await new Promise((resolve) => {
-        const bannerImg = new Image();
-        bannerImg.onload = () => {
-          const width = instance.canvas.width * 0.7;
-          const height = instance.canvas.height * 0.2;
-          const x = (instance.canvas.width - width) / 2;
-          const y = instance.canvas.height * 0.65;
+    if (design.banner && design.banner !== 'none') {
+        await new Promise((resolve) => {
+            const bannerImg = new Image();
+            bannerImg.onload = () => {
+                const width = instance.canvas.width * 0.7;
+                const height = instance.canvas.height * 0.2;
+                const x = (instance.canvas.width - width) / 2;
+                const y = instance.canvas.height * 0.65;
 
-          // Draw banner first
-          ctx.drawImage(bannerImg, x, y, width, height);
+                // Draw banner image
+                ctx.drawImage(bannerImg, x, y, width, height);
 
-          // Setup text style with gold gradient
-          ctx.font = 'bold 35px MedievalSharp';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
+                // Only add text if it exists
+                if (text) {
+                    // Setup text style with gold gradient
+                    ctx.font = 'bold 35px MedievalSharp';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
 
-          // Create gold gradient for text
-          const gradient = ctx.createLinearGradient(
-            instance.canvas.width / 2 - 100,
-            0,
-            instance.canvas.width / 2 + 100,
-            0
-          );
-          gradient.addColorStop(0, '#b8860b');    // Darker gold
-          gradient.addColorStop(0.5, '#ffd700');  // Bright gold
-          gradient.addColorStop(1, '#b8860b');    // Darker gold
-          
-          // Apply gradient fill and add text shadow
-          ctx.fillStyle = gradient;
-          ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-          ctx.shadowBlur = 4;
-          ctx.shadowOffsetX = 2;
-          ctx.shadowOffsetY = 2;
+                    // Create gold gradient for text
+                    const gradient = ctx.createLinearGradient(
+                        instance.canvas.width / 2 - 100,
+                        0,
+                        instance.canvas.width / 2 + 100,
+                        0
+                    );
+                    gradient.addColorStop(0, '#b8860b');
+                    gradient.addColorStop(0.5, '#ffd700');
+                    gradient.addColorStop(1, '#b8860b');
 
-          // Draw text slightly lower in the banner
-          const textX = instance.canvas.width / 2;
-          const textY = y + (height * 0.7); // Move text down to 60% of banner height
-          ctx.fillText(text, textX, textY);
+                    ctx.fillStyle = gradient;
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+                    ctx.shadowBlur = 4;
+                    ctx.shadowOffsetX = 2;
+                    ctx.shadowOffsetY = 2;
 
-          // Reset shadow
-          ctx.shadowColor = 'transparent';
-          ctx.shadowBlur = 0;
-          ctx.shadowOffsetX = 0;
-          ctx.shadowOffsetY = 0;
+                    const textX = instance.canvas.width / 2;
+                    const textY = y + (height * 0.7);
+                    ctx.fillText(text, textX, textY);
 
-          resolve();
-        };
-        bannerImg.src = design.banner;
-      });
+                    ctx.shadowColor = 'transparent';
+                    ctx.shadowBlur = 0;
+                    ctx.shadowOffsetX = 0;
+                    ctx.shadowOffsetY = 0;
+                }
+
+                resolve();
+            };
+            bannerImg.src = design.banner;
+        });
     }
   };
 
   // Update loadAndDrawElement to be the only drawing function
   const loadAndDrawElement = (src, position) => {
     return new Promise((resolve) => {
-      if (!src) {
-        resolve();
-        return;
-      }
-      
-      console.log('Loading element:', src, 'for position:', position);
-      const img = new Image();
-      img.src = src;
-      
-      img.onload = () => {
-        const ctx = instance.canvas.getContext('2d');
-        let width, height, x, y;
-        
-        if (position === 'frame') {
-          width = instance.canvas.width;
-          height = instance.canvas.height;
-          x = 0;
-          y = 0;
-          ctx.drawImage(img, x, y, width, height);
-        } else if (position === 'leftAnimal') {
-          width = instance.canvas.width * 0.42;
-          height = instance.canvas.height * 0.42;
-          x = instance.canvas.width * 0.00;
-          y = instance.canvas.height * 0.3;
-          ctx.drawImage(img, x, y, width, height);
-        } else if (position === 'rightAnimal') {
-          width = instance.canvas.width * 0.42;
-          height = instance.canvas.height * 0.42;
-          x = instance.canvas.width * 0.58;
-          y = instance.canvas.height * 0.3;
-          
-          // Save context state
-          ctx.save();
-          
-          // Set up the transform for flipping
-          ctx.translate(x + width, y);
-          ctx.scale(-1, 1);
-          
-          // Draw the image at 0,0 since we've translated the context
-          ctx.drawImage(img, 0, 0, width, height);
-          
-          // Restore context state
-          ctx.restore();
-        } else if (position === 'crown') {
-          const crownImg = new Image();
-          crownImg.src = img.src;
-          const aspectRatio = crownImg.naturalWidth / crownImg.naturalHeight;
-          width = instance.canvas.width * 0.35;
-          height = width / aspectRatio;
-          x = (instance.canvas.width - width) / 2;
-          y = instance.canvas.height * 0.05;
-          ctx.drawImage(img, x, y, width, height);
-        } else if (position === 'banner') {
-          width = instance.canvas.width * 0.8;
-          height = instance.canvas.height * 0.25;
-          x = (instance.canvas.width - width) / 2;
-          y = instance.canvas.height * 0.7;
-          ctx.drawImage(img, x, y, width, height);
-        } else if (position === 'laurel') {
-          width = instance.canvas.width;
-          height = instance.canvas.height;
-          x = 0;
-          y = 0;
-          ctx.drawImage(img, x, y, width, height);
+        if (!src) {
+            resolve();
+            return;
         }
         
-        resolve();
-      };
+        console.log('Loading element:', src, 'for position:', position);
+        const img = new Image();
+        img.src = src;
+        
+        img.onload = () => {
+            const ctx = instance.canvas.getContext('2d');
+            let width, height, x, y;
+            
+            // Save the current context state
+            ctx.save();
+            
+            // Set transparency for laurels
+            if (position === 'laurel') {
+                ctx.globalAlpha = 0.7; // 30% transparency
+            }
+            
+            if (position === 'frame') {
+                width = instance.canvas.width;
+                height = instance.canvas.height;
+                x = 0;
+                y = 0;
+                ctx.drawImage(img, x, y, width, height);
+            } else if (position === 'leftAnimal') {
+                width = instance.canvas.width * 0.42;
+                height = instance.canvas.height * 0.42;
+                x = instance.canvas.width * 0.00;
+                y = instance.canvas.height * 0.3;
+                ctx.drawImage(img, x, y, width, height);
+            } else if (position === 'rightAnimal') {
+                width = instance.canvas.width * 0.42;
+                height = instance.canvas.height * 0.42;
+                x = instance.canvas.width * 0.58;
+                y = instance.canvas.height * 0.3;
+                
+                // Save context state
+                ctx.save();
+                
+                // Set up the transform for flipping
+                ctx.translate(x + width, y);
+                ctx.scale(-1, 1);
+                
+                // Draw the image at 0,0 since we've translated the context
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Restore context state
+                ctx.restore();
+            } else if (position === 'crown') {
+                const crownImg = new Image();
+                crownImg.src = img.src;
+                const aspectRatio = crownImg.naturalWidth / crownImg.naturalHeight;
+                width = instance.canvas.width * 0.35;
+                height = width / aspectRatio;
+                x = (instance.canvas.width - width) / 2;
+                y = instance.canvas.height * 0.05;
+                ctx.drawImage(img, x, y, width, height);
+            } else if (position === 'banner') {
+                width = instance.canvas.width * 0.8;
+                height = instance.canvas.height * 0.25;
+                x = (instance.canvas.width - width) / 2;
+                y = instance.canvas.height * 0.7;
+                ctx.drawImage(img, x, y, width, height);
+            } else if (position === 'laurel') {
+                width = instance.canvas.width;
+                height = instance.canvas.height;
+                x = 0;
+                y = 0;
+                ctx.drawImage(img, x, y, width, height);
+            }
+            
+            // Restore the context state
+            ctx.restore();
+            resolve();
+        };
     });
-  };
+};
   
   // Then modify redrawCanvas to use this function
   instance.redrawCanvas = async (skipWatermark = false) => {
@@ -701,16 +711,11 @@ Template.editor.onRendered(function() {
     await instance.drawBackgroundImages();
     await loadAndDrawElement(design.frame, 'frame');
     await loadAndDrawElement(design.laurel, 'laurel');
-    
-    if (design.frame && !design.frameNoBg) {
-      design.frameNoBg = design.frame.replace('.png', '-nbg.png');
-      instance.design.set(design);
-    }
     await loadAndDrawElement(design.frameNoBg, 'frame');
     await loadAndDrawElement(design.crown, 'crown');
     await loadAndDrawElement(design.leftAnimal, 'leftAnimal');
     await loadAndDrawElement(design.rightAnimal, 'rightAnimal');
-    await loadAndDrawElement(design.banner, 'banner');
+    
     await instance.drawBannerText();
     
     // Only draw watermark if not skipping
@@ -951,10 +956,6 @@ Template.editor.helpers({
     return Template.instance().selectedCategory.get() === 'frame';
   },
   
-  isBannerCategory() {
-    return Template.instance().selectedCategory.get() === 'banner';
-  },
-  
   bannerText() {
     return Template.instance().bannerText.get();
   },
@@ -1020,9 +1021,15 @@ Template.editor.helpers({
       'bears',
       'boars',
       'bulls',
+      'deers',
+      'dolphins',
       'dragons',
       'eagles',
+      'griffins',
+      'horses',
       'lions',
+      'people',
+      'unicorns',
       'wolves'
     ];
   },
@@ -1287,8 +1294,8 @@ Template.editor.events({
   
   'input #bannerText'(event, instance) {
     const input = event.target;
-    if (input.value.length > 12) {
-      input.value = input.value.slice(0, 12).toUpperCase();
+    if (input.value.length > 14) {
+      input.value = input.value.slice(0, 14).toUpperCase();
     } else {
       input.value = input.value.toUpperCase();
     }

@@ -51,5 +51,37 @@ Template.login.events({
         FlowRouter.go('/');
       }
     });
+  },
+  
+  'click #show-forgot-password'(event) {
+    event.preventDefault();
+    $('#login-card').fadeOut(300, function() {
+      $('#forgot-password-card').removeClass('d-none').hide().fadeIn(300);
+    });
+  },
+  
+  'click #show-login-from-forgot'(event) {
+    event.preventDefault();
+    $('#forgot-password-card').fadeOut(300, function() {
+      $('#login-card').removeClass('d-none').hide().fadeIn(300);
+    });
+  },
+  
+  'submit #forgot-password-form'(event, instance) {
+    event.preventDefault();
+    
+    const email = event.target['reset-email'].value;
+    
+    Accounts.forgotPassword({ email }, (error) => {
+      if (error) {
+        alert(error.reason);
+      } else {
+        alert('Password reset email sent. Please check your inbox.');
+        // Switch back to login view
+        $('#forgot-password-card').fadeOut(300, function() {
+          $('#login-card').removeClass('d-none').hide().fadeIn(300);
+        });
+      }
+    });
   }
 }); 
