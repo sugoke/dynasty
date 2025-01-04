@@ -102,20 +102,5 @@ Meteor.startup(() => {
     });
   };
 
-  // Test email configuration on startup
-  try {
-    console.log('Testing email configuration...');
-    sendEmailViaSmtp2Go({
-      to: 'test@example.com',
-      from: Meteor.settings.smtp.username,
-      subject: 'Email System Test',
-      text: 'This is a test email to verify the email system is working.',
-      html: '<p>This is a test email to verify the email system is working.</p>'
-    });
-    console.log('Test email sent successfully');
-  } catch (error) {
-    console.error('Failed to send test email:', error);
-  }
-
   console.log('Server started successfully');
 });

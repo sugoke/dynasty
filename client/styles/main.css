@@ -2721,3 +2721,26 @@ body::before {
   z-index: 1 !important;
 }
 
+/* Add these styles */
+.loading-spinner {
+  color: var(--color-gold) !important;
+  padding: 2rem !important;
+}
+
+.analysis-text {
+  font-family: 'Cinzel', serif !important;
+  color: var(--color-wood) !important;
+  line-height: 1.6 !important;
+  padding: 1rem !important;
+  text-align: justify !important;
+}
+
+#analyzeBtn {
+  margin-top: 1rem !important;
+}
+
+#analyzeBtn:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+

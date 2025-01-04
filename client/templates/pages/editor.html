@@ -149,6 +149,9 @@
           <button class="btn btn-medieval-success px-4" id="exportBtn">
             <i class="fas fa-download"></i> Export
           </button>
+          <button class="btn btn-medieval-secondary px-4" id="analyzeBtn" disabled="{{#if credits}}{{#if gt credits 0}}false{{else}}true{{/if}}{{else}}true{{/if}}">
+            <i class="fas fa-magic"></i> Analyze
+          </button>
         </div>
       </div>
     </div>
@@ -299,6 +302,30 @@
               {{/each}}
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Add this modal at the bottom of the template -->
+  <div class="modal fade" id="analysisModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Symbolic Analysis</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="analysis-content">
+            <div class="loading-spinner text-center d-none">
+              <i class="fas fa-spinner fa-spin fa-2x"></i>
+              <p class="mt-2">Analyzing your composition...</p>
+            </div>
+            <div class="analysis-text"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-medieval" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>

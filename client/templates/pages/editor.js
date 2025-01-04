@@ -1333,9 +1333,47 @@ Template.editor.events({
       const firstButton = event.target.querySelector('.btn-medieval-secondary');
       if (firstButton) firstButton.focus();
     }, 150);
+  },
+  
+  'click #analyzeBtn'(event, instance) {
+    const user = Meteor.user();
+    if (!user?.profile?.credits) {
+      return;
+    }
+
+    const design = instance.design.get();
+    const elements = {
+      leftAnimal: design.leftAnimal ? getElementName(design.leftAnimal) : null,
+      rightAnimal: design.rightAnimal ? getElementName(design.rightAnimal) : null,
+      crown: design.crown ? getElementName(design.crown) : null,
+      banner: design.banner ? getElementName(design.banner) : null,
+      laurel: design.laurel ? getElementName(design.laurel) : null,
+      bannerText: instance.bannerText.get()
+    };
+
+    const modal = new bootstrap.Modal(document.getElementById('analysisModal'));
+    modal.show();
+
+    const loadingSpinner = document.querySelector('.loading-spinner');
+    const analysisText = document.querySelector('.analysis-text');
+    loadingSpinner.classList.remove('d-none');
+    analysisText.textContent = '';
+
+    Meteor.call('analyzeComposition', elements, (error, result) => {
+      loadingSpinner.classList.add('d-none');
+      if (error) {
+        analysisText.textContent = 'Failed to analyze composition: ' + error.reason;
+      } else {
+        analysisText.textContent = result;
+      }
+    });
   }
 });
 
 Template.registerHelper('eq', function(a, b) {
   return a === b;
+});
+
+Template.registerHelper('gt', function(a, b) {
+  return a > b;
 });

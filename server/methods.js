@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
+import { HTTP } from 'meteor/http';
 import Stripe from 'stripe';
 import { Designs } from '../lib/collections';
 import fs from 'fs';
@@ -162,6 +163,63 @@ Meteor.methods({
     } catch (error) {
       console.error('Error saving exported image:', error);
       throw new Meteor.Error('save-failed', 'Failed to save exported image');
+    }
+  },
+  
+  async analyzeComposition(elements) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    const user = await Meteor.users.findOneAsync(this.userId);
+    if (!user?.profile?.credits) {
+      throw new Meteor.Error('no-credits', 'No credits available');
+    }
+
+    try {
+      const prompt = `Analyze this coat of arms composition and create a symbolic interpretation:
+      Left Character: ${elements.leftAnimal || 'None'}
+      Right Character: ${elements.rightAnimal || 'None'}
+      Crown Type: ${elements.crown || 'None'}
+      Banner Style: ${elements.banner || 'None'}
+      Banner Text: ${elements.bannerText || 'None'}
+      Laurel Type: ${elements.laurel || 'None'}
+
+      Please provide a detailed paragraph about the symbolic meaning of these elements together, their historical significance, and what they might represent for the bearer of this coat of arms. Use a formal, medieval-style tone.`;
+
+      const result = await HTTP.post('https://api.openai.com/v1/chat/completions', {
+        headers: {
+          'Authorization': `Bearer ${Meteor.settings.private.openai.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        data: {
+          model: "gpt-4",
+          messages: [
+            {
+              role: "system",
+              content: "You are an expert heraldry interpreter with deep knowledge of medieval symbolism and coat of arms traditions."
+            },
+            {
+              role: "user",
+              content: prompt
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 500
+        }
+      });
+
+      // Use credit
+      await Meteor.users.updateAsync(this.userId, {
+        $inc: {
+          'profile.credits': -1
+        }
+      });
+
+      return result.data.choices[0].message.content;
+    } catch (error) {
+      console.error('OpenAI API Error:', error);
+      throw new Meteor.Error('analysis-failed', 'Failed to analyze composition');
     }
   }
 }); 
