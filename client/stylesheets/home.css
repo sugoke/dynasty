@@ -1,0 +1,58 @@
+.welcome-container {
+  text-align: center;
+  padding: 2rem;
+}
+
+.welcome-title {
+  color: #FFD700;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.legacy-subtitle {
+  color: #fff;
+  margin-bottom: 3rem;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.feature-card {
+  background: rgba(60, 30, 20, 0.8);
+  padding: 2rem;
+  border-radius: 8px;
+  color: #fff;
+}
+
+.feature-card i {
+  color: #FFD700;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+  color: #FFD700;
+  margin-bottom: 1rem;
+}
+
+.editor-button button {
+  background: #2E7D32;
+  color: #FFD700;
+  border: 1px solid #FFD700;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 auto;
+}
+
+.editor-button button:hover {
+  background: #1B5E20;
+} 

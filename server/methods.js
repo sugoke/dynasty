@@ -29,12 +29,10 @@ Meteor.methods({
       throw new Meteor.Error('not-authorized');
     }
     
-    // Log the design object to help debug
-    console.log('Saving design:', design);
-    
     try {
       // Define a pattern that matches either null or a string
       const StringOrNull = Match.OneOf(String, null);
+      const BackgroundImage = Match.OneOf(String, null);
       
       check(design, {
         frame: StringOrNull,
@@ -43,7 +41,15 @@ Meteor.methods({
         rightAnimal: StringOrNull,
         crown: StringOrNull,
         banner: StringOrNull,
-        laurel: StringOrNull
+        laurel: StringOrNull,
+        layout: String,
+        bannerText: StringOrNull,
+        backgroundImages: {
+          area1: BackgroundImage,
+          area2: BackgroundImage,
+          area3: BackgroundImage,
+          area4: BackgroundImage
+        }
       });
       
       const selector = { userId: this.userId };
@@ -177,15 +183,41 @@ Meteor.methods({
     }
 
     try {
-      const prompt = `Analyze this coat of arms composition and create a symbolic interpretation:
-      Left Character: ${elements.leftAnimal || 'None'}
-      Right Character: ${elements.rightAnimal || 'None'}
-      Crown Type: ${elements.crown || 'None'}
-      Banner Style: ${elements.banner || 'None'}
-      Banner Text: ${elements.bannerText || 'None'}
-      Laurel Type: ${elements.laurel || 'None'}
+      // Get all elements from the design
+      const design = await Designs.findOneAsync({ userId: this.userId });
+      const currentDesign = design?.design || {};
 
-      Please provide a detailed paragraph about the symbolic meaning of these elements together, their historical significance, and what they might represent for the bearer of this coat of arms. Use a formal, medieval-style tone.`;
+      const prompt = `Analyze this newly created coat of arms and reveal its symbolic meaning to its creator. Format the response in markdown, using **bold text** for important terms, qualities, and key concepts.
+
+      The coat of arms contains the following elements:
+
+      Main Elements:
+      ${currentDesign.leftAnimal ? `- Left Character: **${currentDesign.leftAnimal}**` : ''}
+      ${currentDesign.rightAnimal ? `- Right Character: **${currentDesign.rightAnimal}**` : ''}
+      ${currentDesign.crown ? `- Crown: **${currentDesign.crown}**` : ''}
+      ${currentDesign.banner ? `- Banner: **${currentDesign.banner}**` : ''}
+      ${currentDesign.bannerText ? `- Banner Text: "**${currentDesign.bannerText}**"` : ''}
+      ${currentDesign.laurel ? `- Laurel: **${currentDesign.laurel}**` : ''}
+
+      Background Elements:
+      ${Object.entries(currentDesign.backgroundImages || {})
+        .filter(([_, image]) => image)
+        .map(([area, image]) => `- ${area}: **${image}**`)
+        .join('\n')}
+
+      Please provide a comprehensive analysis including:
+      1. A personal introduction about how these elements create a meaningful composition
+      2. Individual analysis of each element's symbolism, including:
+         - Characters' traditional meanings and virtues
+         - Crown's symbolism and status implications
+         - Banner's color symbolism and design significance
+         - Etymology and meaning of any text/names in the banner
+         - Laurel's traditional significance
+         - Each background symbol's historical and cultural meaning
+         - For any flags present, their national significance and cultural heritage
+      3. A conclusion about what these combined elements suggest about the bearer's values and aspirations
+
+      Format the response with clear paragraphs, using **bold text** for emphasis on important concepts, virtues, and symbolic meanings.`;
 
       const result = await HTTP.post('https://api.openai.com/v1/chat/completions', {
         headers: {
@@ -193,11 +225,11 @@ Meteor.methods({
           'Content-Type': 'application/json'
         },
         data: {
-          model: "gpt-4",
+          model: "gpt-3.5-turbo",
           messages: [
             {
               role: "system",
-              content: "You are an expert heraldry interpreter with deep knowledge of medieval symbolism and coat of arms traditions."
+              content: "You are a master herald interpreting a personal coat of arms. Provide deep insight into heraldic symbolism, etymology, and cultural meanings. Be thorough in analyzing every element present, including background symbols and flags."
             },
             {
               role: "user",
@@ -205,11 +237,10 @@ Meteor.methods({
             }
           ],
           temperature: 0.7,
-          max_tokens: 500
+          max_tokens: 800
         }
       });
 
-      // Use credit
       await Meteor.users.updateAsync(this.userId, {
         $inc: {
           'profile.credits': -1

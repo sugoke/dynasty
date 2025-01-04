@@ -249,6 +249,38 @@ const CHAR_OPTIONS = {
   ]
 };
 
+// Add this function at the top level, after the imports and before Template.editor
+const getElementName = (url) => {
+  if (!url) return 'None';
+  if (url === 'none') return 'None';
+  const match = url.match(/\/([^\/]+)\/([^\/]+)\.png$/);
+  if (match) {
+    const folder = match[1];
+    const filename = match[2];
+    
+    // Special handling for crowns
+    if (folder === 'crowns') {
+      switch (filename) {
+        case 'crown1': return 'Crown 1';
+        case 'crown2': return 'Crown 2';
+        case 'crown3': return 'Crown 3';
+        case 'feather1': return 'Feather 1';
+        case 'feather2': return 'Feather 2';
+        case 'helmet1': return 'Helmet 1';
+        case 'helmet2': return 'Helmet 2';
+        case 'shield': return 'Shield';
+        case 'star1': return 'Star 1';
+        case 'star2': return 'Star 2';
+        case 'viking': return 'Viking';
+      }
+    }
+    
+    // Default behavior for other elements
+    return filename.charAt(0).toUpperCase() + filename.slice(1);
+  }
+  return '';
+};
+
 Template.editor.onCreated(function() {
   this.selectedCategory = new ReactiveVar(null);
   this.selectedElement = new ReactiveVar(null);
@@ -260,7 +292,15 @@ Template.editor.onCreated(function() {
     rightAnimal: null,
     crown: null,
     banner: null,
-    laurel: null
+    laurel: null,
+    layout: '1',
+    bannerText: '',
+    backgroundImages: {
+      area1: null,
+      area2: null,
+      area3: null,
+      area4: null
+    }
   };
   this.design = new ReactiveVar(initialDesign);
   this.selectedLayout = new ReactiveVar('1');
@@ -286,6 +326,15 @@ Template.editor.onCreated(function() {
           design.frameNoBg = design.frame.replace('.png', '-nbg.png');
         }
         this.design.set(design);
+        if (design.layout) {
+          this.selectedLayout.set(design.layout);
+        }
+        if (design.backgroundImages) {
+          this.backgroundImages.set(design.backgroundImages);
+        }
+        if (design.bannerText) {  // Load saved banner text
+          this.bannerText.set(design.bannerText);
+        }
         this.redrawCanvas();
       }
     });
@@ -822,33 +871,7 @@ Template.editor.helpers({
   },
   
   getElementName(url) {
-    if (url === 'none') return 'None';
-    const match = url.match(/\/([^\/]+)\/([^\/]+)\.png$/);
-    if (match) {
-      const folder = match[1];
-      const filename = match[2];
-      
-      // Special handling for crowns
-      if (folder === 'crowns') {
-        switch (filename) {
-          case 'crown1': return 'Crown 1';
-          case 'crown2': return 'Crown 2';
-          case 'crown3': return 'Crown 3';
-          case 'feather1': return 'Feather 1';
-          case 'feather2': return 'Feather 2';
-          case 'helmet1': return 'Helmet 1';
-          case 'helmet2': return 'Helmet 2';
-          case 'shield': return 'Shield';
-          case 'star1': return 'Star 1';
-          case 'star2': return 'Star 2';
-          case 'viking': return 'Viking';
-        }
-      }
-      
-      // Default behavior for other elements
-      return filename.charAt(0).toUpperCase() + filename.slice(1);
-    }
-    return '';
+    return getElementName(url);
   },
   
   isNoneOption(url) {
@@ -1040,6 +1063,11 @@ Template.editor.helpers({
 
   isRightAnimalType() {
     return Template.instance().currentElementType.get() === 'rightAnimal';
+  },
+
+  analyzeDisabled() {
+    const credits = Meteor.user()?.profile?.credits;
+    return !credits || credits <= 0;
   }
 });
 
@@ -1158,24 +1186,25 @@ Template.editor.events({
   
   'click #saveBtn'(event, instance) {
     const design = instance.design.get();
-    
-    // Ensure all values are either strings or null
-    const cleanDesign = {
-      frame: design.frame || null,
-      frameNoBg: design.frameNoBg || null,
-      leftAnimal: design.leftAnimal || null,
-      rightAnimal: design.rightAnimal || null,
-      crown: design.crown || null,
-      banner: design.banner || null,
-      laurel: design.laurel || null
+    const layout = instance.selectedLayout.get();
+    const backgroundImages = instance.backgroundImages.get();
+    const bannerText = instance.bannerText.get();
+
+    // Create complete design object
+    const completeDesign = {
+      ...design,
+      layout: layout,
+      backgroundImages: backgroundImages,
+      bannerText: bannerText  // Add banner text to saved design
     };
     
-    Meteor.call('saveDesign', cleanDesign, (error) => {
+    console.log('Saving complete design:', completeDesign);
+    
+    Meteor.call('saveDesign', completeDesign, (error) => {
       if (error) {
         console.error('Save error:', error);
         alert('Error saving design: ' + error.reason);
       } else {
-        // Show modal instead of alert
         const modal = new bootstrap.Modal(document.getElementById('successModal'));
         modal.show();
       }
@@ -1356,6 +1385,10 @@ Template.editor.events({
 
     const loadingSpinner = document.querySelector('.loading-spinner');
     const analysisText = document.querySelector('.analysis-text');
+    const copyButton = document.querySelector('#copyAnalysis');
+    
+    // Hide copy button and text, show spinner
+    copyButton.style.display = 'none';
     loadingSpinner.classList.remove('d-none');
     analysisText.textContent = '';
 
@@ -1364,9 +1397,32 @@ Template.editor.events({
       if (error) {
         analysisText.textContent = 'Failed to analyze composition: ' + error.reason;
       } else {
-        analysisText.textContent = result;
+        // Format the text - replace **text** with <strong>text</strong>
+        const formattedText = result.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        // Add line breaks between paragraphs
+        const withLineBreaks = formattedText.replace(/\n\n/g, '<br><br>');
+        analysisText.innerHTML = withLineBreaks;
+        // Show copy button
+        copyButton.style.display = 'block';
       }
     });
+  },
+  
+  'click #copyAnalysis'(event, instance) {
+    const analysisText = document.querySelector('.analysis-text').textContent;
+    if (analysisText) {
+      navigator.clipboard.writeText(analysisText).then(() => {
+        // Temporarily change button text to show success
+        const btn = event.currentTarget;
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => {
+          btn.innerHTML = originalHtml;
+        }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy:', err);
+      });
+    }
   }
 });
 

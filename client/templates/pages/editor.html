@@ -147,10 +147,10 @@
             <i class="fas fa-save"></i> Save
           </button>
           <button class="btn btn-medieval-success px-4" id="exportBtn">
-            <i class="fas fa-download"></i> Export
+            <i class="fas fa-download"></i> Export (1 credit)
           </button>
-          <button class="btn btn-medieval-secondary px-4" id="analyzeBtn" disabled="{{#if credits}}{{#if gt credits 0}}false{{else}}true{{/if}}{{else}}true{{/if}}">
-            <i class="fas fa-magic"></i> Analyze
+          <button class="btn btn-medieval-secondary px-4" id="analyzeBtn" disabled={{analyzeDisabled}}>
+            <i class="fas fa-magic"></i> Analyze (1 credit)
           </button>
         </div>
       </div>
@@ -317,11 +317,14 @@
         </div>
         <div class="modal-body">
           <div class="analysis-content">
+            <button class="btn btn-medieval-secondary btn-sm float-end mb-2" id="copyAnalysis" style="display: none; font-size: 0.8rem; padding: 0.25rem 0.5rem;">
+              <i class="fas fa-copy"></i> Copy
+            </button>
             <div class="loading-spinner text-center d-none">
               <i class="fas fa-spinner fa-spin fa-2x"></i>
               <p class="mt-2">Analyzing your composition...</p>
             </div>
-            <div class="analysis-text"></div>
+            <div class="analysis-text" style="clear: both; white-space: pre-line;"></div>
           </div>
         </div>
         <div class="modal-footer">
