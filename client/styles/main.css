@@ -184,6 +184,7 @@ body {
   padding-top: 64px !important;
   position: relative !important;
   margin: 0 !important;
+  overflow-x: hidden !important; /* Prevent horizontal scroll on body */
 }
 
 body::before {
@@ -219,7 +220,7 @@ body {
 .container-fluid {
   padding: 0 !important;
   margin: 0 !important;
-  min-height: 100vh !important;
+  min-height: unset !important;
   position: relative !important;
   z-index: 1 !important;
   background: rgba(26, 12, 8, 0.4) !important;
@@ -228,7 +229,7 @@ body {
 .container-fluid {
   padding: 0 !important;
   margin: 0 !important;
-  min-height: 100vh !important;
+  min-height: unset !important;
   position: relative !important;
   z-index: 1 !important;
 }
@@ -315,23 +316,41 @@ h4, h5, h6 {
 
 /* Editor styles */
 .editor-container {
-  max-width: 1400px !important;
+  max-width: 100% !important; /* Changed from 1400px */
   margin: 0 auto !important;
   padding: 15px !important;
   display: flex !important;
-  flex-direction: column !important;  /* Ensure title is above content */
+  flex-direction: column !important;
+  min-height: unset !important;
+  overflow-x: hidden !important;
 }
 
 @media (min-width: 992px) {
   .editor-container {
-    gap: 1rem !important;  /* Space between title and content */
+    gap: 0.5rem !important; /* Reduced from 1rem */
   }
 
   /* Canvas and controls wrapper */
   .editor-content {
     display: flex !important;
-    gap: 3rem !important;
+    gap: 2rem !important; /* Reduced from 3rem */
     align-items: flex-start !important;
+    padding: 0 1rem !important;
+  }
+
+  /* Canvas wrapper adjustments */
+  .canvas-wrapper {
+    width: 90% !important;
+    max-width: min(calc((100vh - 120px) * 0.9), 1080px) !important; /* Adjusted to account for title */
+    aspect-ratio: 1/1 !important;
+    margin: 0 auto !important;
+  }
+
+  /* Page title adjustments */
+  .page-title {
+    font-size: 1.8rem !important; /* Slightly smaller */
+    margin-bottom: 0.5rem !important; /* Reduced spacing */
+    padding: 0.25rem 1rem !important; /* Reduced padding */
   }
 
   /* Canvas section */
@@ -340,22 +359,26 @@ h4, h5, h6 {
     max-width: calc(100% - 380px) !important;
   }
 
-  /* Controls section */
+  /* Controls section - remove top padding */
   .controls {
     width: 320px !important;
     flex: 0 0 320px !important;
-    height: calc(100vh - 94px) !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
+    height: auto !important;
+    overflow-y: visible !important;
     padding-right: 10px !important;
-    padding-top: 1rem !important;  /* Add space at the top */
-    position: sticky !important;
-    top: 79px !important;
+    padding-top: 0 !important; /* Remove top padding */
+    position: relative !important;
+    top: auto !important;
+  }
+
+  /* Adjust editor actions spacing */
+  .editor-actions {
+    margin-bottom: 0 !important; /* Remove bottom margin */
   }
 
   /* Element categories spacing */
   .element-categories {
-    margin-top: 1rem !important;  /* Add space above first button */
+    margin-top: 0 !important;  /* Remove space above first button */
   }
 }
 
@@ -386,8 +409,8 @@ h4, h5, h6 {
 /* Canvas wrapper adjustments */
 .canvas-wrapper {
   position: relative !important;
-  width: 100% !important;
-  max-width: min(calc(100vh - 94px), 1200px) !important;  /* Never bigger than viewport height minus navbar and padding */
+  width: 90% !important;  /* Reduced from 100% to 90% */
+  max-width: min(calc((100vh - 94px) * 0.9), 1080px) !important;  /* Reduced from 1200px to 1080px (10% less) */
   aspect-ratio: 1/1 !important;
   margin: 0 auto !important;
   padding: 0 !important;
@@ -664,16 +687,15 @@ h4, h5, h6 {
 .navbar {
   height: 64px !important;
   min-height: 64px !important;
-  background: #1a0c08 url('https://www.transparenttextures.com/patterns/dark-wood.png') !important;
+  background-color: rgb(26, 12, 8) !important; /* Fully opaque, no transparency */
   border-bottom: double 3px #8B4513 !important;
   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5) !important;
-  backdrop-filter: blur(5px) !important;
-  z-index: 10 !important; /* Lower z-index */
+  z-index: 10 !important;
 }
 
 /* Update navbar-light to navbar-dark for proper text colors */
 .navbar.navbar-light {
-  background-color: #1a0c08 !important;
+  background-color: rgb(26, 12, 8) !important; /* Same solid color */
 }
 
 .navbar-brand {
@@ -1740,23 +1762,41 @@ body .modal .btn-secondary:hover,
 
 /* Update editor container styles */
 .editor-container {
-  max-width: 1400px !important;
+  max-width: 100% !important; /* Changed from 1400px */
   margin: 0 auto !important;
   padding: 15px !important;
   display: flex !important;
-  flex-direction: column !important;  /* Ensure title is above content */
+  flex-direction: column !important;
+  min-height: unset !important;
+  overflow-x: hidden !important;
 }
 
 @media (min-width: 992px) {
   .editor-container {
-    gap: 1rem !important;  /* Space between title and content */
+    gap: 0.5rem !important; /* Reduced from 1rem */
   }
 
   /* Canvas and controls wrapper */
   .editor-content {
     display: flex !important;
-    gap: 3rem !important;
+    gap: 2rem !important; /* Reduced from 3rem */
     align-items: flex-start !important;
+    padding: 0 1rem !important;
+  }
+
+  /* Canvas wrapper adjustments */
+  .canvas-wrapper {
+    width: 90% !important;
+    max-width: min(calc((100vh - 120px) * 0.9), 1080px) !important; /* Adjusted to account for title */
+    aspect-ratio: 1/1 !important;
+    margin: 0 auto !important;
+  }
+
+  /* Page title adjustments */
+  .page-title {
+    font-size: 1.8rem !important; /* Slightly smaller */
+    margin-bottom: 0.5rem !important; /* Reduced spacing */
+    padding: 0.25rem 1rem !important; /* Reduced padding */
   }
 
   /* Canvas section */
@@ -1765,22 +1805,26 @@ body .modal .btn-secondary:hover,
     max-width: calc(100% - 380px) !important;
   }
 
-  /* Controls section */
+  /* Controls section - remove top padding */
   .controls {
     width: 320px !important;
     flex: 0 0 320px !important;
-    height: calc(100vh - 94px) !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
+    height: auto !important;
+    overflow-y: visible !important;
     padding-right: 10px !important;
-    padding-top: 1rem !important;  /* Add space at the top */
-    position: sticky !important;
-    top: 79px !important;
+    padding-top: 0 !important; /* Remove top padding */
+    position: relative !important;
+    top: auto !important;
+  }
+
+  /* Adjust editor actions spacing */
+  .editor-actions {
+    margin-bottom: 0 !important; /* Remove bottom margin */
   }
 
   /* Element categories spacing */
   .element-categories {
-    margin-top: 1rem !important;  /* Add space above first button */
+    margin-top: 0 !important;  /* Remove space above first button */
   }
 }
 
@@ -1823,8 +1867,8 @@ body .modal .btn-secondary:hover,
 /* Canvas wrapper and grid overlay */
 .canvas-wrapper {
   position: relative !important;
-  width: 100% !important;
-  max-width: min(calc(100vh - 94px), 1200px) !important;  /* Never bigger than viewport height minus navbar and padding */
+  width: 90% !important;  /* Reduced from 100% to 90% */
+  max-width: min(calc((100vh - 94px) * 0.9), 1080px) !important;  /* Reduced from 1200px to 1080px (10% less) */
   aspect-ratio: 1/1 !important;
   margin: 0 auto !important;
   padding: 0 !important;
@@ -2528,7 +2572,7 @@ body .modal .btn-secondary:hover,
 
 /* Mobile menu fixes */
 .navbar-collapse {
-  background: #1a0c08 url('https://www.transparenttextures.com/patterns/dark-wood.png') !important;
+  background-color: rgb(26, 12, 8) !important; /* Same solid color */
   border: double 3px #8B4513 !important;
   margin: 0 -15px !important;
   padding: 10px 15px !important;
@@ -2536,7 +2580,7 @@ body .modal .btn-secondary:hover,
   top: 64px !important;
   left: 0 !important;
   right: 0 !important;
-  z-index: 1029 !important; /* Just below navbar */
+  z-index: 1029 !important;
 }
 
 /* Ensure navbar brand doesn't get cut off */
