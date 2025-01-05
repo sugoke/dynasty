@@ -6,10 +6,24 @@ Template.login.events({
   'submit #login-form'(event, instance) {
     event.preventDefault();
     
+    const btn = event.target.querySelector('#loginBtn');
+    const spinner = btn.querySelector('.spinner-border');
+    const btnText = btn.querySelector('.btn-text');
+    
+    // Show spinner
+    spinner.classList.remove('d-none');
+    btnText.classList.add('d-none');
+    btn.disabled = true;
+    
     const email = event.target.email.value;
     const password = event.target.password.value;
     
     Meteor.loginWithPassword(email, password, (error) => {
+      // Hide spinner
+      spinner.classList.add('d-none');
+      btnText.classList.remove('d-none');
+      btn.disabled = false;
+      
       if (error) {
         alert(error.reason);
       } else {
@@ -35,6 +49,15 @@ Template.login.events({
   'submit #register-form'(event, instance) {
     event.preventDefault();
     
+    const btn = event.target.querySelector('#registerBtn');
+    const spinner = btn.querySelector('.spinner-border');
+    const btnText = btn.querySelector('.btn-text');
+    
+    // Show spinner
+    spinner.classList.remove('d-none');
+    btnText.classList.add('d-none');
+    btn.disabled = true;
+    
     const email = event.target['reg-email'].value;
     const password = event.target['reg-password'].value;
     
@@ -45,6 +68,11 @@ Template.login.events({
         credits: 0
       }
     }, (error) => {
+      // Hide spinner
+      spinner.classList.add('d-none');
+      btnText.classList.remove('d-none');
+      btn.disabled = false;
+      
       if (error) {
         alert(error.reason);
       } else {

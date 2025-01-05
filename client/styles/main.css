@@ -2744,3 +2744,53 @@ body::before {
   cursor: not-allowed !important;
 }
 
+/* Add these login container styles */
+.login-container {
+  padding: 20px !important;
+  max-width: 400px !important;  /* Reduced from default */
+  margin: 20px auto !important;
+}
+
+/* Card styles */
+.login-container .card {
+  margin: 10px auto !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.login-container .card-body {
+  padding: 20px !important;
+}
+
+/* Form styles */
+.login-container .form-group {
+  margin-bottom: 15px !important;
+}
+
+/* Mobile adjustments */
+@media (max-width: 576px) {
+  .login-container {
+    padding: 15px !important;
+    margin: 10px auto !important;
+  }
+  
+  .login-container .card {
+    margin: 5px !important;
+  }
+  
+  .login-container .card-body {
+    padding: 15px !important;
+  }
+}
+
+/* Ensure container is centered vertically */
+.login-container {
+  min-height: calc(100vh - 100px) !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.login-container .row {
+  width: 100% !important;
+}
+

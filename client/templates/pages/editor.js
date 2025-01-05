@@ -208,7 +208,7 @@ const CHAR_OPTIONS = {
     '/images/deers/deer2.png'
   ],
   dolphins: [
-    '/images/dolphins/dolphin1.png'
+    '/images/dolphins/dolphin.png'
   ],
   dragons: [
     '/images/dragons/dragon1.png'
@@ -282,6 +282,11 @@ const getElementName = (url) => {
 };
 
 Template.editor.onCreated(function() {
+  if (!Meteor.userId()) {
+    Router.go('/');
+    return;
+  }
+
   this.selectedCategory = new ReactiveVar(null);
   this.selectedElement = new ReactiveVar(null);
   // Set initial design state with both frame files
@@ -342,6 +347,12 @@ Template.editor.onCreated(function() {
 });
 
 Template.editor.onRendered(function() {
+  this.autorun(() => {
+    if (!Meteor.userId()) {
+      Router.go('/');
+    }
+  });
+  
   const instance = this;
   instance.canvas = instance.find('#coatCanvas');
   instance.ctx = instance.canvas.getContext('2d');
@@ -387,6 +398,7 @@ Template.editor.onRendered(function() {
       if (!src || src === 'none') continue;
 
       const isSymbol = src.includes('/symbols/symbols/');
+      const isFlag = src.includes('/flags/');
       
       if (isSymbol) {
         const img = new Image();
@@ -443,61 +455,54 @@ Template.editor.onRendered(function() {
 
           ctx.drawImage(img, cornerX, cornerY, targetW, targetH);
         }
-      } else {
+      } else if (isFlag && layout === '2') {
+        // Draw rotated flag in split mode
         const img = new Image();
         await new Promise((resolve) => {
-          img.onload = () => {
-            if (layout === '1') {
-              // Single mode: Fixed height, width adjusts to maintain aspect ratio
-              const flagHeight = areaInfo.h * 0.9;
-              const aspectRatio = img.naturalWidth / img.naturalHeight;
-              const flagWidth = flagHeight * aspectRatio;
-              const flagX = areaInfo.x + (areaInfo.w - flagWidth) / 2;
-              const flagY = areaInfo.y + (areaInfo.h - flagHeight) / 2;
-              
-              ctx.drawImage(img, flagX, flagY, flagWidth, flagHeight);
-              addGlossEffect(ctx, flagX, flagY, flagWidth, flagHeight);
-            } else if (layout === '2') {
-              // Split mode: Show cropped middle section of flag
-              const flagHeight = areaInfo.h * 0.95;
-              const flagWidth = areaInfo.w;
-              const flagY = areaInfo.y + (areaInfo.h - flagHeight) / 2;
-              const flagX = areaInfo.area === 'area1' ? 
-                areaInfo.x + areaInfo.w - flagWidth : 
-                areaInfo.x;
-
-              // Calculate source coordinates to crop middle section
-              const sourceHeight = img.naturalHeight;
-              const sourceWidth = sourceHeight * (flagWidth / flagHeight);
-              const sourceX = (img.naturalWidth - sourceWidth) / 2;
-              const sourceY = 0;
-              
-              ctx.drawImage(
-                img,
-                sourceX, sourceY, sourceWidth, sourceHeight,
-                flagX, flagY, flagWidth, flagHeight
-              );
-              
-              addGlossEffect(ctx, flagX, flagY, flagWidth, flagHeight);
-            } else if (layout === '4') {
-              // Quad mode: square crop from center
-              const sourceSize = Math.min(img.naturalWidth, img.naturalHeight);
-              const sourceX = (img.naturalWidth - sourceSize) / 2;
-              const sourceY = (img.naturalHeight - sourceSize) / 2;
-              
-              ctx.drawImage(
-                img,
-                sourceX, sourceY, sourceSize, sourceSize,
-                areaInfo.x, areaInfo.y, areaInfo.w, areaInfo.h
-              );
-              
-              addGlossEffect(ctx, areaInfo.x, areaInfo.y, areaInfo.w, areaInfo.h);
-            }
-            resolve();
-          };
+          img.onload = () => { resolve(); };
           img.onerror = () => { resolve(); };
           img.src = src;
         });
+
+        if (img.naturalWidth && img.naturalHeight) {
+          ctx.save();
+          
+          // Calculate dimensions for rotated flag
+          const areaWidth = areaInfo.w;
+          const areaHeight = areaInfo.h;
+          
+          // Set rotation point to center of area
+          ctx.translate(
+            areaInfo.x + areaWidth/2,
+            areaInfo.y + areaHeight/2
+          );
+          
+          // Rotate 90 degrees clockwise
+          ctx.rotate(Math.PI / 2);
+          
+          // Draw the rotated image
+          ctx.drawImage(
+            img,
+            -areaHeight/2,  // Swap width/height due to rotation
+            -areaWidth/2,
+            areaHeight,
+            areaWidth
+          );
+          
+          ctx.restore();
+        }
+      } else {
+        // Regular flag/image drawing (existing code)
+        const img = new Image();
+        await new Promise((resolve) => {
+          img.onload = () => { resolve(); };
+          img.onerror = () => { resolve(); };
+          img.src = src;
+        });
+
+        if (img.naturalWidth && img.naturalHeight) {
+          ctx.drawImage(img, areaInfo.x, areaInfo.y, areaInfo.w, areaInfo.h);
+        }
       }
     }
   };
@@ -1433,3 +1438,53 @@ Template.registerHelper('eq', function(a, b) {
 Template.registerHelper('gt', function(a, b) {
   return a > b;
 });
+
+// Inside redrawCanvas function, where background images are drawn
+const drawBackgroundImage = async (ctx, image, area) => {
+  const layout = instance.selectedLayout.get();
+  const isFlag = image.includes('/flags/');
+  
+  // Get area dimensions and position
+  let x, y, width, height;
+  
+  if (layout === '2' && isFlag) {
+    // For split mode flags, rotate 90 degrees
+    ctx.save();
+    
+    // Calculate dimensions for rotated flag
+    if (area === 'area1') {
+      x = 0;
+      y = 0;
+      width = canvas.width / 2;
+      height = canvas.height;
+      // Set rotation point to center of left half
+      ctx.translate(width/2, height/2);
+    } else {
+      x = canvas.width / 2;
+      y = 0;
+      width = canvas.width / 2;
+      height = canvas.height;
+      // Set rotation point to center of right half
+      ctx.translate(canvas.width * 3/4, height/2);
+    }
+    
+    // Rotate 90 degrees clockwise
+    ctx.rotate(Math.PI / 2);
+    
+    // Draw the rotated image
+    const img = await loadImage(image);
+    // Adjust drawing position for rotation
+    ctx.drawImage(img, -height/2, -width/2, height, width);
+    
+    ctx.restore();
+  } else {
+    // Original drawing code for non-split mode or non-flag images
+    if (layout === '1') {
+      // ... existing single layout code
+    } else if (layout === '2') {
+      // ... existing split layout code for non-flag images
+    } else if (layout === '4') {
+      // ... existing quad layout code
+    }
+  }
+};

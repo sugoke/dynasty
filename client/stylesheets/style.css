@@ -1,0 +1,42 @@
+/* Add or update these styles */
+.accounts-dialog {
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.login-form {
+  max-width: 300px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+.login-form .at-form {
+  padding: 15px;
+}
+
+.login-form .at-title {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.login-form .at-input {
+  margin-bottom: 10px;
+}
+
+.login-form .at-btn {
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* Ensure modal fits on mobile */
+@media (max-width: 576px) {
+  .accounts-dialog,
+  .login-form {
+    max-width: 90%;
+    margin: 10px auto;
+  }
+  
+  .login-form .at-form {
+    padding: 10px;
+  }
+} 
