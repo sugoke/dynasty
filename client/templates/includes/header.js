@@ -20,6 +20,9 @@ Template.header.events({
       
       if (error) {
         alert(error.reason);
+      } else {
+        // Redirect to home on successful logout
+        FlowRouter.go('/');
       }
     });
   }

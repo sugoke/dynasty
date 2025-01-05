@@ -282,6 +282,13 @@ const getElementName = (url) => {
 };
 
 Template.editor.onCreated(function() {
+  // Add this autorun at the start
+  this.autorun(() => {
+    if (!Meteor.userId()) {
+      FlowRouter.go('/');
+    }
+  });
+  
   if (!Meteor.userId()) {
     Router.go('/');
     return;
@@ -492,7 +499,7 @@ Template.editor.onRendered(function() {
           ctx.restore();
         }
       } else {
-        // Regular flag/image drawing (existing code)
+        // Regular flag/image drawing
         const img = new Image();
         await new Promise((resolve) => {
           img.onload = () => { resolve(); };
@@ -501,7 +508,25 @@ Template.editor.onRendered(function() {
         });
 
         if (img.naturalWidth && img.naturalHeight) {
-          ctx.drawImage(img, areaInfo.x, areaInfo.y, areaInfo.w, areaInfo.h);
+          if (isFlag && (layout === '1' || layout === '4')) {
+            // For flags in single or quad mode: crop square from middle
+            const sourceSize = Math.min(img.naturalWidth, img.naturalHeight);
+            const sourceX = (img.naturalWidth - sourceSize) / 2;
+            const sourceY = (img.naturalHeight - sourceSize) / 2;
+            
+            // Draw the cropped square flag
+            ctx.drawImage(
+              img,
+              sourceX, sourceY, sourceSize, sourceSize,  // Source (cropped square)
+              areaInfo.x, areaInfo.y, areaInfo.w, areaInfo.h  // Destination
+            );
+            
+            // Add gloss effect
+            addGlossEffect(ctx, areaInfo.x, areaInfo.y, areaInfo.w, areaInfo.h);
+          } else {
+            // Regular drawing for non-flags or split layout
+            ctx.drawImage(img, areaInfo.x, areaInfo.y, areaInfo.w, areaInfo.h);
+          }
         }
       }
     }
@@ -1375,16 +1400,21 @@ Template.editor.events({
       return;
     }
 
+    // Get current design state
     const design = instance.design.get();
-    const elements = {
-      leftAnimal: design.leftAnimal ? getElementName(design.leftAnimal) : null,
-      rightAnimal: design.rightAnimal ? getElementName(design.rightAnimal) : null,
-      crown: design.crown ? getElementName(design.crown) : null,
-      banner: design.banner ? getElementName(design.banner) : null,
-      laurel: design.laurel ? getElementName(design.laurel) : null,
-      bannerText: instance.bannerText.get()
+    const layout = instance.selectedLayout.get();
+    const backgroundImages = instance.backgroundImages.get();
+    const bannerText = instance.bannerText.get();
+
+    // Create complete design object
+    const completeDesign = {
+      ...design,
+      layout: layout,
+      backgroundImages: backgroundImages,
+      bannerText: bannerText
     };
 
+    // Show analysis modal and loading state
     const modal = new bootstrap.Modal(document.getElementById('analysisModal'));
     modal.show();
 
@@ -1392,24 +1422,30 @@ Template.editor.events({
     const analysisText = document.querySelector('.analysis-text');
     const copyButton = document.querySelector('#copyAnalysis');
     
-    // Hide copy button and text, show spinner
     copyButton.style.display = 'none';
     loadingSpinner.classList.remove('d-none');
     analysisText.textContent = '';
 
-    Meteor.call('analyzeComposition', elements, (error, result) => {
-      loadingSpinner.classList.add('d-none');
-      if (error) {
-        analysisText.textContent = 'Failed to analyze composition: ' + error.reason;
-      } else {
-        // Format the text - replace **text** with <strong>text</strong>
-        const formattedText = result.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        // Add line breaks between paragraphs
-        const withLineBreaks = formattedText.replace(/\n\n/g, '<br><br>');
-        analysisText.innerHTML = withLineBreaks;
-        // Show copy button
-        copyButton.style.display = 'block';
+    // First save the design
+    Meteor.call('saveDesign', completeDesign, (saveError) => {
+      if (saveError) {
+        loadingSpinner.classList.add('d-none');
+        analysisText.textContent = 'Error saving design before analysis: ' + saveError.reason;
+        return;
       }
+
+      // Then proceed with analysis
+      Meteor.call('analyzeComposition', completeDesign, (error, result) => {
+        loadingSpinner.classList.add('d-none');
+        if (error) {
+          analysisText.textContent = 'Failed to analyze composition: ' + error.reason;
+        } else {
+          const formattedText = result.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+          const withLineBreaks = formattedText.replace(/\n\n/g, '<br><br>');
+          analysisText.innerHTML = withLineBreaks;
+          copyButton.style.display = 'block';
+        }
+      });
     });
   },
   
